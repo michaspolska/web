@@ -43,6 +43,7 @@ nav {
   margin-bottom: 20px;
   font-size: 1.1rem;
 }
+
 nav a {
   margin: 0 10px;
   text-decoration: none;
@@ -50,6 +51,7 @@ nav a {
   font-weight: bold;
   transition: color 0.3s ease;
 }
+
 nav a:hover { color: var(--accent-hover); }
 
 .container { flex: 1; padding: 0 15px 30px 15px; }
@@ -87,10 +89,26 @@ nav a:hover { color: var(--accent-hover); }
   flex-direction: column;
   text-align: center;
 }
+
 .card:hover { background-color: var(--card-hover); }
-.card p { flex-grow: 1; margin-top: 10px; margin-bottom: 10px; text-align: center; font-size: 1.1rem; }
-.card .header h2 { font-size: 1.3rem; margin-bottom: 5px; }
-.read-more { margin-top: auto; font-size: 1.1rem; }
+
+.card p { 
+  flex-grow: 1; 
+  margin-top: 10px; 
+  margin-bottom: 10px; 
+  text-align: center; 
+  font-size: 1.1rem; 
+}
+
+.card .header h2 { 
+  font-size: 1.3rem; 
+  margin-bottom: 5px; 
+}
+
+.read-more { 
+  margin-top: auto; 
+  font-size: 1.1rem; 
+}
 
 .article-section {
   background-color: white;
@@ -99,8 +117,17 @@ nav a:hover { color: var(--accent-hover); }
   margin-top: 20px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
-.article-section h2 { font-size: 1.5rem; text-align: center; margin-bottom: 15px; }
-.article-section div { font-size: 1.1rem; line-height: 1.6; }
+
+.article-section h2 { 
+  font-size: 1.5rem; 
+  text-align: center; 
+  margin-bottom: 15px; 
+}
+
+.article-section div { 
+  font-size: 1.1rem; 
+  line-height: 1.6; 
+}
 
 footer {
   background-color: var(--footer-bg);
@@ -134,11 +161,21 @@ footer {
   user-select: none;
   transition: background-color 0.3s ease;
 }
+
 .arrow:hover { background-color: var(--accent-hover); }
 
 /* ukrycie strzałek na mobile <700px */
 @media (max-width: 700px) {
   .arrow { display: none !important; }
+}
+
+/* dla desktopu >700px */
+@media (min-width: 701px) {
+  .arrow {
+    display: flex !important;
+    position: static;
+    transform: none;
+  }
 }
 
 /* responsywne karty */
