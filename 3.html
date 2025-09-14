@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Blog inspirowany TM - Strona Główna</title>
+  <style>
+    /* --- STYLE skrócone --- */
+    body { font-family: 'Georgia', serif; background: #fdfbf7; margin: 0; }
+    header, nav, .container, footer { max-width: 1100px; margin: auto; }
+    header { padding: 20px; text-align: center; background: #fff; border-bottom: 1px solid #ddd; }
+    nav { text-align: center; padding: 10px; background: #fff; border-bottom: 1px solid #ddd; margin-bottom: 40px; }
+    nav a { margin: 0 15px; text-decoration: none; font-weight: bold; color: #006d77; }
+    .cards { display: flex; gap: 30px; flex-wrap: wrap; }
+    .card { flex: 0 0 calc(25% - 30px); background: #fff; border-radius: 8px; padding: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+    .card h2 { font-size: 1.1rem; margin: 0; }
+    .date { font-size: 0.8rem; color: #888; font-style: italic; margin-bottom: 10px; }
+    .read-more { display: inline-block; margin-top: auto; color: #006d77; font-weight: bold; cursor: pointer; }
+    .read-more:hover { text-decoration: underline; color: #004f58; }
+    .article-section { margin-top: 40px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+    .article-section h2 { margin-top: 0; }
+  </style>
+  <!-- ✅ biblioteka do markdowna -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+
+  <header><h1>Blog inspirowany TM</h1></header>
+  <nav>
+    <a href="index.html">Start</a>
+    <a href="#">Artykuły</a>
+    <a href="#">Statystyki</a>
+    <a href="#">Podcast</a>
+    <a href="#">O mnie</a>
+    <a href="#">Kontakt</a>
+  </nav>
+
+  <div class="container">
+    <div class="cards" id="cards">
+      <div class="card">
+        <h2>Jak stać się bardziej produktywnym?</h2>
+        <div class="date">25 lipca 2025</div>
+        <p>Poznaj 5 sprawdzonych metod...</p>
+        <a href="#" class="read-more" data-md="produktywnosc.md">Czytaj dalej →</a>
+      </div>
+      <div class="card">
+        <h2>Minimalizm: mniej znaczy więcej</h2>
+        <div class="date">20 lipca 2025</div>
+        <p>Jak ograniczenie rzeczy pomogło mi...</p>
+        <a href="#" class="read-more" data-md="minimalizm.md">Czytaj dalej →</a>
+      </div>
+      <div class="card">
+        <h2>Biohacking: Sekrety Tima Ferrissa</h2>
+        <div class="date">5 lipca 2025</div>
+        <p>Odkryj techniki optymalizacji zdrowia...</p>
+        <a href="#" class="read-more" data-md="biohacking.md">Czytaj dalej →</a>
+      </div>
+    </div>
+
+    <!-- sekcja na artykuł -->
+    <section class="article-section" id="articleSection">
+      <h2>Wybierz artykuł z listy powyżej</h2>
+      <div id="articleContent"></div>
+    </section>
+  </div>
+
+  <footer>© 2025 Michał - Blog inspirowany TM</footer>
+
+<script>
+  async function loadArticle(mdFile) {
+    const articleContent = document.getElementById("articleContent");
+    const articleTitle = document.querySelector("#articleSection h2");
+
+    articleContent.innerHTML = "<p>Ładowanie...</p>";
+    articleTitle.textContent = "Ładowanie artykułu...";
+
+    try {
+      const response = await fetch(mdFile);
+      if (!response.ok) throw new Error("Nie można załadować pliku: " + mdFile);
+
+      const text = await response.text();
+      const html = marked.parse(text);
+
+      articleContent.innerHTML = html;
+
+      // Ustaw tytuł na pierwszy nagłówek z pliku
+      const firstHeading = document.querySelector("#articleContent h1, #articleContent h2");
+      if (firstHeading) {
+        articleTitle.textContent = firstHeading.textContent;
+        firstHeading.remove();
+      } else {
+        articleTitle.textContent = "Artykuł";
+      }
+    } catch (err) {
+      articleContent.innerHTML = "<p>Błąd ładowania artykułu.</p>";
+      articleTitle.textContent = "Błąd";
+      console.error(err);
+    }
+  }
+
+  // obsługa kliknięcia
+  document.querySelectorAll(".read-more").forEach(link => {
+    link.addEventListener("click", event => {
+      event.preventDefault();
+      const mdFile = link.getAttribute("data-md");
+      if (mdFile) loadArticle(mdFile);
+    });
+  });
+</script>
+
+</body>
+</html>
