@@ -218,7 +218,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const getVisibleCardsCount = () => isMobile() ? 1 : window.innerWidth <= 1024 ? 2 : 4;
 
   const updateSlider = () => {
-    const cardsPerPage = getVisibleCardsCount();
     const visibleItems = allCards.filter(card => !card.classList.contains('hidden-by-search'));
     if (!visibleItems.length) {
       arrowLeft.classList.add('hidden');
@@ -227,12 +226,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (isMobile()) {
+      // na mobile używamy natywnego scrollowania, strzałki całkowicie ukryte
       arrowLeft.classList.add('hidden');
       arrowRight.classList.add('hidden');
       cardsContainer.style.transform = 'none';
       return;
     }
 
+    const cardsPerPage = getVisibleCardsCount();
     const cardWidth = visibleItems[0].offsetWidth;
     const gap = 20;
     const maxIndex = Math.max(0, visibleItems.length - cardsPerPage);
@@ -253,11 +254,17 @@ document.addEventListener('DOMContentLoaded', () => {
     updateSlider();
   };
 
+  // obsługa strzałek
   arrowRight.addEventListener('click', () => { currentIndex++; updateSlider(); });
   arrowLeft.addEventListener('click', () => { currentIndex--; updateSlider(); });
+
+  // obsługa wyszukiwarki
   searchInput.addEventListener('input', filterCards);
+
+  // resize okna
   window.addEventListener('resize', () => setTimeout(updateSlider, 150));
 
+  // obsługa klawiatury dla strzałek
   [arrowLeft, arrowRight].forEach(arrow => {
     arrow.addEventListener('keydown', e => {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); arrow.click(); }
@@ -266,6 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   updateSlider();
 
+  // ładowanie artykułów Markdown
   document.querySelectorAll(".read-more").forEach(link => {
     link.addEventListener("click", async (event) => {
       event.preventDefault();
@@ -297,6 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 </script>
+
 
 </body>
 </html>
