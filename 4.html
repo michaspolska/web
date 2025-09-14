@@ -124,7 +124,7 @@ footer {
   margin-top: 20px;
 }
 
-/* STRZAŁKI */
+/* Strzałki slidera */
 .arrow {
   position: absolute;
   top: 50%;
@@ -145,8 +145,12 @@ footer {
 }
 .arrow-left { left: 10px; }
 .arrow-right { right: 10px; }
-.arrow.hidden { display: none !important; }
 .arrow:hover { background-color: var(--accent-hover); }
+
+/* Całkowicie ukryj strzałki na urządzeniach < 700px */
+@media (max-width: 700px) {
+  .arrow { display: none !important; }
+}
 
 /* FILTROWANIE */
 .hidden-by-search { display: none !important; }
@@ -207,27 +211,27 @@ document.addEventListener('DOMContentLoaded', () => {
   const getVisibleCardsCount = () => isMobile() ? 1 : window.innerWidth <= 1024 ? 2 : 4;
 
   const updateSlider = () => {
-    const visibleItems = allCards.filter(c => !c.classList.contains('hidden-by-search'));
-    if (!visibleItems.length) return;
+  const visibleItems = allCards.filter(c => !c.classList.contains('hidden-by-search'));
+  if (!visibleItems.length) return;
 
-    if (isMobile()) {
-      arrowLeft.classList.add('hidden');
-      arrowRight.classList.add('hidden');
-      cardsContainer.style.transform = 'none';
-      return;
-    }
+  if (isMobile()) {
+    // Na mobile: strzałki zawsze ukryte i brak transformacji
+    cardsContainer.style.transform = 'none';
+    return;
+  }
 
-    const cardsPerPage = getVisibleCardsCount();
-    const cardWidth = visibleItems[0].offsetWidth;
-    const gap = 20;
-    const maxIndex = Math.max(0, visibleItems.length - cardsPerPage);
-    currentIndex = Math.max(0, Math.min(currentIndex, maxIndex));
+  const cardsPerPage = getVisibleCardsCount();
+  const cardWidth = visibleItems[0].offsetWidth;
+  const gap = 20;
+  const maxIndex = Math.max(0, visibleItems.length - cardsPerPage);
+  currentIndex = Math.max(0, Math.min(currentIndex, maxIndex));
 
-    cardsContainer.style.transform = `translateX(-${currentIndex * (cardWidth + gap)}px)`;
-    arrowLeft.classList.toggle('hidden', currentIndex === 0);
-    arrowRight.classList.toggle('hidden', currentIndex >= maxIndex);
-  };
+  cardsContainer.style.transform = `translateX(-${currentIndex * (cardWidth + gap)}px)`;
 
+  // Tylko dla desktopu pokaz/ukryj strzałki
+  arrowLeft.classList.toggle('hidden', currentIndex === 0);
+  arrowRight.classList.toggle('hidden', currentIndex >= maxIndex);
+};
   const filterCards = () => {
     const term = searchInput.value.toLowerCase();
     allCards.forEach(card => {
