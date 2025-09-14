@@ -64,8 +64,8 @@ nav a:hover { color: var(--accent-hover); }
 
 #searchInput {
   width: 100%;
-  padding: 8px 12px;
-  font-size: 0.95rem;
+  padding: 10px 15px;
+  font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 8px;
   margin: 0 auto 20px;
@@ -76,7 +76,7 @@ nav a:hover { color: var(--accent-hover); }
   position: relative;
   overflow-x: auto;
   scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch; /* płynny scroll na iOS */
+  -webkit-overflow-scrolling: touch;
   padding-bottom: 20px;
 }
 
@@ -89,7 +89,7 @@ nav a:hover { color: var(--accent-hover); }
 .card {
   background-color: var(--card-bg);
   border-radius: 12px;
-  padding: 15px;
+  padding: 20px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
   flex: 0 0 100%;
   display: flex;
@@ -98,9 +98,9 @@ nav a:hover { color: var(--accent-hover); }
 }
 
 .card:hover { background-color: var(--card-hover); }
-.card p { flex-grow: 1; margin-top: 0; margin-bottom: 10px; text-align: center; font-size: 0.95rem; }
-.card .header h2 { font-size: 1.1rem; }
-.read-more { margin-top: auto; font-size: 0.95rem; }
+.card p { flex-grow: 1; margin-top: 0; margin-bottom: 10px; text-align: center; font-size: 1rem; }
+.card .header h2 { font-size: 1.3rem; }
+.read-more { margin-top: auto; font-size: 1rem; }
 
 .article-section {
   background-color: white;
@@ -110,14 +110,14 @@ nav a:hover { color: var(--accent-hover); }
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
-.article-section h2 { font-size: 1.2rem; text-align: center; margin-bottom: 15px; }
-.article-section div { font-size: 0.95rem; line-height: 1.5; }
+.article-section h2 { font-size: 1.4rem; text-align: center; margin-bottom: 15px; }
+.article-section div { font-size: 1rem; line-height: 1.6; }
 
 footer {
   background-color: var(--footer-bg);
   padding: 15px;
   text-align: center;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   color: #555;
   margin-top: 20px;
 }
@@ -152,27 +152,21 @@ footer {
 .arrow-right { right: 10px; }
 .arrow.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
-/* ukrycie przy filtrowaniu */
 .hidden-by-search { display: none !important; }
 
 /* --- poprawki dla telefonów --- */
 @media (max-width: 700px) {
-  /* powiększenie header, nav, wyszukiwarki */
-  header { font-size: 1.6rem; padding: 25px 15px; }
-  nav { font-size: 1.1rem; padding: 15px 15px; }
-  #searchInput { font-size: 1.1rem; padding: 12px 15px; }
-
-  /* powiększenie kart */
-  .card { flex: 0 0 90%; padding: 20px; }
-  .card .header h2 { font-size: 1.3rem; }
-  .card p, .read-more { font-size: 1.05rem; }
-
-  /* strzałki schowane na telefonach, przesuwanie palcem naturalne */
+  header { font-size: 1.8rem; padding: 30px 15px; }
+  nav { font-size: 1.2rem; padding: 18px 15px; }
+  #searchInput { font-size: 1.2rem; padding: 15px 15px; }
+  .card { flex: 0 0 95%; padding: 25px; }
+  .card .header h2 { font-size: 1.5rem; }
+  .card p, .read-more { font-size: 1.1rem; }
+  .article-section h2 { font-size: 1.6rem; }
+  .article-section div { font-size: 1.1rem; line-height: 1.7; }
   .arrow { display: none; }
 }
-
-
-</style>
+  </style>
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
@@ -233,7 +227,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (isMobile()) {
-      // na mobile używamy natywnego scrollowania, strzałki ukrywamy
       arrowLeft.classList.add('hidden');
       arrowRight.classList.add('hidden');
       cardsContainer.style.transform = 'none';
@@ -273,7 +266,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   updateSlider();
 
-  // ładowanie artykułów
   document.querySelectorAll(".read-more").forEach(link => {
     link.addEventListener("click", async (event) => {
       event.preventDefault();
@@ -304,9 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
-
 </script>
-
 
 </body>
 </html>
