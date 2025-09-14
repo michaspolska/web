@@ -70,14 +70,24 @@ nav a:hover { color: var(--accent-hover); }
   position: relative;
   overflow-x: auto;
   scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch; /* Lepsze przewijanie na iOS */
   padding-bottom: 20px;
 }
+
+/* Ukrycie paska przewijania */
+.slider-container::-webkit-scrollbar {
+  display: none;
+}
+.slider-container {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
 
 .cards {
   display: flex;
   gap: 20px;
-  transition: transform 0.5s ease-in-out; /* Płynne przewijanie */
+  transition: transform 0.5s ease-in-out;
 }
 
 .card {
@@ -165,17 +175,28 @@ footer {
 
 .arrow:hover { background-color: var(--accent-hover); }
 
-/* NOWA KLASA do ukrywania strzałek na krańcach slidera (używana w JS) */
+/* Klasa do ukrywania strzałek na krańcach slidera (używana w JS) */
 .hidden {
   visibility: hidden;
   opacity: 0;
 }
 
-/* POPRAWIONA REGUŁA: Ukrycie całego kontenera strzałek na mobile <701px */
+/* ukrycie strzałek i dodanie swipe na mobile <701px */
 @media (max-width: 700px) {
   .slider-arrows {
     display: none;
   }
+  
+  /* === NOWE REGUŁY DLA PRZESUWANIA PALCEM === */
+  .slider-container {
+    scroll-snap-type: x mandatory;
+    scroll-padding: 0 20px; /* Dodaje margines, by karty nie kleiły się do krawędzi */
+  }
+  
+  .card {
+    scroll-snap-align: center; /* Każda karta jest punktem przyciągania */
+  }
+  /* =========================================== */
 }
 
 /* responsywne karty */
@@ -187,7 +208,6 @@ footer {
 .hidden-by-search { display: none !important; }
 
 </style>
-
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
