@@ -139,27 +139,32 @@ document.addEventListener('DOMContentLoaded', () => {
   const allCards = Array.from(cardsContainer.children);
   let currentIndex = 0;
 
-  const getVisibleCardsCount = () => window.innerWidth <= 700 ? 1 : window.innerWidth <= 1024 ? 2 : 4;
+  const isMobile = () => window.innerWidth <= 700;
+  const getVisibleCardsCount = () => isMobile() ? 1 : window.innerWidth <= 1024 ? 2 : 4;
 
   const updateSlider = () => {
     const cardsPerPage = getVisibleCardsCount();
     const visibleItems = allCards.filter(card => !card.classList.contains('hidden-by-search'));
-
     if (!visibleItems.length) {
       arrowLeft.classList.add('hidden');
       arrowRight.classList.add('hidden');
       return;
     }
 
+    if (isMobile()) {
+      // na mobile używamy natywnego scrollowania, strzałki ukrywamy
+      arrowLeft.classList.add('hidden');
+      arrowRight.classList.add('hidden');
+      cardsContainer.style.transform = 'none';
+      return;
+    }
+
     const cardWidth = visibleItems[0].offsetWidth;
-    const gap = 20; // dopasowane do CSS
+    const gap = 20;
     const maxIndex = Math.max(0, visibleItems.length - cardsPerPage);
-
     currentIndex = Math.max(0, Math.min(currentIndex, maxIndex));
-    const translateX = currentIndex * (cardWidth + gap);
-    cardsContainer.style.transform = `translateX(-${translateX}px)`;
-    cardsContainer.scrollLeft = 0; // reset scroll dla mobile
 
+    cardsContainer.style.transform = `translateX(-${currentIndex * (cardWidth + gap)}px)`;
     arrowLeft.classList.toggle('hidden', currentIndex === 0);
     arrowRight.classList.toggle('hidden', currentIndex >= maxIndex);
   };
@@ -174,17 +179,11 @@ document.addEventListener('DOMContentLoaded', () => {
     updateSlider();
   };
 
-  // obsługa kliknięć strzałek
   arrowRight.addEventListener('click', () => { currentIndex++; updateSlider(); });
   arrowLeft.addEventListener('click', () => { currentIndex--; updateSlider(); });
-
-  // obsługa szukania
   searchInput.addEventListener('input', filterCards);
+  window.addEventListener('resize', () => setTimeout(updateSlider, 150));
 
-  // resize okna
-  window.addEventListener('resize', () => { setTimeout(updateSlider, 150); });
-
-  // ułatwienia dla klawiatury
   [arrowLeft, arrowRight].forEach(arrow => {
     arrow.addEventListener('keydown', e => {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); arrow.click(); }
@@ -193,17 +192,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   updateSlider();
 
-  // ----------------- ładowanie artykułów -----------------
+  // ładowanie artykułów
   document.querySelectorAll(".read-more").forEach(link => {
     link.addEventListener("click", async (event) => {
       event.preventDefault();
       const mdFile = link.getAttribute("data-md");
       if (!mdFile) return;
-
-      // reset slider i scroll przed wyświetleniem artykułu
-      currentIndex = 0;
-      cardsContainer.style.transform = `translateX(0px)`;
-      cardsContainer.scrollLeft = 0;
 
       const articleContent = document.getElementById("articleContent");
       const articleTitle = document.querySelector("#articleSection h2");
@@ -216,14 +210,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const text = await response.text();
         articleContent.innerHTML = marked.parse(text);
 
-        // ustaw tytuł artykułu i usuń pierwsze h1/h2 z treści
         const firstHeading = articleContent.querySelector("h1, h2");
         if (firstHeading) {
           articleTitle.textContent = firstHeading.textContent;
           firstHeading.remove();
-        } else {
-          articleTitle.textContent = "Artykuł";
-        }
+        } else articleTitle.textContent = "Artykuł";
       } catch (err) {
         articleContent.innerHTML = "<p>Błąd ładowania artykułu.</p>";
         articleTitle.textContent = "Błąd";
@@ -232,6 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+
 </script>
 
 
