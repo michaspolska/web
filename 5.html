@@ -109,7 +109,35 @@ footer {
   color: #555;
   margin-top: 20px;
 }
+/* nowy kontener strzałek pod sliderem */
+.slider-arrows {
+  display: flex;
+  justify-content: center;
+  gap: 40px; /* odległość między strzałkami */
+  margin-top: 15px;
+}
 
+/* strzałki */
+.arrow {
+  background-color: rgba(0, 107, 119, 0.8);
+  color: white;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.5rem;
+  user-select: none;
+  transition: background-color 0.3s ease;
+}
+.arrow:hover { background-color: var(--accent-hover); }
+
+/* ukrycie na urządzeniach < 700px */
+@media (max-width: 700px) {
+  .arrow { display: none !important; }
+}
 /* responsywne karty */
 @media (min-width: 480px) { .card { flex: 0 0 48%; } }
 @media (min-width: 768px) { .card { flex: 0 0 calc((100% - 3 * 20px)/3); } }
@@ -164,17 +192,20 @@ footer {
 <div class="container">
   <input type="text" id="searchInput" placeholder="Szukaj po tytułach artykułów..." />
 
-  <div class="slider-container" aria-label="Slider artykułów">
-    <div class="cards" id="cards">
-      <div class="card"><div class="header"><h2>Jak stać się bardziej produktywnym?</h2></div><p>Poznaj 5 sprawdzonych metod...</p><a href="#" class="read-more" data-md="produktywnosc.md">Czytaj dalej →</a></div>
-      <div class="card"><div class="header"><h2>Minimalizm: mniej znaczy więcej</h2></div><p>Jak ograniczenie rzeczy pomogło mi...</p><a href="#" class="read-more" data-md="minimalizm.md">Czytaj dalej →</a></div>
-      <div class="card"><div class="header"><h2>Poranna rutyna ludzi sukcesu</h2></div><p>Odkryj, co łączy poranki Tima Ferrissa...</p><a href="#" class="read-more" data-md="rutyna.md">Czytaj dalej →</a></div>
-      <div class="card"><div class="header"><h2>Startup bez ryzyka – jak zacząć</h2></div><p>Naucz się, jak uruchomić biznes online...</p><a href="#" class="read-more" data-md="startup.md">Czytaj dalej →</a></div>
-    </div>
+ <div class="slider-container" aria-label="Slider artykułów">
+  <div class="cards" id="cards">
+    <div class="card"><div class="header"><h2>Jak stać się bardziej produktywnym?</h2></div><p>Poznaj 5 sprawdzonych metod...</p><a href="#" class="read-more" data-md="produktywnosc.md">Czytaj dalej →</a></div>
+    <div class="card"><div class="header"><h2>Minimalizm: mniej znaczy więcej</h2></div><p>Jak ograniczenie rzeczy pomogło mi...</p><a href="#" class="read-more" data-md="minimalizm.md">Czytaj dalej →</a></div>
+    <div class="card"><div class="header"><h2>Poranna rutyna ludzi sukcesu</h2></div><p>Odkryj, co łączy poranki Tima Ferrissa...</p><a href="#" class="read-more" data-md="rutyna.md">Czytaj dalej →</a></div>
+    <div class="card"><div class="header"><h2>Startup bez ryzyka – jak zacząć</h2></div><p>Naucz się, jak uruchomić biznes online...</p><a href="#" class="read-more" data-md="startup.md">Czytaj dalej →</a></div>
+  </div>
 
+  <!-- NOWY KONTAINER NA STRZAŁKI -->
+  <div class="slider-arrows">
     <div class="arrow arrow-left" id="arrowLeft">&#8592;</div>
     <div class="arrow arrow-right" id="arrowRight">&#8594;</div>
   </div>
+</div>
 
   <section class="article-section" id="articleSection">
     <h2>Wybierz artykuł z listy powyżej</h2>
