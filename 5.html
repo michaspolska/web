@@ -2,9 +2,10 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
+<!-- BARDZO WAŻNE: Ten tag instruuje telefon, by renderował stronę poprawnie -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Blog inspirowany TM - Strona Główna</title>
 <style>
-
 :root {
   --primary-bg: #fdfbf7;
   --card-bg: #ffffff;
@@ -67,28 +68,27 @@ nav a:hover { color: var(--accent-hover); }
   display: block;
 }
 
+.slider-wrapper {
+  /* Dodajemy ten wrapper, aby strzałki nie były wewnątrz przewijanego obszaru */
+}
+
 .slider-container {
   position: relative;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch; /* Lepsze przewijanie na iOS */
+  /* Domyślnie dla desktopu przewijanie jest wyłączone (steruje nim JS) */
+  overflow-x: hidden;
   padding-bottom: 20px;
 }
 
-/* Ukrycie paska przewijania na wszystkich platformach */
-.slider-container::-webkit-scrollbar {
-  display: none;
-}
-.slider-container {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
+/* Ukrycie paska przewijania */
+.slider-container::-webkit-scrollbar { display: none; }
+.slider-container { -ms-overflow-style: none; scrollbar-width: none; }
 
 
 .cards {
   display: flex;
   gap: 20px;
   transition: transform 0.5s ease-in-out;
+  padding-left: 5px; /* Mały padding, by cień pierwszej karty był widoczny */
 }
 
 .card {
@@ -104,23 +104,9 @@ nav a:hover { color: var(--accent-hover); }
 
 .card:hover { background-color: var(--card-hover); }
 
-.card p { 
-  flex-grow: 1; 
-  margin-top: 10px; 
-  margin-bottom: 10px; 
-  text-align: center; 
-  font-size: 1.1rem; 
-}
-
-.card .header h2 { 
-  font-size: 1.3rem; 
-  margin-bottom: 5px; 
-}
-
-.read-more { 
-  margin-top: auto; 
-  font-size: 1.1rem; 
-}
+.card p { flex-grow: 1; margin: 10px 0; text-align: center; font-size: 1.1rem; }
+.card .header h2 { font-size: 1.3rem; margin-bottom: 5px; }
+.read-more { margin-top: auto; font-size: 1.1rem; }
 
 .article-section {
   background-color: white;
@@ -129,17 +115,8 @@ nav a:hover { color: var(--accent-hover); }
   margin-top: 20px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
-
-.article-section h2 { 
-  font-size: 1.5rem; 
-  text-align: center; 
-  margin-bottom: 15px; 
-}
-
-.article-section div { 
-  font-size: 1.1rem; 
-  line-height: 1.6; 
-}
+.article-section h2 { font-size: 1.5rem; text-align: center; margin-bottom: 15px; }
+.article-section div { font-size: 1.1rem; line-height: 1.6; }
 
 footer {
   background-color: var(--footer-bg);
@@ -150,15 +127,13 @@ footer {
   margin-top: 20px;
 }
 
-/* kontener strzałek pod sliderem - domyślnie widoczny */
+/* --- KONTENER STRZAŁEK (TYLKO DLA DESKTOPU) --- */
 .slider-arrows {
   display: flex;
   justify-content: center;
   gap: 40px;
   margin-top: 15px;
 }
-
-/* style strzałek */
 .arrow {
   background-color: rgba(0, 107, 119, 0.8);
   color: white;
@@ -173,7 +148,6 @@ footer {
   user-select: none;
   transition: background-color 0.3s ease, visibility 0.3s ease;
 }
-
 .arrow:hover { background-color: var(--accent-hover); }
 
 /* Klasa do ukrywania strzałek na krańcach slidera na desktopie (używana w JS) */
@@ -182,35 +156,41 @@ footer {
   opacity: 0;
 }
 
-/* === GŁÓWNA ZMIANA: REGUŁY DLA URZĄDZEŃ MOBILNYCH === */
+
+/* === KLUCZOWE ZMIANY DLA URZĄDZEŃ MOBILNYCH (max 700px) === */
 @media (max-width: 700px) {
-  /* 1. Całkowite ukrycie kontenera ze strzałkami */
+  /* 1. CAŁKOWICIE UKRYJ STRZAŁKI */
   .slider-arrows {
     display: none;
   }
   
-  /* 2. Włączenie przyciągania kart przy przesuwaniu palcem */
+  /* 2. WŁĄCZ PRZEWIJANIE PALCEM */
   .slider-container {
-    scroll-snap-type: x mandatory;
-    scroll-padding: 0 20px;
+    overflow-x: auto; /* To jest kluczowe dla przesuwania palcem! */
+    -webkit-overflow-scrolling: touch; /* Płynniejsze przewijanie na iOS */
+    scroll-snap-type: x mandatory; /* Włącz przyciąganie */
+    scroll-padding: 0 15px; /* Dystans od krawędzi przy przyciąganiu */
   }
   
   .card {
-    scroll-snap-align: center;
+    scroll-snap-align: center; /* Przyciągaj karty do środka */
+  }
+  
+  /* 3. Wyłącz transformacje JS na mobile, bo steruje tym natywne przewijanie */
+  .cards {
+    transform: none !important;
   }
 }
 
-/* responsywne karty dla różnych szerokości ekranu */
+/* responsywne karty */
 @media (min-width: 480px) { .card { flex: 0 0 48%; } }
 @media (min-width: 768px) { .card { flex: 0 0 calc((100% - 2 * 20px)/3); } }
-@media (min-width: 1024px) { .card { flex: 0 0 calc((100% - 3 * 30px)/4); } }
+@media (min-width: 1024px) { .card { flex: 0 0 calc((100% - 3 * 20px)/4); } }
 
-/* filtrowanie */
 .hidden-by-search { display: none !important; }
 
-
-
 </style>
+
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
@@ -228,106 +208,88 @@ footer {
 <div class="container">
   <input type="text" id="searchInput" placeholder="Szukaj po tytułach artykułów..." />
 
- <div class="slider-container" aria-label="Slider artykułów">
-  <div class="cards" id="cards">
-    <div class="card"><div class="header"><h2>Jak stać się bardziej produktywnym?</h2></div><p>Poznaj 5 sprawdzonych metod...</p><a href="#" class="read-more" data-md="produktywnosc.md">Czytaj dalej →</a></div>
-    <div class="card"><div class="header"><h2>Minimalizm: mniej znaczy więcej</h2></div><p>Jak ograniczenie rzeczy pomogło mi...</p><a href="#" class="read-more" data-md="minimalizm.md">Czytaj dalej →</a></div>
-    <div class="card"><div class="header"><h2>Poranna rutyna ludzi sukcesu</h2></div><p>Odkryj, co łączy poranki Tima Ferrissa...</p><a href="#" class="read-more" data-md="rutyna.md">Czytaj dalej →</a></div>
-    <div class="card"><div class="header"><h2>Startup bez ryzyka – jak zacząć</h2></div><p>Naucz się, jak uruchomić biznes online...</p><a href="#" class="read-more" data-md="startup.md">Czytaj dalej →</a></div>
-    <div class="card"><div class="header"><h2>Kolejny artykuł testowy</h2></div><p>Opis kolejnego artykułu do testów.</p><a href="#" class="read-more" data-md="test.md">Czytaj dalej →</a></div>
-    <div class="card"><div class="header"><h2>Jeszcze jeden wpis na bloga</h2></div><p>Krótki opis tego, co znajdziesz w środku.</p><a href="#" class="read-more" data-md="wpis.md">Czytaj dalej →</a></div>
+  <!-- Zmiana w HTML: opakowałem slider i strzałki w jeden kontener -->
+  <div class="slider-wrapper">
+    <div class="slider-container" aria-label="Slider artykułów">
+      <div class="cards" id="cards">
+        <div class="card"><div class="header"><h2>Jak stać się bardziej produktywnym?</h2></div><p>Poznaj 5 sprawdzonych metod...</p><a href="#" class="read-more" data-md="produktywnosc.md">Czytaj dalej →</a></div>
+        <div class="card"><div class="header"><h2>Minimalizm: mniej znaczy więcej</h2></div><p>Jak ograniczenie rzeczy pomogło mi...</p><a href="#" class="read-more" data-md="minimalizm.md">Czytaj dalej →</a></div>
+        <div class="card"><div class="header"><h2>Poranna rutyna ludzi sukcesu</h2></div><p>Odkryj, co łączy poranki Tima Ferrissa...</p><a href="#" class="read-more" data-md="rutyna.md">Czytaj dalej →</a></div>
+        <div class="card"><div class="header"><h2>Startup bez ryzyka – jak zacząć</h2></div><p>Naucz się, jak uruchomić biznes online...</p><a href="#" class="read-more" data-md="startup.md">Czytaj dalej →</a></div>
+        <div class="card"><div class="header"><h2>Kolejny artykuł testowy</h2></div><p>Opis kolejnego artykułu do testów.</p><a href="#" class="read-more" data-md="test.md">Czytaj dalej →</a></div>
+        <div class="card"><div class="header"><h2>Jeszcze jeden wpis na bloga</h2></div><p>Krótki opis tego, co znajdziesz w środku.</p><a href="#" class="read-more" data-md="wpis.md">Czytaj dalej →</a></div>
+      </div>
+    </div>
+    
+    <div class="slider-arrows">
+      <div class="arrow arrow-left" id="arrowLeft">&#8592;</div>
+      <div class="arrow arrow-right" id="arrowRight">&#8594;</div>
+    </div>
   </div>
-</div>
 
-<!-- Kontener na strzałki pozostał bez zmian w HTML -->
-<div class="slider-arrows">
-  <div class="arrow arrow-left" id="arrowLeft">&#8592;</div>
-  <div class="arrow arrow-right" id="arrowRight">&#8594;</div>
-</div>
-
-<section class="article-section" id="articleSection">
-  <h2>Wybierz artykuł z listy powyżej</h2>
-  <div id="articleContent"></div>
-</section>
+  <section class="article-section" id="articleSection">
+    <h2>Wybierz artykuł z listy powyżej</h2>
+    <div id="articleContent"></div>
+  </section>
 </div>
 
 <footer>© 2025 Michał - Blog inspirowany TM</footer>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const sliderContainer = document.querySelector('.slider-container');
   const cardsContainer = document.getElementById('cards');
   const arrowLeft = document.getElementById('arrowLeft');
   const arrowRight = document.getElementById('arrowRight');
   const searchInput = document.getElementById('searchInput');
   const allCards = Array.from(cardsContainer.children);
+  let currentIndex = 0;
 
-  const updateSliderState = () => {
-    // Na mobilkach slider jest przewijany palcem, więc nie potrzebujemy logiki strzałek
+  const updateSlider = () => {
+    // Na mobile nic nie robimy - za wszystko odpowiada CSS
     if (window.innerWidth <= 700) {
-      sliderContainer.style.overflowX = 'auto'; // Upewnij się, że przewijanie jest możliwe
-      cardsContainer.style.transform = 'none'; // Usuń transformację z wersji desktopowej
-      return; // Zakończ funkcję dla mobile
-    }
-    
-    // Logika dla desktop
-    sliderContainer.style.overflowX = 'hidden'; // Ukryj pasek przewijania na desktop
-    
-    const visibleCards = allCards.filter(card => !card.classList.contains('hidden-by-search'));
-    if (visibleCards.length === 0) {
-        arrowLeft.classList.add('hidden');
-        arrowRight.classList.add('hidden');
-        return;
+      return; 
     }
 
-    const cardWidth = visibleCards[0].offsetWidth;
-    const gap = parseInt(window.getComputedStyle(cardsContainer).gap, 10) || 20;
-    const containerWidth = sliderContainer.offsetWidth;
+    // Poniższa logika jest tylko dla desktopu
+    const visibleCards = allCards.filter(card => !card.classList.contains('hidden-by-search'));
+    if (!visibleCards.length) {
+      arrowLeft.classList.add('hidden');
+      arrowRight.classList.add('hidden');
+      return;
+    }
     
-    // Ile kart mieści się w kontenerze
+    const containerWidth = cardsContainer.parentElement.offsetWidth;
+    const cardWidth = visibleCards[0].offsetWidth;
+    const gap = parseInt(window.getComputedStyle(cardsContainer).gap) || 20;
     const cardsInView = Math.floor((containerWidth + gap) / (cardWidth + gap));
     
-    // Maksymalna liczba "przesunięć"
-    const maxScrolls = Math.ceil(visibleCards.length / cardsInView) - 1;
-    
-    // Pobierz aktualne przesunięcie (lub ustaw na 0)
-    let currentScroll = parseInt(cardsContainer.dataset.currentScroll || '0', 10);
-    
-    // Aktualizacja widoczności strzałek
-    arrowLeft.classList.toggle('hidden', currentScroll === 0);
-    arrowRight.classList.toggle('hidden', currentScroll >= maxScrolls || visibleCards.length <= cardsInView);
+    const maxIndex = Math.max(0, visibleCards.length - cardsInView);
+    currentIndex = Math.max(0, Math.min(currentIndex, maxIndex));
 
-    // Oblicz nowe przesunięcie
-    const offset = currentScroll * cardsInView * (cardWidth + gap);
+    const offset = currentIndex * (cardWidth + gap);
     cardsContainer.style.transform = `translateX(-${offset}px)`;
-  };
 
+    arrowLeft.classList.toggle('hidden', currentIndex === 0);
+    arrowRight.classList.toggle('hidden', currentIndex >= maxIndex);
+  };
+  
   const filterCards = () => {
     const term = searchInput.value.toLowerCase();
     allCards.forEach(card => {
       const title = card.querySelector('h2').textContent.toLowerCase();
       card.classList.toggle('hidden-by-search', !title.includes(term));
     });
-    // Zresetuj pozycję slidera po filtrowaniu
-    cardsContainer.dataset.currentScroll = '0';
-    updateSliderState();
+    currentIndex = 0; // Resetuj pozycję po filtrowaniu
+    updateSlider();
   };
   
-  arrowRight.addEventListener('click', () => {
-    let currentScroll = parseInt(cardsContainer.dataset.currentScroll || '0', 10);
-    cardsContainer.dataset.currentScroll = currentScroll + 1;
-    updateSliderState();
-  });
-
-  arrowLeft.addEventListener('click', () => {
-    let currentScroll = parseInt(cardsContainer.dataset.currentScroll || '0', 10);
-    cardsContainer.dataset.currentScroll = Math.max(0, currentScroll - 1);
-    updateSliderState();
-  });
-  
+  arrowRight.addEventListener('click', () => { currentIndex++; updateSlider(); });
+  arrowLeft.addEventListener('click', () => { currentIndex--; updateSlider(); });
   searchInput.addEventListener('input', filterCards);
-  window.addEventListener('resize', () => setTimeout(updateSliderState, 150));
-
+  
+  // Używamy setTimeout, by dać przeglądarce chwilę na przeliczenie layoutu
+  window.addEventListener('resize', () => setTimeout(updateSlider, 150));
+  
   document.querySelectorAll(".read-more").forEach(link => {
     link.addEventListener("click", async (event) => {
       event.preventDefault();
@@ -349,7 +311,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (firstHeading) {
           articleTitle.textContent = firstHeading.textContent;
           firstHeading.remove();
-        } else articleTitle.textContent = "Artykuł";
+        } else {
+          articleTitle.textContent = "Artykuł";
+        }
       } catch (err) {
         articleContent.innerHTML = "<p>Błąd ładowania artykułu.</p>";
         articleTitle.textContent = "Błąd";
@@ -358,9 +322,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Ulepszyłem także logikę slidera, aby przewijał całe "strony" kart
-  // zamiast pojedynczych kart, co jest bardziej intuicyjne.
-  updateSliderState();
+  // Uruchomienie slidera przy starcie strony
+  updateSlider();
 });
 </script>
 
