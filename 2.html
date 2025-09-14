@@ -2,61 +2,134 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <title>Blog – Karty z Markdown</title>
+  <title>Blog – przykładowe artykuły</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-    .card { border: 1px solid #ddd; border-radius: 10px; padding: 15px; background: #fafafa; }
-    .card .header { display: flex; justify-content: space-between; align-items: center; }
-    .card h2 { margin: 0; font-size: 20px; }
-    .card .date { font-size: 12px; color: gray; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 15px;
+    }
+    .card {
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .card .header {
+      margin-bottom: 10px;
+    }
+    .card h2 {
+      font-size: 18px;
+      margin: 0;
+    }
+    .date {
+      font-size: 12px;
+      color: #666;
+    }
+    .read-more {
+      display: inline-block;
+      margin-top: 10px;
+      color: #0077cc;
+      text-decoration: none;
+    }
+    .read-more:hover {
+      text-decoration: underline;
+    }
+    .article-section {
+      margin-top: 40px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .article-section h2 {
+      margin-top: 0;
+    }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-  <h1>📚 Blog z plików Markdown</h1>
-  <div class="cards" id="cards"></div>
+  <h1>Blog – Artykuły</h1>
 
-  <!-- biblioteka do parsowania Markdown -->
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <div class="cards" id="cards">
+    <div class="card">
+      <div class="header">
+        <h2>Jak stać się bardziej produktywnym?</h2>
+        <div class="date">25 lipca 2025</div>
+      </div>
+      <p>Poznaj 5 sprawdzonych metod...</p>
+      <a href="#" class="read-more" data-md="produktywnosc.md">Czytaj dalej →</a>
+    </div>
+    <div class="card">
+      <div class="header">
+        <h2>Minimalizm: mniej znaczy więcej</h2>
+        <div class="date">20 lipca 2025</div>
+      </div>
+      <p>Jak ograniczenie rzeczy pomogło mi...</p>
+      <a href="#" class="read-more" data-md="minimalizm.md">Czytaj dalej →</a>
+    </div>
+    <div class="card">
+      <div class="header">
+        <h2>Biohacking: Sekrety Tima Ferrissa</h2>
+        <div class="date">5 lipca 2025</div>
+      </div>
+      <p>Odkryj techniki optymalizacji zdrowia...</p>
+      <a href="#" class="read-more" data-md="biohacking.md">Czytaj dalej →</a>
+    </div>
+  </div>
+
+  <!-- Sekcja na załadowany artykuł -->
+  <section class="article-section" id="articleSection" aria-label="Artykuł">
+    <h2>Wybierz artykuł z listy powyżej</h2>
+    <div id="articleContent"></div>
+  </section>
+
   <script>
-    // Lista plików Markdown (w tym samym katalogu co index.html)
-    const files = [
-      "jak-stac-sie-produktywnym.md",
-      "minimalizm.md",
-      "poranna-rutyna.md"
-    ];
+    async function loadArticle(mdFile) {
+      const articleContent = document.getElementById("articleContent");
+      const articleTitle = document.querySelector("#articleSection h2");
 
-    async function loadPosts() {
-      const container = document.getElementById("cards");
+      articleContent.innerHTML = "<p>Ładowanie...</p>";
+      articleTitle.textContent = "Ładowanie artykułu...";
 
-      for (let file of files) {
-        let response = await fetch(file);
-        let text = await response.text();
+      try {
+        const response = await fetch(mdFile);
+        if (!response.ok) throw new Error("Nie można załadować pliku: " + mdFile);
 
-        // pierwsza linia = data (np. "2025-07-25")
-        let lines = text.trim().split("\n");
-        let date = lines[0].trim();
-        let excerpt = lines[1] || "Brak opisu.";
+        const text = await response.text();
+        const html = marked.parse(text);
 
-        // nazwa pliku → tytuł
-        let filename = file.replace(".md", "");
-        let title = filename.replace(/-/g, " ");
+        articleContent.innerHTML = html;
 
-        let card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-          <div class="header">
-            <h2>${title}</h2>
-            <div class="date">${date}</div>
-          </div>
-          <p>${marked.parseInline(excerpt)}</p>
-          <a href="${file}" class="read-more">Czytaj dalej →</a>
-        `;
-        container.appendChild(card);
+        // Ustaw tytuł sekcji na pierwszy nagłówek z pliku
+        const firstHeading = document.querySelector("#articleContent h1, #articleContent h2");
+        if (firstHeading) {
+          articleTitle.textContent = firstHeading.textContent;
+          firstHeading.remove();
+        } else {
+          articleTitle.textContent = "Artykuł";
+        }
+      } catch (err) {
+        articleContent.innerHTML = "<p>Błąd ładowania artykułu.</p>";
+        articleTitle.textContent = "Błąd";
+        console.error(err);
       }
     }
 
-    loadPosts();
+    // Obsługa kliknięcia "Czytaj dalej"
+    document.querySelectorAll(".read-more").forEach(link => {
+      link.addEventListener("click", event => {
+        event.preventDefault();
+        const mdFile = link.getAttribute("data-md");
+        loadArticle(mdFile);
+      });
+    });
   </script>
 </body>
 </html>
