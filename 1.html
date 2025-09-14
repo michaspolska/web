@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Blog inspirowany TM - Strona Główna</title>
+  <style>
+    /* Style CSS pozostają bez zmian */
+    :root { --primary-bg: #fdfbf7; --card-bg: #ffffff; --card-hover: #f3f1ec; --text-color: #333; --accent-color: #006d77; --accent-hover: #004f58; --footer-bg: #eaeaea; --button-color: #00aba9; --button-hover: #008e8e; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Georgia', serif; background-color: var(--primary-bg); color: var(--text-color); display: flex; flex-direction: column; min-height: 100vh; }
+    header, nav, .container, footer { max-width: 1100px; width: 100%; margin-left: auto; margin-right: auto; }
+    header { background-color: white; padding: 20px; border-bottom: 1px solid #ddd; text-align: center; }
+    nav { background-color: white; border-bottom: 1px solid #ddd; padding: 10px 20px; text-align: center; margin-bottom: 40px; }
+    nav a { margin: 0 15px; text-decoration: none; color: var(--accent-color); font-weight: bold; transition: color 0.3s ease; }
+    nav a:hover { color: var(--accent-hover); }
+    .container { flex: 1; padding: 0 20px 40px 20px; }
+    #searchInput { width: 100%; max-width: 400px; padding: 10px 15px; font-size: 1rem; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 30px; display: block; margin-left: auto; margin-right: auto; box-shadow: inset 1px 1px 3px #eee; transition: border-color 0.3s ease; }
+    #searchInput:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 5px var(--accent-color); }
+    .slider-container { position: relative; overflow: hidden; width: 100%; padding-bottom: 60px; }
+    .cards { display: flex; gap: 30px; transition: transform 0.5s ease; will-change: transform; }
+    .card { background-color: var(--card-bg); border-radius: 12px; padding: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); transition: background-color 0.3s ease; flex: 0 0 calc((100% - 3 * 30px) / 4); display: flex; flex-direction: column; text-align: center; }
+    .card:hover { background-color: var(--card-hover); }
+    .card.hidden-by-search { display: none; }
+    .header { height: 90px; display: flex; flex-direction: column; justify-content: center; text-align: center; margin-bottom: 15px; overflow: hidden; }
+    .header h2 { margin: 0 0 5px 0; line-height: 1.2; font-size: 1.1rem; }
+    .date { font-size: 0.85rem; color: #888; font-style: italic; margin: 0; }
+    .card p { flex-grow: 1; margin-top: 0; margin-bottom: 15px; text-align: center; }
+    .read-more { display: inline-block; margin-top: auto; color: var(--accent-color); font-weight: bold; text-decoration: none; transition: color 0.3s ease; align-self: center; cursor: pointer; }
+    .read-more:hover { color: var(--accent-hover); text-decoration: underline; }
+    .arrow { position: absolute; bottom: 10px; background-color: rgba(0, 107, 119, 0.8); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; font-size: 1.5rem; transition: background-color 0.3s ease, opacity 0.3s ease, visibility 0.3s ease; z-index: 10; }
+    .arrow:hover { background-color: var(--accent-hover); }
+    .arrow-left { left: calc(50% - 50px); }
+    .arrow-right { right: calc(50% - 50px); }
+    .arrow.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .game-section { background-color: white; padding: 40px 20px; border-radius: 12px; margin-top: 40px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); text-align: center; }
+    .game-section img { max-width: 300px; width: 100%; margin-bottom: 20px; border-radius: 12px; }
+    .game-section h2 { margin-top: 0; text-align: center; }
+    .game-section p { text-align: left; max-width: 700px; margin: 0 auto 20px auto; line-height: 1.5; font-size: 1.05rem; }
+    .game-button { background-color: var(--button-color); color: white; padding: 12px 30px; font-size: 1.1rem; border: none; border-radius: 8px; cursor: pointer; transition: background-color 0.3s ease; text-decoration: none; display: inline-block; margin-top: 10px; }
+    .game-button:hover { background-color: var(--button-hover); }
+    footer { background-color: var(--footer-bg); padding: 20px; text-align: center; font-size: 0.9em; color: #555; margin-top: 40px; }
+    @media (max-width: 1024px) { .card { flex: 0 0 calc((100% - 1 * 30px) / 2); } }
+    @media (max-width: 700px) { .card { flex: 0 0 100%; } .cards { transform: none !important; flex-wrap: wrap; } .arrow { display: none; } }
+  </style>
+</head>
+<body>
+
+  <header><h1>Blog inspirowany TM</h1></header>
+  <nav>
+    <a href="index.html">Start</a>
+    <a href="#">Artykuły</a>
+    <!-- Usunięty link do stats.html, można go dodać z powrotem później -->
+    <a href="#">Statystyki</a>
+    <a href="#">Podcast</a>
+    <a href="#">O mnie</a>
+    <a href="#">Kontakt</a>
+  </nav>
+
+  <div class="container">
+    <input type="text" id="searchInput" placeholder="Szukaj po tytułach artykułów..." aria-label="Szukaj po tytułach artykułów" />
+
+    <div class="slider-container" aria-label="Slider artykułów">
+      <div class="cards" id="cards">
+        <!-- Karty z artykułami (bez zmian) -->
+        <div class="card"><div class="header"><h2>Jak stać się bardziej produktywnym?</h2><div class="date">25 lipca 2025</div></div><p>Poznaj 5 sprawdzonych metod...</p><a href="#" class="read-more">Czytaj dalej →</a></div>
+        <div class="card"><div class="header"><h2>Minimalizm: mniej znaczy więcej</h2><div class="date">20 lipca 2025</div></div><p>Jak ograniczenie rzeczy pomogło mi...</p><a href="#" class="read-more">Czytaj dalej →</a></div>
+        <div class="card"><div class="header"><h2>Poranna rutyna ludzi sukcesu</h2><div class="date">15 lipca 2025</div></div><p>Odkryj, co łączy poranki Tima Ferrissa...</p><a href="#" class="read-more">Czytaj dalej →</a></div>
+        <div class="card"><div class="header"><h2>Startup bez ryzyka – jak zacząć</h2><div class="date">10 lipca 2025</div></div><p>Naucz się, jak uruchomić biznes online...</p><a href="#" class="read-more">Czytaj dalej →</a></div>
+        <div class="card"><div class="header"><h2>Biohacking: Sekrety Tima Ferrissa</h2><div class="date">5 lipca 2025</div></div><p>Odkryj techniki optymalizacji zdrowia...</p><a href="#" class="read-more">Czytaj dalej →</a></div>
+        <div class="card"><div class="header"><h2>Zdrowe nawyki na co dzień</h2><div class="date">30 czerwca 2025</div></div><p>Jak proste zmiany w diecie i ruchu...</p><a href="#" class="read-more">Czytaj dalej →</a></div>
+        <div class="card"><div class="header"><h2>Podróże, które zmieniają życie</h2><div class="date">25 czerwca 2025</div></div><p>Historie z wypraw, które odmieniły...</p><a href="#" class="read-more">Czytaj dalej →</a></div>
+        <div class="card"><div class="header"><h2>Networking od podstaw</h2><div class="date">20 czerwca 2025</div></div><p>Budowanie wartościowych relacji...</p><a href="#" class="read-more">Czytaj dalej →</a></div>
+      </div>
+      <div class="arrow arrow-left" id="arrowLeft" role="button" aria-label="Przesuń w lewo" tabindex="0">&#8592;</div>
+      <div class="arrow arrow-right" id="arrowRight" role="button" aria-label="Przesuń w prawo" tabindex="0">&#8594;</div>
+    </div>
+
+    <section class="game-section" aria-label="Opis gry Coyote">
+      <img src="https://via.placeholder.com/300x200.webp?text=Gra+COYOTE" alt="Gra karciana Coyote" />
+      <h2>COYOTE – Gra karciana Tima Ferrissa i Exploding Kittens</h2>
+      <a href="https://www.youtube.com/watch?v=ovtgK0vhclY" class="game-button" target="_blank" rel="noopener noreferrer">Zobacz film na YouTube</a>
+    </section>
+  </div>
+
+  <footer>© 2025 Michał - Blog inspirowany TM</footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Pobranie elementów strony
+      const cardsContainer = document.getElementById('cards');
+      const arrowLeft = document.getElementById('arrowLeft');
+      const arrowRight = document.getElementById('arrowRight');
+      const searchInput = document.getElementById('searchInput');
+
+      // Sprawdzenie, czy kluczowe elementy istnieją na stronie, aby uniknąć błędów
+      if (!cardsContainer || !arrowLeft || !arrowRight || !searchInput) {
+        console.error("Brak kluczowych elementów slidera na stronie. Skrypt nie zostanie wykonany.");
+        return;
+      }
+
+      const allCards = Array.from(cardsContainer.children);
+      let currentIndex = 0;
+
+      const getVisibleCardsCount = () => {
+        if (window.innerWidth <= 700) return 1;
+        if (window.innerWidth <= 1024) return 2;
+        return 4;
+      };
+
+      const updateSlider = () => {
+        const cardsPerPage = getVisibleCardsCount();
+        const visibleItems = allCards.filter(card => !card.classList.contains('hidden-by-search'));
+
+        if (visibleItems.length === 0) {
+            // Obsługa przypadku, gdy nic nie pasuje do wyszukiwania
+            arrowLeft.classList.add('hidden');
+            arrowRight.classList.add('hidden');
+            return;
+        }
+
+        const cardWidth = visibleItems[0].offsetWidth;
+        const gap = 30; // Wartość z CSS
+        const stepWidth = cardWidth + gap;
+        const maxIndex = Math.max(0, visibleItems.length - cardsPerPage);
+        
+        currentIndex = Math.max(0, Math.min(currentIndex, maxIndex));
+        cardsContainer.style.transform = `translateX(-${currentIndex * stepWidth}px)`;
+        
+        arrowLeft.classList.toggle('hidden', currentIndex === 0);
+        arrowRight.classList.toggle('hidden', currentIndex >= maxIndex);
+      };
+
+      const filterCards = () => {
+        const searchTerm = searchInput.value.toLowerCase();
+        allCards.forEach(card => {
+          const title = card.querySelector('h2').textContent.toLowerCase();
+          card.classList.toggle('hidden-by-search', !title.includes(searchTerm));
+        });
+        currentIndex = 0; // Resetuj pozycję slidera po każdym wyszukiwaniu
+        updateSlider();
+      };
+
+      // Dodanie nasłuchiwania na zdarzenia
+      arrowRight.addEventListener('click', () => {
+        currentIndex++;
+        updateSlider();
+      });
+
+      arrowLeft.addEventListener('click', () => {
+        currentIndex--;
+        updateSlider();
+      });
+
+      searchInput.addEventListener('input', filterCards);
+
+      // Aktualizacja slidera przy zmianie rozmiaru okna
+      let resizeTimeout;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(updateSlider, 150);
+      });
+
+      // Ułatwienia dostępu (obsługa klawiatury dla strzałek)
+      [arrowLeft, arrowRight].forEach(arrow => {
+        arrow.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            arrow.click();
+          }
+        });
+      });
+      
+      // Inicjalizacja slidera przy załadowaniu strony
+      updateSlider();
+    });
+  </script>
+
+</body>
+</html>
