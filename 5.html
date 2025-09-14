@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>Blog inspirowany TM - Strona Główna</title>
 <style>
+
 :root {
   --primary-bg: #fdfbf7;
   --card-bg: #ffffff;
@@ -74,7 +75,7 @@ nav a:hover { color: var(--accent-hover); }
   padding-bottom: 20px;
 }
 
-/* Ukrycie paska przewijania */
+/* Ukrycie paska przewijania na wszystkich platformach */
 .slider-container::-webkit-scrollbar {
   display: none;
 }
@@ -149,7 +150,7 @@ footer {
   margin-top: 20px;
 }
 
-/* kontener strzałek pod sliderem */
+/* kontener strzałek pod sliderem - domyślnie widoczny */
 .slider-arrows {
   display: flex;
   justify-content: center;
@@ -157,7 +158,7 @@ footer {
   margin-top: 15px;
 }
 
-/* strzałki */
+/* style strzałek */
 .arrow {
   background-color: rgba(0, 107, 119, 0.8);
   color: white;
@@ -175,37 +176,39 @@ footer {
 
 .arrow:hover { background-color: var(--accent-hover); }
 
-/* Klasa do ukrywania strzałek na krańcach slidera (używana w JS) */
+/* Klasa do ukrywania strzałek na krańcach slidera na desktopie (używana w JS) */
 .hidden {
   visibility: hidden;
   opacity: 0;
 }
 
-/* ukrycie strzałek i dodanie swipe na mobile <701px */
+/* === GŁÓWNA ZMIANA: REGUŁY DLA URZĄDZEŃ MOBILNYCH === */
 @media (max-width: 700px) {
+  /* 1. Całkowite ukrycie kontenera ze strzałkami */
   .slider-arrows {
     display: none;
   }
   
-  /* === NOWE REGUŁY DLA PRZESUWANIA PALCEM === */
+  /* 2. Włączenie przyciągania kart przy przesuwaniu palcem */
   .slider-container {
     scroll-snap-type: x mandatory;
-    scroll-padding: 0 20px; /* Dodaje margines, by karty nie kleiły się do krawędzi */
+    scroll-padding: 0 20px;
   }
   
   .card {
-    scroll-snap-align: center; /* Każda karta jest punktem przyciągania */
+    scroll-snap-align: center;
   }
-  /* =========================================== */
 }
 
-/* responsywne karty */
+/* responsywne karty dla różnych szerokości ekranu */
 @media (min-width: 480px) { .card { flex: 0 0 48%; } }
 @media (min-width: 768px) { .card { flex: 0 0 calc((100% - 2 * 20px)/3); } }
 @media (min-width: 1024px) { .card { flex: 0 0 calc((100% - 3 * 30px)/4); } }
 
 /* filtrowanie */
 .hidden-by-search { display: none !important; }
+
+
 
 </style>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
