@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-<meta charset="UTF-8" />
-<title>Blog inspirowany TM - Strona Główna</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
+  <meta charset="UTF-8" />
+  <title>Blog inspirowany TM - Strona Główna</title>
+  <style>
 :root {
   --primary-bg: #fdfbf7;
   --card-bg: #ffffff;
@@ -13,7 +12,10 @@
   --accent-color: #006d77;
   --accent-hover: #004f58;
   --footer-bg: #eaeaea;
+  --button-color: #00aba9;
+  --button-hover: #008e8e;
 }
+
 * { box-sizing: border-box; }
 body { margin: 0; font-family: 'Georgia', serif; background-color: var(--primary-bg); color: var(--text-color); display: flex; flex-direction: column; min-height: 100vh; }
 header, nav, .container, footer { max-width: 1100px; width: 100%; margin: 0 auto; }
@@ -30,7 +32,9 @@ nav a:hover { color: var(--accent-hover); }
 
 .slider-container {
   position: relative;
-  overflow: hidden;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
   padding-bottom: 20px;
 }
 .cards {
@@ -60,34 +64,42 @@ footer { background-color: var(--footer-bg); padding: 15px; text-align: center; 
 
 @media (min-width: 480px) { .card { flex: 0 0 48%; } }
 @media (min-width: 768px) { .card { flex: 0 0 calc((100% - 3 * 20px) / 3); } }
-@media (min-width: 1024px) { .card { flex: 0 0 calc((100% - 3 * 20px) / 4); } }
+@media (min-width: 1024px) { .card { flex: 0 0 calc((100% - 3 * 30px) / 4); } }
 
 .arrow {
-  position: absolute; top: 50%; transform: translateY(-50%);
-  background-color: rgba(0, 107, 119, 0.8); color: white;
-  width: 40px; height: 40px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; user-select: none; font-size: 1.5rem;
-  transition: background-color 0.3s ease;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 107, 119, 0.8);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  font-size: 1.5rem;
+  transition: background-color 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
   z-index: 10;
 }
 .arrow:hover { background-color: var(--accent-hover); }
 .arrow-left { left: 10px; }
 .arrow-right { right: 10px; }
 .arrow.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-@media (max-width: 700px) {
-  .arrow { display: none; }
-  .cards { overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; transform: none; }
-  .card { flex: 0 0 80%; scroll-snap-align: center; }
-}
+@media (max-width: 700px) { .arrow { display: none; } }
+
+.hidden-by-search { display: none !important; } /* dodane dla filtrowania */
 </style>
+
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
 
 <header><h1>Blog inspirowany TM</h1></header>
 <nav>
-  <a href="#">Start</a>
+  <a href="index.html">Start</a>
   <a href="#">Artykuły</a>
   <a href="#">Statystyki</a>
   <a href="#">Podcast</a>
@@ -96,18 +108,18 @@ footer { background-color: var(--footer-bg); padding: 15px; text-align: center; 
 </nav>
 
 <div class="container">
-  <input type="text" id="searchInput" placeholder="Szukaj po tytułach artykułów..." />
+  <input type="text" id="searchInput" placeholder="Szukaj po tytułach artykułów..." aria-label="Szukaj po tytułach artykułów" />
 
-  <div class="slider-container">
+  <div class="slider-container" aria-label="Slider artykułów">
     <div class="cards" id="cards">
-      <div class="card"><div class="header"><h2>Jak stać się bardziej produktywnym?</h2></div><p>Poznaj 5 sprawdzonych metod...</p><a href="#" class="read-more" data-md="produktywnosc.md">Czytaj dalej →</a></div>
-      <div class="card"><div class="header"><h2>Minimalizm: mniej znaczy więcej</h2></div><p>Jak ograniczenie rzeczy pomogło mi...</p><a href="#" class="read-more" data-md="minimalizm.md">Czytaj dalej →</a></div>
-      <div class="card"><div class="header"><h2>Poranna rutyna ludzi sukcesu</h2></div><p>Odkryj, co łączy poranki Tima Ferrissa...</p><a href="#" class="read-more" data-md="rutyna.md">Czytaj dalej →</a></div>
-      <div class="card"><div class="header"><h2>Startup bez ryzyka – jak zacząć</h2></div><p>Naucz się, jak uruchomić biznes online...</p><a href="#" class="read-more" data-md="startup.md">Czytaj dalej →</a></div>
+      <div class="card"><div class="header"><h2>Jak stać się bardziej produktywnym?</h2><div class="date">25 lipca 2025</div></div><p>Poznaj 5 sprawdzonych metod...</p><a href="#" class="read-more" data-md="produktywnosc.md">Czytaj dalej →</a></div>
+      <div class="card"><div class="header"><h2>Minimalizm: mniej znaczy więcej</h2><div class="date">20 lipca 2025</div></div><p>Jak ograniczenie rzeczy pomogło mi...</p><a href="#" class="read-more" data-md="minimalizm.md">Czytaj dalej →</a></div>
+      <div class="card"><div class="header"><h2>Poranna rutyna ludzi sukcesu</h2><div class="date">15 lipca 2025</div></div><p>Odkryj, co łączy poranki Tima Ferrissa...</p><a href="#" class="read-more" data-md="rutyna.md">Czytaj dalej →</a></div>
+      <div class="card"><div class="header"><h2>Startup bez ryzyka – jak zacząć</h2><div class="date">10 lipca 2025</div></div><p>Naucz się, jak uruchomić biznes online...</p><a href="#" class="read-more" data-md="startup.md">Czytaj dalej →</a></div>
     </div>
 
-    <button class="arrow arrow-left" id="arrowLeft">&#8592;</button>
-    <button class="arrow arrow-right" id="arrowRight">&#8594;</button>
+    <div class="arrow arrow-left" id="arrowLeft" role="button" aria-label="Przesuń w lewo" tabindex="0">&#8592;</div>
+    <div class="arrow arrow-right" id="arrowRight" role="button" aria-label="Przesuń w prawo" tabindex="0">&#8594;</div>
   </div>
 
   <section class="article-section" id="articleSection">
@@ -121,34 +133,33 @@ footer { background-color: var(--footer-bg); padding: 15px; text-align: center; 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const cardsContainer = document.getElementById('cards');
-  const allCards = Array.from(cardsContainer.children);
   const arrowLeft = document.getElementById('arrowLeft');
   const arrowRight = document.getElementById('arrowRight');
   const searchInput = document.getElementById('searchInput');
+  const allCards = Array.from(cardsContainer.children);
   let currentIndex = 0;
 
   const getVisibleCardsCount = () => window.innerWidth <= 700 ? 1 : window.innerWidth <= 1024 ? 2 : 4;
 
   const updateSlider = () => {
     const cardsPerPage = getVisibleCardsCount();
-    const visibleCards = allCards.filter(c => !c.classList.contains('hidden-by-search'));
-    if (!visibleCards.length) { arrowLeft.classList.add('hidden'); arrowRight.classList.add('hidden'); return; }
-
-    const cardWidth = visibleCards[0].offsetWidth;
+    const visibleItems = allCards.filter(card => !card.classList.contains('hidden-by-search'));
+    if (!visibleItems.length) {
+      arrowLeft.classList.add('hidden');
+      arrowRight.classList.add('hidden');
+      return;
+    }
+    const cardWidth = visibleItems[0].offsetWidth;
     const gap = 20;
-    const maxIndex = Math.max(0, visibleCards.length - cardsPerPage);
+    const maxIndex = Math.max(0, visibleItems.length - cardsPerPage);
     currentIndex = Math.max(0, Math.min(currentIndex, maxIndex));
-
-    if (window.innerWidth > 700) cardsContainer.style.transform = `translateX(-${currentIndex*(cardWidth+gap)}px)`;
-
-    arrowLeft.classList.toggle('hidden', currentIndex===0);
-    arrowRight.classList.toggle('hidden', currentIndex>=maxIndex);
+    const translateX = currentIndex * (cardWidth + gap);
+    cardsContainer.style.transform = `translateX(-${translateX}px)`;
+    arrowLeft.classList.toggle('hidden', currentIndex === 0);
+    arrowRight.classList.toggle('hidden', currentIndex >= maxIndex);
   };
 
-  arrowLeft.addEventListener('click', () => { currentIndex--; updateSlider(); });
-  arrowRight.addEventListener('click', () => { currentIndex++; updateSlider(); });
-
-  searchInput.addEventListener('input', () => {
+  const filterCards = () => {
     const term = searchInput.value.toLowerCase();
     allCards.forEach(card => {
       const title = card.querySelector('h2').textContent.toLowerCase();
@@ -157,38 +168,46 @@ document.addEventListener('DOMContentLoaded', () => {
     currentIndex = 0;
     updateSlider();
     if (window.innerWidth <= 700) cardsContainer.scrollLeft = 0;
-  });
+  };
 
+  arrowRight.addEventListener('click', () => { currentIndex++; updateSlider(); });
+  arrowLeft.addEventListener('click', () => { currentIndex--; updateSlider(); });
+  searchInput.addEventListener('input', filterCards);
   window.addEventListener('resize', () => { setTimeout(updateSlider, 150); });
+  [arrowLeft, arrowRight].forEach(arrow => {
+    arrow.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' ') { e.preventDefault(); arrow.click(); } });
+  });
+  updateSlider();
 
   // ładowanie artykułów
   document.querySelectorAll(".read-more").forEach(link => {
-    link.addEventListener("click", async e => {
-      e.preventDefault();
-      const mdFile = link.dataset.md;
+    link.addEventListener("click", async (event) => {
+      event.preventDefault();
+      const mdFile = link.getAttribute("data-md");
       if (!mdFile) return;
       const articleContent = document.getElementById("articleContent");
       const articleTitle = document.querySelector("#articleSection h2");
       articleContent.innerHTML = "<p>Ładowanie...</p>";
       articleTitle.textContent = "Ładowanie artykułu...";
       try {
-        const resp = await fetch(mdFile);
-        if (!resp.ok) throw new Error("Błąd ładowania: "+mdFile);
-        const text = await resp.text();
+        const response = await fetch(mdFile);
+        if (!response.ok) throw new Error("Nie można załadować pliku: " + mdFile);
+        const text = await response.text();
         articleContent.innerHTML = marked.parse(text);
         const firstHeading = articleContent.querySelector("h1, h2");
-        if (firstHeading) { articleTitle.textContent = firstHeading.textContent; firstHeading.remove(); } 
-        else articleTitle.textContent = "Artykuł";
-      } catch(err) {
+        if (firstHeading) {
+          articleTitle.textContent = firstHeading.textContent;
+          firstHeading.remove();
+        } else articleTitle.textContent = "Artykuł";
+      } catch (err) {
         articleContent.innerHTML = "<p>Błąd ładowania artykułu.</p>";
         articleTitle.textContent = "Błąd";
         console.error(err);
       }
     });
   });
-
-  updateSlider();
 });
 </script>
+
 </body>
 </html>
