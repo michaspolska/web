@@ -84,6 +84,49 @@
 
   <footer>© 2025 Michał - Blog inspirowany TM</footer>
 
+
+<script>
+    async function loadArticle(mdFile) {
+      const articleContent = document.getElementById("articleContent");
+      const articleTitle = document.querySelector("#articleSection h2");
+
+      articleContent.innerHTML = "<p>Ładowanie...</p>";
+      articleTitle.textContent = "Ładowanie artykułu...";
+
+      try {
+        const response = await fetch(mdFile);
+        if (!response.ok) throw new Error("Nie można załadować pliku: " + mdFile);
+
+        const text = await response.text();
+        const html = marked.parse(text);
+
+        articleContent.innerHTML = html;
+
+        // Ustaw tytuł sekcji na pierwszy nagłówek z pliku
+        const firstHeading = document.querySelector("#articleContent h1, #articleContent h2");
+        if (firstHeading) {
+          articleTitle.textContent = firstHeading.textContent;
+          firstHeading.remove();
+        } else {
+          articleTitle.textContent = "Artykuł";
+        }
+      } catch (err) {
+        articleContent.innerHTML = "<p>Błąd ładowania artykułu.</p>";
+        articleTitle.textContent = "Błąd";
+        console.error(err);
+      }
+    }
+
+    // Obsługa kliknięcia "Czytaj dalej"
+    document.querySelectorAll(".read-more").forEach(link => {
+      link.addEventListener("click", event => {
+        event.preventDefault();
+        const mdFile = link.getAttribute("data-md");
+        loadArticle(mdFile);
+      });
+    });
+  </script>
+  
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       // Pobranie elementów strony
