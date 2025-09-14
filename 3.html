@@ -259,6 +259,21 @@ arrowLeft.addEventListener('click', () => {
   updateSlider();
 });
 
+
+  // ------------------------szukaj ---------------------------
+  const filterCards = () => {
+  const searchTerm = searchInput.value.toLowerCase();
+
+  // filtruj wszystkie karty
+  allCards.forEach(card => {
+    const title = card.querySelector('h2').textContent.toLowerCase();
+    card.classList.toggle('hidden-by-search', !title.includes(searchTerm));
+  });
+
+  // resetuj pozycję slidera po wyszukiwaniu
+  currentIndex = 0;
+  updateSlider();
+};
 </script>
 
 </body>
