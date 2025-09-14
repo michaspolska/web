@@ -15,6 +15,7 @@
 }
 
 * { box-sizing: border-box; }
+
 body {
   margin: 0;
   font-family: 'Georgia', serif;
@@ -109,8 +110,8 @@ footer {
   color: #555;
   margin-top: 20px;
 }
-/* nowy kontener strzałek pod sliderem */
-/* strzałki pod sliderem */
+
+/* kontener strzałek pod sliderem */
 .slider-arrows {
   display: flex;
   justify-content: center;
@@ -135,53 +136,15 @@ footer {
 }
 .arrow:hover { background-color: var(--accent-hover); }
 
-/* ukrycie na urządzeniach < 700px */
-@media (max-width: 700px) {
-  .arrow { display: none; }
-}
-
-/* usuń absolutne pozycjonowanie w media query */
-@media (min-width: 701px) {
-  .arrow {
-    position: static; /* zmiana z absolute na static */
-    transform: none;
-  }
-}
-/* ukrycie na urządzeniach < 700px */
+/* ukrycie strzałek na mobile <700px */
 @media (max-width: 700px) {
   .arrow { display: none !important; }
 }
+
 /* responsywne karty */
 @media (min-width: 480px) { .card { flex: 0 0 48%; } }
-@media (min-width: 768px) { .card { flex: 0 0 calc((100% - 3 * 20px)/3); } }
-@media (min-width: 1024px) { .card { flex: 0 0 calc((100% - 4 * 30px)/4); } }
-
-/* ukrycie strzałek na mobile */
-.arrow { display: none; }
-
-/* widoczne tylko na desktopie >700px */
-@media (min-width: 701px) {
-  .arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(0, 107, 119, 0.8);
-    color: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    user-select: none;
-    font-size: 1.5rem;
-    z-index: 10;
-  }
-  .arrow-left { left: 10px; }
-  .arrow-right { right: 10px; }
-  .arrow:hover { background-color: var(--accent-hover); }
-}
+@media (min-width: 768px) { .card { flex: 0 0 calc((100% - 2 * 20px)/3); } }
+@media (min-width: 1024px) { .card { flex: 0 0 calc((100% - 3 * 30px)/4); } }
 
 /* filtrowanie */
 .hidden-by-search { display: none !important; }
