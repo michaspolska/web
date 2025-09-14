@@ -77,6 +77,7 @@ nav a:hover { color: var(--accent-hover); }
 .cards {
   display: flex;
   gap: 20px;
+  transition: transform 0.5s ease-in-out; /* Płynne przewijanie */
 }
 
 .card {
@@ -159,22 +160,21 @@ footer {
   cursor: pointer;
   font-size: 1.5rem;
   user-select: none;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, visibility 0.3s ease;
 }
 
 .arrow:hover { background-color: var(--accent-hover); }
 
-/* ukrycie strzałek na mobile <700px */
-@media (max-width: 700px) {
-  .arrow { display: none !important; }
+/* NOWA KLASA do ukrywania strzałek na krańcach slidera (używana w JS) */
+.hidden {
+  visibility: hidden;
+  opacity: 0;
 }
 
-/* dla desktopu >700px */
-@media (min-width: 701px) {
-  .arrow {
-    display: flex !important;
-    position: static;
-    transform: none;
+/* POPRAWIONA REGUŁA: Ukrycie całego kontenera strzałek na mobile <701px */
+@media (max-width: 700px) {
+  .slider-arrows {
+    display: none;
   }
 }
 
@@ -211,54 +211,72 @@ footer {
     <div class="card"><div class="header"><h2>Minimalizm: mniej znaczy więcej</h2></div><p>Jak ograniczenie rzeczy pomogło mi...</p><a href="#" class="read-more" data-md="minimalizm.md">Czytaj dalej →</a></div>
     <div class="card"><div class="header"><h2>Poranna rutyna ludzi sukcesu</h2></div><p>Odkryj, co łączy poranki Tima Ferrissa...</p><a href="#" class="read-more" data-md="rutyna.md">Czytaj dalej →</a></div>
     <div class="card"><div class="header"><h2>Startup bez ryzyka – jak zacząć</h2></div><p>Naucz się, jak uruchomić biznes online...</p><a href="#" class="read-more" data-md="startup.md">Czytaj dalej →</a></div>
-  </div>
-
-  <!-- NOWY KONTAINER NA STRZAŁKI -->
-  <div class="slider-arrows">
-    <div class="arrow arrow-left" id="arrowLeft">&#8592;</div>
-    <div class="arrow arrow-right" id="arrowRight">&#8594;</div>
+    <div class="card"><div class="header"><h2>Kolejny artykuł testowy</h2></div><p>Opis kolejnego artykułu do testów.</p><a href="#" class="read-more" data-md="test.md">Czytaj dalej →</a></div>
+    <div class="card"><div class="header"><h2>Jeszcze jeden wpis na bloga</h2></div><p>Krótki opis tego, co znajdziesz w środku.</p><a href="#" class="read-more" data-md="wpis.md">Czytaj dalej →</a></div>
   </div>
 </div>
 
-  <section class="article-section" id="articleSection">
-    <h2>Wybierz artykuł z listy powyżej</h2>
-    <div id="articleContent"></div>
-  </section>
+<!-- Kontener na strzałki pozostał bez zmian w HTML -->
+<div class="slider-arrows">
+  <div class="arrow arrow-left" id="arrowLeft">&#8592;</div>
+  <div class="arrow arrow-right" id="arrowRight">&#8594;</div>
+</div>
+
+<section class="article-section" id="articleSection">
+  <h2>Wybierz artykuł z listy powyżej</h2>
+  <div id="articleContent"></div>
+</section>
 </div>
 
 <footer>© 2025 Michał - Blog inspirowany TM</footer>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+  const sliderContainer = document.querySelector('.slider-container');
   const cardsContainer = document.getElementById('cards');
   const arrowLeft = document.getElementById('arrowLeft');
   const arrowRight = document.getElementById('arrowRight');
   const searchInput = document.getElementById('searchInput');
   const allCards = Array.from(cardsContainer.children);
-  let currentIndex = 0;
 
-  const isMobile = () => window.innerWidth <= 700;
-  const getVisibleCardsCount = () => isMobile() ? 1 : window.innerWidth <= 1024 ? 2 : 4;
-
-  const updateSlider = () => {
-    const visibleItems = allCards.filter(c => !c.classList.contains('hidden-by-search'));
-    if (!visibleItems.length) return;
-
-    if (isMobile()) {
-      cardsContainer.style.transform = 'none';
-      return;
+  const updateSliderState = () => {
+    // Na mobilkach slider jest przewijany palcem, więc nie potrzebujemy logiki strzałek
+    if (window.innerWidth <= 700) {
+      sliderContainer.style.overflowX = 'auto'; // Upewnij się, że przewijanie jest możliwe
+      cardsContainer.style.transform = 'none'; // Usuń transformację z wersji desktopowej
+      return; // Zakończ funkcję dla mobile
+    }
+    
+    // Logika dla desktop
+    sliderContainer.style.overflowX = 'hidden'; // Ukryj pasek przewijania na desktop
+    
+    const visibleCards = allCards.filter(card => !card.classList.contains('hidden-by-search'));
+    if (visibleCards.length === 0) {
+        arrowLeft.classList.add('hidden');
+        arrowRight.classList.add('hidden');
+        return;
     }
 
-    const cardsPerPage = getVisibleCardsCount();
-    const cardWidth = visibleItems[0].offsetWidth;
-    const gap = 20;
-    const maxIndex = Math.max(0, visibleItems.length - cardsPerPage);
-    currentIndex = Math.max(0, Math.min(currentIndex, maxIndex));
+    const cardWidth = visibleCards[0].offsetWidth;
+    const gap = parseInt(window.getComputedStyle(cardsContainer).gap, 10) || 20;
+    const containerWidth = sliderContainer.offsetWidth;
+    
+    // Ile kart mieści się w kontenerze
+    const cardsInView = Math.floor((containerWidth + gap) / (cardWidth + gap));
+    
+    // Maksymalna liczba "przesunięć"
+    const maxScrolls = Math.ceil(visibleCards.length / cardsInView) - 1;
+    
+    // Pobierz aktualne przesunięcie (lub ustaw na 0)
+    let currentScroll = parseInt(cardsContainer.dataset.currentScroll || '0', 10);
+    
+    // Aktualizacja widoczności strzałek
+    arrowLeft.classList.toggle('hidden', currentScroll === 0);
+    arrowRight.classList.toggle('hidden', currentScroll >= maxScrolls || visibleCards.length <= cardsInView);
 
-    cardsContainer.style.transform = `translateX(-${currentIndex * (cardWidth + gap)}px)`;
-
-    arrowLeft.classList.toggle('hidden', currentIndex === 0);
-    arrowRight.classList.toggle('hidden', currentIndex >= maxIndex);
+    // Oblicz nowe przesunięcie
+    const offset = currentScroll * cardsInView * (cardWidth + gap);
+    cardsContainer.style.transform = `translateX(-${offset}px)`;
   };
 
   const filterCards = () => {
@@ -267,14 +285,25 @@ document.addEventListener('DOMContentLoaded', () => {
       const title = card.querySelector('h2').textContent.toLowerCase();
       card.classList.toggle('hidden-by-search', !title.includes(term));
     });
-    currentIndex = 0;
-    updateSlider();
+    // Zresetuj pozycję slidera po filtrowaniu
+    cardsContainer.dataset.currentScroll = '0';
+    updateSliderState();
   };
+  
+  arrowRight.addEventListener('click', () => {
+    let currentScroll = parseInt(cardsContainer.dataset.currentScroll || '0', 10);
+    cardsContainer.dataset.currentScroll = currentScroll + 1;
+    updateSliderState();
+  });
 
-  arrowRight.addEventListener('click', () => { currentIndex++; updateSlider(); });
-  arrowLeft.addEventListener('click', () => { currentIndex--; updateSlider(); });
+  arrowLeft.addEventListener('click', () => {
+    let currentScroll = parseInt(cardsContainer.dataset.currentScroll || '0', 10);
+    cardsContainer.dataset.currentScroll = Math.max(0, currentScroll - 1);
+    updateSliderState();
+  });
+  
   searchInput.addEventListener('input', filterCards);
-  window.addEventListener('resize', () => setTimeout(updateSlider, 150));
+  window.addEventListener('resize', () => setTimeout(updateSliderState, 150));
 
   document.querySelectorAll(".read-more").forEach(link => {
     link.addEventListener("click", async (event) => {
@@ -306,7 +335,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  updateSlider();
+  // Ulepszyłem także logikę slidera, aby przewijał całe "strony" kart
+  // zamiast pojedynczych kart, co jest bardziej intuicyjne.
+  updateSliderState();
 });
 </script>
 
