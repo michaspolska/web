@@ -65,6 +65,38 @@ footer { background-color: var(--footer-bg); padding: 15px; text-align: center; 
 @media (min-width: 480px) { .card { flex: 0 0 48%; } } /* dwa obok siebie na małych tabletach */
 @media (min-width: 768px) { .card { flex: 0 0 calc((100% - 3 * 20px) / 3); } } /* 3 karty obok siebie na większych tabletach */
 @media (min-width: 1024px) { .card { flex: 0 0 calc((100% - 3 * 30px) / 4); } } /* 4 karty desktop */
+
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 107, 119, 0.8);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  font-size: 1.5rem;
+  transition: background-color 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 10;
+}
+
+.arrow:hover {
+  background-color: var(--accent-hover);
+}
+
+.arrow-left { left: 10px; }
+.arrow-right { right: 10px; }
+
+.arrow.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+@media (max-width: 700px) {
+  .arrow { display: none; } /* na telefonie schowaj strzałki */
+}
 </style>
 
 
@@ -189,6 +221,44 @@ footer { background-color: var(--footer-bg); padding: 15px; text-align: center; 
       if (mdFile) loadArticle(mdFile);
     });
   });
+
+  const updateSlider = () => {
+  const cardsPerPage = getVisibleCardsCount();
+  const visibleItems = allCards.filter(card => !card.classList.contains('hidden-by-search'));
+
+  if (visibleItems.length === 0) {
+      arrowLeft.classList.add('hidden');
+      arrowRight.classList.add('hidden');
+      return;
+  }
+
+  const cardWidth = visibleItems[0].offsetWidth;
+  const gap = 30; // zgodne z CSS
+  const stepWidth = cardWidth + gap;
+  const maxIndex = Math.max(0, visibleItems.length - cardsPerPage);
+
+  // ogranicz indeks
+  currentIndex = Math.max(0, Math.min(currentIndex, maxIndex));
+
+  // przesunięcie kontenera tylko w poziomie
+  const translateX = currentIndex * stepWidth;
+  cardsContainer.style.transform = `translateX(-${translateX}px)`;
+
+  arrowLeft.classList.toggle('hidden', currentIndex === 0);
+  arrowRight.classList.toggle('hidden', currentIndex >= maxIndex);
+};
+
+// obsługa kliknięć strzałek
+arrowRight.addEventListener('click', () => {
+  currentIndex++;
+  updateSlider();
+});
+
+arrowLeft.addEventListener('click', () => {
+  currentIndex--;
+  updateSlider();
+});
+
 </script>
 
 </body>
