@@ -4,22 +4,47 @@
   <meta charset="UTF-8" />
   <title>Blog inspirowany TM - Strona Główna</title>
   <style>
-    /* --- STYLE skrócone --- */
-    body { font-family: 'Georgia', serif; background: #fdfbf7; margin: 0; }
-    header, nav, .container, footer { max-width: 1100px; margin: auto; }
-    header { padding: 20px; text-align: center; background: #fff; border-bottom: 1px solid #ddd; }
-    nav { text-align: center; padding: 10px; background: #fff; border-bottom: 1px solid #ddd; margin-bottom: 40px; }
-    nav a { margin: 0 15px; text-decoration: none; font-weight: bold; color: #006d77; }
-    .cards { display: flex; gap: 30px; flex-wrap: wrap; }
-    .card { flex: 0 0 calc(25% - 30px); background: #fff; border-radius: 8px; padding: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
-    .card h2 { font-size: 1.1rem; margin: 0; }
-    .date { font-size: 0.8rem; color: #888; font-style: italic; margin-bottom: 10px; }
-    .read-more { display: inline-block; margin-top: auto; color: #006d77; font-weight: bold; cursor: pointer; }
-    .read-more:hover { text-decoration: underline; color: #004f58; }
-    .article-section { margin-top: 40px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
-    .article-section h2 { margin-top: 0; }
+    :root { --primary-bg: #fdfbf7; --card-bg: #ffffff; --card-hover: #f3f1ec; --text-color: #333; --accent-color: #006d77; --accent-hover: #004f58; --footer-bg: #eaeaea; --button-color: #00aba9; --button-hover: #008e8e; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Georgia', serif; background-color: var(--primary-bg); color: var(--text-color); display: flex; flex-direction: column; min-height: 100vh; }
+    header, nav, .container, footer { max-width: 1100px; width: 100%; margin: 0 auto; }
+    header { background-color: white; padding: 20px; border-bottom: 1px solid #ddd; text-align: center; }
+    nav { background-color: white; border-bottom: 1px solid #ddd; padding: 10px 20px; text-align: center; margin-bottom: 40px; }
+    nav a { margin: 0 15px; text-decoration: none; color: var(--accent-color); font-weight: bold; transition: color 0.3s ease; }
+    nav a:hover { color: var(--accent-hover); }
+    .container { flex: 1; padding: 0 20px 40px 20px; }
+
+    #searchInput { width: 100%; max-width: 400px; padding: 10px 15px; font-size: 1rem; border: 1px solid #ccc; border-radius: 8px; margin: 0 auto 30px; display: block; box-shadow: inset 1px 1px 3px #eee; transition: border-color 0.3s ease; }
+    #searchInput:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 5px var(--accent-color); }
+
+    .slider-container { position: relative; overflow: hidden; width: 100%; padding-bottom: 60px; }
+    .cards { display: flex; gap: 30px; transition: transform 0.5s ease; will-change: transform; }
+    .card { background-color: var(--card-bg); border-radius: 12px; padding: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); transition: background-color 0.3s ease; flex: 0 0 calc((100% - 3 * 30px) / 4); display: flex; flex-direction: column; text-align: center; }
+    .card:hover { background-color: var(--card-hover); }
+    .card.hidden-by-search { display: none; }
+    .header { height: 90px; display: flex; flex-direction: column; justify-content: center; text-align: center; margin-bottom: 15px; overflow: hidden; }
+    .header h2 { margin: 0 0 5px 0; line-height: 1.2; font-size: 1.1rem; }
+    .date { font-size: 0.85rem; color: #888; font-style: italic; margin: 0; }
+    .card p { flex-grow: 1; margin-top: 0; margin-bottom: 15px; text-align: center; }
+    .read-more { display: inline-block; margin-top: auto; color: var(--accent-color); font-weight: bold; text-decoration: none; transition: color 0.3s ease; align-self: center; cursor: pointer; }
+    .read-more:hover { color: var(--accent-hover); text-decoration: underline; }
+
+    .arrow { position: absolute; bottom: 10px; background-color: rgba(0, 107, 119, 0.8); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; font-size: 1.5rem; transition: background-color 0.3s ease, opacity 0.3s ease, visibility 0.3s ease; z-index: 10; }
+    .arrow:hover { background-color: var(--accent-hover); }
+    .arrow-left { left: calc(50% - 50px); }
+    .arrow-right { right: calc(50% - 50px); }
+    .arrow.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+    .article-section { background-color: white; padding: 40px 20px; border-radius: 12px; margin-top: 40px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+    .article-section h2 { margin-top: 0; text-align: center; }
+    .article-section div { max-width: 800px; margin: 0 auto; line-height: 1.5; }
+
+    footer { background-color: var(--footer-bg); padding: 20px; text-align: center; font-size: 0.9em; color: #555; margin-top: 40px; }
+    @media (max-width: 1024px) { .card { flex: 0 0 calc((100% - 1 * 30px) / 2); } }
+    @media (max-width: 700px) { .card { flex: 0 0 100%; } .cards { transform: none !important; flex-wrap: wrap; } .arrow { display: none; } }
   </style>
-  <!-- ✅ biblioteka do markdowna -->
+
+  <!-- marked.js do Markdown -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
@@ -35,28 +60,20 @@
   </nav>
 
   <div class="container">
-    <div class="cards" id="cards">
-      <div class="card">
-        <h2>Jak stać się bardziej produktywnym?</h2>
-        <div class="date">25 lipca 2025</div>
-        <p>Poznaj 5 sprawdzonych metod...</p>
-        <a href="#" class="read-more" data-md="produktywnosc.md">Czytaj dalej →</a>
+    <input type="text" id="searchInput" placeholder="Szukaj po tytułach artykułów..." aria-label="Szukaj po tytułach artykułów" />
+
+    <div class="slider-container" aria-label="Slider artykułów">
+      <div class="cards" id="cards">
+        <div class="card"><div class="header"><h2>Jak stać się bardziej produktywnym?</h2><div class="date">25 lipca 2025</div></div><p>Poznaj 5 sprawdzonych metod...</p><a href="#" class="read-more" data-md="produktywnosc.md">Czytaj dalej →</a></div>
+        <div class="card"><div class="header"><h2>Minimalizm: mniej znaczy więcej</h2><div class="date">20 lipca 2025</div></div><p>Jak ograniczenie rzeczy pomogło mi...</p><a href="#" class="read-more" data-md="minimalizm.md">Czytaj dalej →</a></div>
+        <div class="card"><div class="header"><h2>Poranna rutyna ludzi sukcesu</h2><div class="date">15 lipca 2025</div></div><p>Odkryj, co łączy poranki Tima Ferrissa...</p><a href="#" class="read-more" data-md="rutyna.md">Czytaj dalej →</a></div>
+        <div class="card"><div class="header"><h2>Startup bez ryzyka – jak zacząć</h2><div class="date">10 lipca 2025</div></div><p>Naucz się, jak uruchomić biznes online...</p><a href="#" class="read-more" data-md="startup.md">Czytaj dalej →</a></div>
       </div>
-      <div class="card">
-        <h2>Minimalizm: mniej znaczy więcej</h2>
-        <div class="date">20 lipca 2025</div>
-        <p>Jak ograniczenie rzeczy pomogło mi...</p>
-        <a href="#" class="read-more" data-md="minimalizm.md">Czytaj dalej →</a>
-      </div>
-      <div class="card">
-        <h2>Biohacking: Sekrety Tima Ferrissa</h2>
-        <div class="date">5 lipca 2025</div>
-        <p>Odkryj techniki optymalizacji zdrowia...</p>
-        <a href="#" class="read-more" data-md="biohacking.md">Czytaj dalej →</a>
-      </div>
+
+      <div class="arrow arrow-left" id="arrowLeft" role="button" aria-label="Przesuń w lewo" tabindex="0">&#8592;</div>
+      <div class="arrow arrow-right" id="arrowRight" role="button" aria-label="Przesuń w prawo" tabindex="0">&#8594;</div>
     </div>
 
-    <!-- sekcja na artykuł -->
     <section class="article-section" id="articleSection">
       <h2>Wybierz artykuł z listy powyżej</h2>
       <div id="articleContent"></div>
@@ -66,6 +83,53 @@
   <footer>© 2025 Michał - Blog inspirowany TM</footer>
 
 <script>
+  // ----------------- SLIDER -----------------
+  document.addEventListener('DOMContentLoaded', () => {
+    const cardsContainer = document.getElementById('cards');
+    const arrowLeft = document.getElementById('arrowLeft');
+    const arrowRight = document.getElementById('arrowRight');
+    const searchInput = document.getElementById('searchInput');
+    const allCards = Array.from(cardsContainer.children);
+    let currentIndex = 0;
+
+    const getVisibleCardsCount = () => window.innerWidth <= 700 ? 1 : window.innerWidth <= 1024 ? 2 : 4;
+
+    const updateSlider = () => {
+      const cardsPerPage = getVisibleCardsCount();
+      const visibleItems = allCards.filter(card => !card.classList.contains('hidden-by-search'));
+      if (!visibleItems.length) { arrowLeft.classList.add('hidden'); arrowRight.classList.add('hidden'); return; }
+      const cardWidth = visibleItems[0].offsetWidth;
+      const gap = 30;
+      const maxIndex = Math.max(0, visibleItems.length - cardsPerPage);
+      currentIndex = Math.max(0, Math.min(currentIndex, maxIndex));
+      cardsContainer.style.transform = `translateX(-${currentIndex * (cardWidth + gap)}px)`;
+      arrowLeft.classList.toggle('hidden', currentIndex === 0);
+      arrowRight.classList.toggle('hidden', currentIndex >= maxIndex);
+    };
+
+    const filterCards = () => {
+      const searchTerm = searchInput.value.toLowerCase();
+      allCards.forEach(card => {
+        const title = card.querySelector('h2').textContent.toLowerCase();
+        card.classList.toggle('hidden-by-search', !title.includes(searchTerm));
+      });
+      currentIndex = 0;
+      updateSlider();
+    };
+
+    arrowRight.addEventListener('click', () => { currentIndex++; updateSlider(); });
+    arrowLeft.addEventListener('click', () => { currentIndex--; updateSlider(); });
+    searchInput.addEventListener('input', filterCards);
+    window.addEventListener('resize', () => { setTimeout(updateSlider, 150); });
+
+    [arrowLeft, arrowRight].forEach(arrow => {
+      arrow.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' ') { e.preventDefault(); arrow.click(); } });
+    });
+
+    updateSlider();
+  });
+
+  // ----------------- ŁADOWANIE ARTYKUŁU -----------------
   async function loadArticle(mdFile) {
     const articleContent = document.getElementById("articleContent");
     const articleTitle = document.querySelector("#articleSection h2");
@@ -82,14 +146,11 @@
 
       articleContent.innerHTML = html;
 
-      // Ustaw tytuł na pierwszy nagłówek z pliku
       const firstHeading = document.querySelector("#articleContent h1, #articleContent h2");
       if (firstHeading) {
         articleTitle.textContent = firstHeading.textContent;
         firstHeading.remove();
-      } else {
-        articleTitle.textContent = "Artykuł";
-      }
+      } else articleTitle.textContent = "Artykuł";
     } catch (err) {
       articleContent.innerHTML = "<p>Błąd ładowania artykułu.</p>";
       articleTitle.textContent = "Błąd";
@@ -97,7 +158,6 @@
     }
   }
 
-  // obsługa kliknięcia
   document.querySelectorAll(".read-more").forEach(link => {
     link.addEventListener("click", event => {
       event.preventDefault();
