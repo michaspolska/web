@@ -69,13 +69,12 @@ nav a:hover { color: var(--accent-hover); }
 }
 
 .slider-wrapper {
-  /* Dodajemy ten wrapper, aby strzałki nie były wewnątrz przewijanego obszaru */
+  /* Ten wrapper pomaga w organizacji slidera i strzałek */
 }
 
 .slider-container {
   position: relative;
-  /* Domyślnie dla desktopu przewijanie jest wyłączone (steruje nim JS) */
-  overflow-x: hidden;
+  overflow-x: hidden; /* Domyślnie dla desktopu, zmieniane dla mobile */
   padding-bottom: 20px;
 }
 
@@ -88,7 +87,7 @@ nav a:hover { color: var(--accent-hover); }
   display: flex;
   gap: 20px;
   transition: transform 0.5s ease-in-out;
-  padding-left: 5px; /* Mały padding, by cień pierwszej karty był widoczny */
+  padding-left: 5px;
 }
 
 .card {
@@ -106,7 +105,24 @@ nav a:hover { color: var(--accent-hover); }
 
 .card p { flex-grow: 1; margin: 10px 0; text-align: center; font-size: 1.1rem; }
 .card .header h2 { font-size: 1.3rem; margin-bottom: 5px; }
-.read-more { margin-top: auto; font-size: 1.1rem; }
+
+
+/* === ZMIANA TUTAJ: STYLOWANIE LINKÓW "CZYTAJ DALEJ" === */
+.read-more {
+  margin-top: auto;
+  font-size: 1.1rem;
+  color: #777; /* Ustawia kolor linku na szary */
+  text-decoration: none; /* Usuwa domyślne podkreślenie */
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.read-more:hover {
+  color: #333; /* Przyciemnia link po najechaniu myszką */
+  text-decoration: underline; /* Dodaje podkreślenie dla lepszej informacji zwrotnej */
+}
+/* ======================================================= */
+
 
 .article-section {
   background-color: white;
@@ -157,23 +173,23 @@ footer {
 }
 
 
-/* === KLUCZOWE ZMIANY DLA URZĄDZEŃ MOBILNYCH (max 700px) === */
+/* === REGUŁY DLA URZĄDZEŃ MOBILNYCH (max 700px) === */
 @media (max-width: 700px) {
-  /* 1. CAŁKOWICIE UKRYJ STRZAŁKI */
+  /* 1. Całkowicie ukryj strzałki */
   .slider-arrows {
     display: none;
   }
   
-  /* 2. WŁĄCZ PRZEWIJANIE PALCEM */
+  /* 2. Włącz przewijanie palcem */
   .slider-container {
-    overflow-x: auto; /* To jest kluczowe dla przesuwania palcem! */
-    -webkit-overflow-scrolling: touch; /* Płynniejsze przewijanie na iOS */
-    scroll-snap-type: x mandatory; /* Włącz przyciąganie */
-    scroll-padding: 0 15px; /* Dystans od krawędzi przy przyciąganiu */
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    scroll-padding: 0 15px;
   }
   
   .card {
-    scroll-snap-align: center; /* Przyciągaj karty do środka */
+    scroll-snap-align: center;
   }
   
   /* 3. Wyłącz transformacje JS na mobile, bo steruje tym natywne przewijanie */
