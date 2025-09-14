@@ -110,10 +110,11 @@ footer {
   margin-top: 20px;
 }
 /* nowy kontener strzałek pod sliderem */
+/* strzałki pod sliderem */
 .slider-arrows {
   display: flex;
   justify-content: center;
-  gap: 40px; /* odległość między strzałkami */
+  gap: 40px;
   margin-top: 15px;
 }
 
@@ -134,6 +135,18 @@ footer {
 }
 .arrow:hover { background-color: var(--accent-hover); }
 
+/* ukrycie na urządzeniach < 700px */
+@media (max-width: 700px) {
+  .arrow { display: none; }
+}
+
+/* usuń absolutne pozycjonowanie w media query */
+@media (min-width: 701px) {
+  .arrow {
+    position: static; /* zmiana z absolute na static */
+    transform: none;
+  }
+}
 /* ukrycie na urządzeniach < 700px */
 @media (max-width: 700px) {
   .arrow { display: none !important; }
