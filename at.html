@@ -1,0 +1,1756 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atheny 2026: Twoja 3-Dniowa Przygoda</title>
+    <style>
+        :root {
+  /* Primitive Color Tokens */
+  --color-white: rgba(255, 255, 255, 1);
+  --color-black: rgba(0, 0, 0, 1);
+  --color-cream-50: rgba(252, 252, 249, 1);
+  --color-cream-100: rgba(255, 255, 253, 1);
+  --color-gray-200: rgba(245, 245, 245, 1);
+  --color-gray-300: rgba(167, 169, 169, 1);
+  --color-gray-400: rgba(119, 124, 124, 1);
+  --color-slate-500: rgba(98, 108, 113, 1);
+  --color-brown-600: rgba(94, 82, 64, 1);
+  --color-charcoal-700: rgba(31, 33, 33, 1);
+  --color-charcoal-800: rgba(38, 40, 40, 1);
+  --color-slate-900: rgba(19, 52, 59, 1);
+  --color-teal-300: rgba(50, 184, 198, 1);
+  --color-teal-400: rgba(45, 166, 178, 1);
+  --color-teal-500: rgba(33, 128, 141, 1);
+  --color-teal-600: rgba(29, 116, 128, 1);
+  --color-teal-700: rgba(26, 104, 115, 1);
+  --color-teal-800: rgba(41, 150, 161, 1);
+  --color-red-400: rgba(255, 84, 89, 1);
+  --color-red-500: rgba(192, 21, 47, 1);
+  --color-orange-400: rgba(230, 129, 97, 1);
+  --color-orange-500: rgba(168, 75, 47, 1);
+
+  --color-brown-600-rgb: 94, 82, 64;
+  --color-teal-500-rgb: 33, 128, 141;
+  --color-slate-900-rgb: 19, 52, 59;
+  --color-slate-500-rgb: 98, 108, 113;
+  --color-red-500-rgb: 192, 21, 47;
+  --color-red-400-rgb: 255, 84, 89;
+  --color-orange-500-rgb: 168, 75, 47;
+  --color-orange-400-rgb: 230, 129, 97;
+
+  --color-bg-1: rgba(59, 130, 246, 0.08);
+  --color-bg-2: rgba(245, 158, 11, 0.08);
+  --color-bg-3: rgba(34, 197, 94, 0.08);
+  --color-bg-4: rgba(239, 68, 68, 0.08);
+  --color-bg-5: rgba(147, 51, 234, 0.08);
+  --color-bg-6: rgba(249, 115, 22, 0.08);
+  --color-bg-7: rgba(236, 72, 153, 0.08);
+  --color-bg-8: rgba(6, 182, 212, 0.08);
+
+  --color-background: var(--color-cream-50);
+  --color-surface: var(--color-cream-100);
+  --color-text: var(--color-slate-900);
+  --color-text-secondary: var(--color-slate-500);
+  --color-primary: var(--color-teal-500);
+  --color-primary-hover: var(--color-teal-600);
+  --color-primary-active: var(--color-teal-700);
+  --color-secondary: rgba(var(--color-brown-600-rgb), 0.12);
+  --color-secondary-hover: rgba(var(--color-brown-600-rgb), 0.2);
+  --color-secondary-active: rgba(var(--color-brown-600-rgb), 0.25);
+  --color-border: rgba(var(--color-brown-600-rgb), 0.2);
+  --color-btn-primary-text: var(--color-cream-50);
+  --color-card-border: rgba(var(--color-brown-600-rgb), 0.12);
+  --color-card-border-inner: rgba(var(--color-brown-600-rgb), 0.12);
+  --color-error: var(--color-red-500);
+  --color-success: var(--color-teal-500);
+  --color-warning: var(--color-orange-500);
+  --color-info: var(--color-slate-500);
+  --color-focus-ring: rgba(var(--color-teal-500-rgb), 0.4);
+  --color-select-caret: rgba(var(--color-slate-900-rgb), 0.8);
+
+  --focus-ring: 0 0 0 3px var(--color-focus-ring);
+  --focus-outline: 2px solid var(--color-primary);
+  --status-bg-opacity: 0.15;
+  --status-border-opacity: 0.25;
+
+  --font-family-base: "FKGroteskNeue", "Geist", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family-mono: "Berkeley Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-size-xs: 11px;
+  --font-size-sm: 12px;
+  --font-size-base: 14px;
+  --font-size-md: 14px;
+  --font-size-lg: 16px;
+  --font-size-xl: 18px;
+  --font-size-2xl: 20px;
+  --font-size-3xl: 24px;
+  --font-size-4xl: 30px;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 550;
+  --font-weight-bold: 600;
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --letter-spacing-tight: -0.01em;
+
+  --space-0: 0;
+  --space-1: 1px;
+  --space-2: 2px;
+  --space-4: 4px;
+  --space-6: 6px;
+  --space-8: 8px;
+  --space-10: 10px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+
+  --radius-sm: 6px;
+  --radius-base: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.02);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+  --shadow-inset-sm: inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1px 0 rgba(0, 0, 0, 0.03);
+
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+
+  /* Custom app colors */
+  --greek-blue: #0077B6;
+  --greek-gold: #FFD700;
+  --meal-color: #FF8C42;
+  --culture-color: #0077B6;
+  --walking-color: #52B788;
+  --nightlife-color: #9B5DE5;
+  --shopping-color: #F15BB5;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-gray-400-rgb: 119, 124, 124;
+    --color-teal-300-rgb: 50, 184, 198;
+    --color-gray-300-rgb: 167, 169, 169;
+    --color-gray-200-rgb: 245, 245, 245;
+
+    --color-bg-1: rgba(29, 78, 216, 0.15);
+    --color-bg-2: rgba(180, 83, 9, 0.15);
+    --color-bg-3: rgba(21, 128, 61, 0.15);
+    --color-bg-4: rgba(185, 28, 28, 0.15);
+    --color-bg-5: rgba(107, 33, 168, 0.15);
+    --color-bg-6: rgba(194, 65, 12, 0.15);
+    --color-bg-7: rgba(190, 24, 93, 0.15);
+    --color-bg-8: rgba(8, 145, 178, 0.15);
+
+    --color-background: var(--color-charcoal-700);
+    --color-surface: var(--color-charcoal-800);
+    --color-text: var(--color-gray-200);
+    --color-text-secondary: rgba(var(--color-gray-300-rgb), 0.7);
+    --color-primary: var(--color-teal-300);
+    --color-primary-hover: var(--color-teal-400);
+    --color-primary-active: var(--color-teal-800);
+    --color-secondary: rgba(var(--color-gray-400-rgb), 0.15);
+    --color-secondary-hover: rgba(var(--color-gray-400-rgb), 0.25);
+    --color-secondary-active: rgba(var(--color-gray-400-rgb), 0.3);
+    --color-border: rgba(var(--color-gray-400-rgb), 0.3);
+    --color-error: var(--color-red-400);
+    --color-success: var(--color-teal-300);
+    --color-warning: var(--color-orange-400);
+    --color-info: var(--color-gray-300);
+    --color-focus-ring: rgba(var(--color-teal-300-rgb), 0.4);
+    --color-btn-primary-text: var(--color-slate-900);
+    --color-card-border: rgba(var(--color-gray-400-rgb), 0.2);
+    --color-card-border-inner: rgba(var(--color-gray-400-rgb), 0.15);
+    --shadow-inset-sm: inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+  }
+}
+
+@font-face {
+  font-family: 'FKGroteskNeue';
+  src: url('https://r2cdn.perplexity.ai/fonts/FKGroteskNeue.woff2') format('woff2');
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family-base);
+  background-color: var(--color-background);
+  color: var(--color-text);
+  line-height: var(--line-height-normal);
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Header Styles */
+.header {
+  background: var(--color-bg-1);
+  padding: var(--space-32) var(--space-16);
+  text-align: center;
+  border-bottom: 2px solid var(--color-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(var(--color-teal-500-rgb), 0.03) 10px,
+    rgba(var(--color-teal-500-rgb), 0.03) 20px
+  );
+  pointer-events: none;
+}
+
+.header-content {
+  position: relative;
+  z-index: 1;
+}
+
+.header h1 {
+  font-size: var(--font-size-4xl);
+  color: var(--color-primary);
+  margin-bottom: var(--space-12);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.header-subtitle {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-16);
+}
+
+.header-description {
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  max-width: 600px;
+  margin: 0 auto var(--space-24) auto;
+}
+
+.stats-container {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-32);
+  flex-wrap: wrap;
+  margin-top: var(--space-24);
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  display: block;
+}
+
+.stat-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Navigation */
+.nav-container {
+  position: sticky;
+  top: 0;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+
+.nav {
+  display: flex;
+  overflow-x: auto;
+  padding: var(--space-8) var(--space-16);
+  gap: var(--space-8);
+}
+
+.nav::-webkit-scrollbar {
+  height: 4px;
+}
+
+.nav::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+}
+
+.nav-btn {
+  padding: var(--space-10) var(--space-20);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  white-space: nowrap;
+  transition: all var(--duration-fast) var(--ease-standard);
+}
+
+.nav-btn:hover {
+  background: var(--color-secondary);
+  border-color: var(--color-primary);
+}
+
+.nav-btn.active {
+  background: var(--color-primary);
+  color: var(--color-btn-primary-text);
+  border-color: var(--color-primary);
+}
+
+/* Main Content */
+.main-content {
+  padding: var(--space-24) var(--space-16);
+}
+
+.section {
+  margin-bottom: var(--space-32);
+  display: none;
+}
+
+.section.active {
+  display: block;
+  animation: fadeIn 0.3s var(--ease-standard);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section-title {
+  font-size: var(--font-size-3xl);
+  color: var(--color-text);
+  margin-bottom: var(--space-8);
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+}
+
+.section-subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-24);
+}
+
+/* Activity Timeline */
+.timeline {
+  position: relative;
+  padding-left: var(--space-32);
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-border);
+}
+
+.activity-card {
+  position: relative;
+  margin-bottom: var(--space-24);
+  background: var(--color-surface);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-16);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--duration-normal) var(--ease-standard);
+}
+
+.activity-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.activity-card::before {
+  content: '';
+  position: absolute;
+  left: -32px;
+  top: 24px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  border: 3px solid var(--color-primary);
+}
+
+.activity-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-12);
+  margin-bottom: var(--space-12);
+}
+
+.activity-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.activity-icon.meal { background: rgba(255, 140, 66, 0.15); }
+.activity-icon.culture { background: rgba(0, 119, 182, 0.15); }
+.activity-icon.walking { background: rgba(82, 183, 136, 0.15); }
+.activity-icon.nightlife { background: rgba(155, 93, 229, 0.15); }
+.activity-icon.shopping { background: rgba(241, 91, 181, 0.15); }
+
+.activity-main {
+  flex: 1;
+}
+
+.activity-time {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--space-4);
+}
+
+.activity-name {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  margin-bottom: var(--space-4);
+}
+
+.activity-location {
+  font-size: var(--font-size-sm);
+  color: var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.activity-location:hover {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}
+
+.activity-details {
+  margin-top: var(--space-12);
+  padding-top: var(--space-12);
+  border-top: 1px solid var(--color-card-border-inner);
+}
+
+.activity-description {
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  line-height: 1.6;
+  margin-bottom: var(--space-12);
+}
+
+.activity-info {
+  display: flex;
+  gap: var(--space-16);
+  flex-wrap: wrap;
+  font-size: var(--font-size-sm);
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  color: var(--color-text-secondary);
+}
+
+.activity-checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  margin-top: var(--space-12);
+  padding: var(--space-8);
+  background: var(--color-bg-3);
+  border-radius: var(--radius-base);
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-standard);
+}
+
+.activity-checkbox:hover {
+  background: rgba(var(--color-success-rgb), 0.2);
+}
+
+.activity-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.activity-checkbox.completed {
+  background: rgba(var(--color-success-rgb), 0.2);
+}
+
+/* Restaurant Cards */
+.restaurant-categories {
+  margin-bottom: var(--space-24);
+}
+
+.category-section {
+  margin-bottom: var(--space-32);
+}
+
+.category-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  margin-bottom: var(--space-16);
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.restaurant-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-16);
+}
+
+.restaurant-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-16);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--duration-normal) var(--ease-standard);
+}
+
+.restaurant-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.restaurant-name {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  margin-bottom: var(--space-4);
+}
+
+.restaurant-address {
+  font-size: var(--font-size-sm);
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.restaurant-address:hover {
+  text-decoration: underline;
+}
+
+/* Hidden Gems */
+.gems-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-20);
+}
+
+.gem-card {
+  background: var(--color-bg-5);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-20);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--duration-normal) var(--ease-standard);
+}
+
+.gem-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.gem-icon {
+  font-size: 32px;
+  margin-bottom: var(--space-12);
+}
+
+.gem-name {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  margin-bottom: var(--space-8);
+}
+
+.gem-description {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+/* Tips Section */
+.tips-grid {
+  display: grid;
+  gap: var(--space-20);
+}
+
+.tip-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-20);
+  box-shadow: var(--shadow-sm);
+}
+
+.tip-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  margin-bottom: var(--space-16);
+}
+
+.tip-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-base);
+  background: var(--color-bg-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.tip-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.tip-content {
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+.tip-content strong {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Accommodation Section */
+.accommodation-info {
+  background: var(--color-surface);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-24);
+  box-shadow: var(--shadow-sm);
+}
+
+.accommodation-info h3 {
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--space-16);
+  color: var(--color-text);
+}
+
+.accommodation-info p {
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  line-height: 1.6;
+  margin-bottom: var(--space-12);
+}
+
+/* Utility Bar */
+.utility-bar {
+  position: fixed;
+  bottom: var(--space-20);
+  right: var(--space-20);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  z-index: 1000;
+}
+
+.utility-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: var(--color-btn-primary-text);
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-lg);
+  transition: all var(--duration-normal) var(--ease-standard);
+}
+
+.utility-btn:hover {
+  background: var(--color-primary-hover);
+  transform: scale(1.1);
+}
+
+.utility-btn:active {
+  transform: scale(0.95);
+}
+
+/* Toast Notification */
+.toast {
+  position: fixed;
+  top: 80px;
+  right: var(--space-20);
+  background: var(--color-success);
+  color: var(--color-btn-primary-text);
+  padding: var(--space-16) var(--space-24);
+  border-radius: var(--radius-base);
+  box-shadow: var(--shadow-lg);
+  z-index: 2000;
+  opacity: 0;
+  transform: translateX(400px);
+  transition: all var(--duration-normal) var(--ease-standard);
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Footer */
+.footer {
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  padding: var(--space-32) var(--space-16);
+  text-align: center;
+  margin-top: var(--space-32);
+}
+
+.footer p {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-8);
+}
+
+.footer-credit {
+  font-size: var(--font-size-base);
+  color: var(--color-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Search Bar */
+.search-container {
+  margin-bottom: var(--space-24);
+}
+
+.search-input {
+  width: 100%;
+  padding: var(--space-12) var(--space-16);
+  font-size: var(--font-size-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  background: var(--color-surface);
+  color: var(--color-text);
+  transition: border-color var(--duration-fast) var(--ease-standard);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header h1 {
+    font-size: var(--font-size-3xl);
+  }
+
+  .stats-container {
+    gap: var(--space-16);
+  }
+
+  .stat-number {
+    font-size: var(--font-size-2xl);
+  }
+
+  .timeline {
+    padding-left: var(--space-24);
+  }
+
+  .activity-card::before {
+    left: -24px;
+  }
+
+  .restaurant-grid,
+  .gems-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .utility-bar {
+    flex-direction: row;
+    bottom: var(--space-12);
+    right: var(--space-12);
+    left: var(--space-12);
+  }
+
+  .utility-btn {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+  }
+
+  .toast {
+    right: var(--space-12);
+    left: var(--space-12);
+  }
+}
+
+/* Print Styles */
+@media print {
+  .nav-container,
+  .utility-bar,
+  .activity-checkbox {
+    display: none;
+  }
+
+  .section {
+    display: block !important;
+    page-break-after: always;
+  }
+
+  .activity-card {
+    page-break-inside: avoid;
+  }
+}
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>🏛️ Atheny 2026: Twoja 3-Dniowa Przygoda</h1>
+                <p class="header-subtitle">19-22 lutego 2026 | 6 osób</p>
+                <p class="header-description">
+                    Zanurz się w starożytnej historii, odkryj ukryte perełki i poczuj się jak tubylec w najbardziej fascynującym mieście Grecji. Ten plan łączy kultowe zabytki z autentycznymi doświadczeniami lokalnymi.
+                </p>
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <span class="stat-number">3</span>
+                        <span class="stat-label">Dni</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">20+</span>
+                        <span class="stat-label">Atrakcji</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">15+</span>
+                        <span class="stat-label">Restauracji</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">5</span>
+                        <span class="stat-label">Ukrytych Perełek</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-container">
+            <div class="nav">
+                <button class="nav-btn active" data-section="day1">📅 Dzień 1</button>
+                <button class="nav-btn" data-section="day2">📅 Dzień 2</button>
+                <button class="nav-btn" data-section="day3">📅 Dzień 3</button>
+                <button class="nav-btn" data-section="restaurants">🍽️ Restauracje</button>
+                <button class="nav-btn" data-section="gems">💎 Ukryte Perełki</button>
+                <button class="nav-btn" data-section="tips">💡 Praktyczne Wskazówki</button>
+                <button class="nav-btn" data-section="accommodation">🏨 Noclegi</button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Day 1 -->
+            <section id="day1" class="section active">
+                <h2 class="section-title">🏛️ Dzień 1: Akropol i Antyczne Ateny</h2>
+                <p class="section-subtitle">Najważniejsze zabytki starożytne</p>
+                
+                <div class="timeline">
+                    <div class="activity-card" data-activity="day1-1">
+                        <div class="activity-header">
+                            <div class="activity-icon meal">☕</div>
+                            <div class="activity-main">
+                                <div class="activity-time">08:00</div>
+                                <h3 class="activity-name">Śniadanie i kawa</h3>
+                                <span class="activity-location" onclick="copyToClipboard('Attica Bakeries (Ermou 55)')">📍 Attica Bakeries (Ermou 55)</span>
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <p class="activity-description">Świeże pieczywo i grecka kawa na początek dnia</p>
+                            <div class="activity-checkbox" onclick="toggleActivity('day1-1')">
+                                <input type="checkbox" id="check-day1-1">
+                                <label for="check-day1-1">Oznacz jako ukończone</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-card" data-activity="day1-2">
+                        <div class="activity-header">
+                            <div class="activity-icon culture">🏛️</div>
+                            <div class="activity-main">
+                                <div class="activity-time">08:30-12:00</div>
+                                <h3 class="activity-name">Akropol i Partenon</h3>
+                                <span class="activity-location" onclick="copyToClipboard('Akropol')">📍 Akropol</span>
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <p class="activity-description">Najważniejsza atrakcja Aten. Zbudowany w V w. p.n.e., symbol starożytnej Grecji. Zawiera Partenon (świątynia Ateny), Erechtejon z kariatydami, świątynię Ateny Nike. Przyjedź wcześnie, aby uniknąć tłumów.</p>
+                            <div class="activity-info">
+                                <span class="info-item">🎫 €15 (luty - sezon zimowy)</span>
+                                <span class="info-item">🕐 08:00-18:00</span>
+                            </div>
+                            <div class="activity-checkbox" onclick="toggleActivity('day1-2')">
+                                <input type="checkbox" id="check-day1-2">
+                                <label for="check-day1-2">Oznacz jako ukończone</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-card" data-activity="day1-3">
+                        <div class="activity-header">
+                            <div class="activity-icon culture">🏛️</div>
+                            <div class="activity-main">
+                                <div class="activity-time">12:30-14:00</div>
+                                <h3 class="activity-name">Muzeum Akropolu</h3>
+                                <span class="activity-location" onclick="copyToClipboard('Muzeum Akropolu')">📍 Muzeum Akropolu</span>
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <p class="activity-description">Jedno z najlepszych muzeów archeologicznych świata. Zawiera oryginalne rzeźby z Akropolu, fryz Partenonu, karyatydy. Nowoczesna architektura z widokiem na Akropol.</p>
+                            <div class="activity-info">
+                                <span class="info-item">🕐 09:00-20:00</span>
+                            </div>
+                            <div class="activity-checkbox" onclick="toggleActivity('day1-3')">
+                                <input type="checkbox" id="check-day1-3">
+                                <label for="check-day1-3">Oznacz jako ukończone</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-card" data-activity="day1-4">
+                        <div class="activity-header">
+                            <div class="activity-icon meal">🍽️</div>
+                            <div class="activity-main">
+                                <div class="activity-time">14:00-15:30</div>
+                                <h3 class="activity-name">Lunch</h3>
+                                <span class="activity-location" onclick="copyToClipboard('Taverna Saita (Kidathineon 21, Plaka)')">📍 Taverna Saita (Kidathineon 21, Plaka)</span>
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <p class="activity-description">Tradycyjna tawerna rodzinna od 1970 roku. Próbuj: gołąbki z ryżem, smażone cukinie, dorsz z skordalia.</p>
+                            <div class="activity-checkbox" onclick="toggleActivity('day1-4')">
+                                <input type="checkbox" id="check-day1-4">
+                                <label for="check-day1-4">Oznacz jako ukończone</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-card" data-activity="day1-5">
+                        <div class="activity-header">
+                            <div class="activity-icon walking">🚶</div>
+                            <div class="activity-main">
+                                <div class="activity-time">15:30-17:00</div>
+                                <h3 class="activity-name">Anafiotika - ukryta wioska</h3>
+                                <span class="activity-location" onclick="copyToClipboard('Anafiotika')">📍 Anafiotika</span>
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <p class="activity-description">Malownicza dzielnica u podnóża Akropolu z białymi domami w stylu cykladyjskim. Przypomina greckie wyspy. Idealne na spacer i zdjęcia.</p>
+                            <div class="activity-checkbox" onclick="toggleActivity('day1-5')">
+                                <input type="checkbox" id="check-day1-5">
+                                <label for="check-day1-5">Oznacz jako ukończone</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-card" data-activity="day1-6">
+                        <div class="activity-header">
+                            <div class="activity-icon culture">🏛️</div>
+                            <div class="activity-main">
+                                <div class="activity-time">17:00-18:30</div>
+                                <h3 class="activity-name">Starożytna Agora</h3>
+                                <span class="activity-location" onclick="copyToClipboard('Starożytna Agora Ateńska')">📍 Starożytna Agora Ateńska</span>
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <p class="activity-description">Serce starożytnych Aten. Świątynia Hefajstosa (najlepiej zachowana świątynia grecka), Stoa Attalosa. Tu filozofowali Sokrates i Platon.</p>
+                            <div class="activity-info">
+                                <span class="info-item">🎫 Wliczone w bilet kombinowany</span>
+                            </div>
+                            <div class="activity-checkbox" onclick="toggleActivity('day1-6')">
+                                <input type="checkbox" id="check-day1-6">
+                                <label for="check-day1-6">Oznacz jako ukończone</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-card" data-activity="day1-7">
+                        <div class="activity-header">
+                            <div class="activity-icon meal">🍽️</div>
+                            <div class="activity-main">
+                                <div class="activity-time">19:00-21:00</div>
+                                <h3 class="activity-name">Kolacja</h3>
+                                <span class="activity-location" onclick="copyToClipboard('Efcharis Restaurant (Monastiraki)')">📍 Efcharis Restaurant (Monastiraki)</span>
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <p class="activity-description">Tradycyjne greckie jedzenie w przystępnych cenach. Próbuj: musaka, souvlaki, grecka sałatka.</p>
+                            <div class="activity-checkbox" onclick="toggleActivity('day1-7')">
+                                <input type="checkbox" id="check-day1-7">
+                                <label for="check-day1-7">Oznacz jako ukończone</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Day 2 -->
+            <section id="day2" class="section">
+                <h2 class="section-title">💎 Dzień 2: Lokalne klejnoty i współczesne Ateny</h2>
+                <p class="section-subtitle">Ukryte perełki i autentyczne doświadczenia</p>
+                
+                <div class="timeline">
+                    <div class="activity-card" data-activity="day2-1">
+                        <div class="activity-header">
+                            <div class="activity-icon meal">☕</div>
+                            <div class="activity-main">
+                                <div class="activity-time">08:00-09:00</div>
+                                <h3 class="activity-name">Śniadanie</h3>
+                                <span class="activity-location" onclick="copyToClipboard('To Koulouri tou Psiri (Karaiskaki 23)')">📍 To Koulouri tou Psiri (Karaiskaki 23)</span>
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <p class="activity-description">Najsłynniejsze koulouri (bułeczki sezamowe) w mieście. Od lat 60-tych, rodzinny biznes.</p>
+                            <div class="activity-checkbox" onclick="toggleActivity('day2-1')">
+                                <input type="checkbox" id="check-day2-1">
+                                <label for="check-day2-1">Oznacz jako ukończone</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-card" data-activity="day2-2">
+                        <div class="activity-header">
+                            <div class="activity-icon culture">🏛️</div>
+                            <div class="activity-main">
+                                <div class="activity-time">09:00-12:00</div>
+                                <h3 class="activity-name">Narodowe Muzeum Archeologiczne</h3>
+                                <span class="activity-location" onclick="copyToClipboard('Narodowe Muzeum Archeologiczne')">📍 Narodowe Muzeum Archeologiczne</span>
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <p class="activity-description">Największe muzeum archeologiczne Grecji. Must-see: Złota Maska Agamemnona, Posejdon z Artemision, Mechanizm z Antykithery. Ponad 11,000 eksponatów.</p>
+                            <div class="activity-info">
+                                <span class="info-item">🕐 09:00-16:00</span>
+                                <span class="info-item">🎫 €12</span>
+                            </div>
+                            <div class="activity-checkbox" onclick="toggleActivity('day2-2')">
+                                <input type="checkbox" id="check-day2-2">
+                                <label for="check-day2-2">Oznacz jako ukończone</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-card" data-activity="day2-3">
+                        <div class="activity-header">
+                            <div class="activity-icon meal">🍽️</div>
+                            <div class="activity-main">
+                                <div class="activity-time">12:30-14:00</div>
+                                <h3 class="activity-name">Lunch</h3>
+                                <span class="activity-location" onclick="copyToClipboard('Diporto (ukryta podziemna tawerna)')">📍 Diporto (ukryta podziemna tawerna)</span>
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <p class="activity-description">Autentyczna podziemna tawerna dostępna przez proste brązowe drzwi. Lokalna atmosfera, domowe jedzenie, brak menu - pytaj co mają tego dnia.</p>
+                            <div class="activity-checkbox" onclick="toggleActivity('day2-3')">
+                                <input type="checkbox" id="check-day2-3">
+                                <label for="check-day2-3">Oznacz jako ukończone</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-card" data-activity="day2-4">
+                        <div class="activity-header">
+                            <div class="activity-icon culture">🎨</div>
+                            <div class="activity-main">
+                                <div class="activity-time">14:00-16:00</div>
+                                <h3 class="activity-name">Muzeum Sztuki Cykladyjskiej</h3>
+                                <span class="activity-location" onclick="copyToClipboard('Goulandris Museum of Cycladic Art')">📍 Goulandris Museum of Cycladic Art</span>
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <p class="activity-description">Ukryty klejnot - artefakty cywilizacji cykladyjskiej: posągi, ceramika, figurki. Inspiracja dla Picassa.</p>
+                            <div class="activity-checkbox" onclick="toggleActivity('day2-4')">
+                                <input type="checkbox" id="check-day2-4">
+                                <label for="check-day2-4">Oznacz jako ukończone</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-card" data-activity="day2-5">
+                        <div class="activity-header">
+                            <div class="activity-icon meal">☕</div>
+                            <div class="activity-main">
+                                <div class="activity-time">16:00-17:00</div>
+                                <h3 class="activity-name">Kawa i ciastko</h3>
+                                <span class="activity-location" onclick="copyToClipboard('Philos (Solonos 32, Kolonaki) lub TAF Coffee')">📍 Philos (Solonos 32, Kolonaki) lub TAF Coffee</span>
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <p class="activity-description">Philos: elegancka kawiarnia z espresso. TAF: galeria+kawiarnia, autentyczne parzenie kawy.</p>
+                            <div class="activity-checkbox" onclick="toggleActivity('day2-5')">
+                                <input type="checkbox" id="check-day2-5">
+                                <label for="check-day2-5">Oznacz jako ukończone</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-card" data-activity="day2-6">
+                        <div class="activity-header">
+                            <div class="activity-icon walking">⛰️</div>
+                            <div class="activity-main">
+                                <div class="activity-time">17:00-19:00</div>
+                                <h3 class="activity-name">Wzgórze Lycabettus</h3>
+                                <span class="activity-location" onclick="copyToClipboard('Lycabettus Hill')">📍 Lycabettus Hill</span>
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <p class="activity-description">Najwyższy punkt Aten (277m). Niesamowite 360° widoki na miasto, Akropol i Morze Egejskie. Kolejka linowa lub spacer. Najlepiej na zachód słońca.</p>
+                            <div class="activity-info">
+                                <span class="info-item">🎫 €10 kolejka powrotnie</span>
+                                <span class="info-item">🕐 09:00-01:30</span>
+                            </div>
+                            <div class="activity-checkbox" onclick="toggleActivity('day2-6')">
+                                <input type="checkbox" id="check-day2-6">
+                                <label for="check-day2-6">Oznacz jako ukończone</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-card" data-activity="day2-7">
+                        <div class="activity-header">
+                            <div class="activity-icon nightlife">🌃</div>
+                            <div class="activity-main">
+                                <div class="activity-time">19:30-22:00</div>
+                                <h3 class="activity-name">Kolacja i wieczór</h3>
+                                <span class="activity-location" onclick="copyToClipboard('Psyrri (dzielnica)')">📍 Psyrri (dzielnica)</span>
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <p class="activity-description">Modna dzielnica ze street artem, tawerny z żywą muzyką, bary. Liosporos Bistro (jazz café), Cantina Social (ukryty bar).</p>
+                            <div class="activity-checkbox" onclick="toggleActivity('day2-7')">
+                                <input type="checkbox" id="check-day2-7">
+                                <label for="check-day2-7">Oznacz jako ukończone</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Day 3 -->
+            <section id="day3" class="section">
+                <h2 class="section-title">🛍️ Dzień 3: Targowiska, zabytki rzymskie i zakupy</h2>
+                <p class="section-subtitle">Połączenie kultury z lokalnym życiem</p>
+                
+                <div class="timeline">
+                    <div class="activity-card" data-activity="day3-1">
+                        <div class="activity-header">
+                            <div class="activity-icon meal">🍩</div>
+                            <div class="activity-main">
+                                <div class="activity-time">08:30-10:00</div>
+                                <h3 class="activity-name">Śniadanie</h3>
+                                <span class="activity-location" onclick="copyToClipboard('Krinos Loukoumades (Aiolou 87)')">📍 Krinos Loukoumades (Aiolou 87)</span>
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <p class="activity-description">Od 1922 roku. Świeże loukoumades (greckie pączki z miodem), gorąca czekolada, bougatsa.</p>
+                            <div class="activity-checkbox" onclick="toggleActivity('day3-1')">
+                                <input type="checkbox" id="check-day3-1">
+                                <label for="check-day3-1">Oznacz jako ukończone</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-card" data-activity="day3-2">
+                        <div class="activity-header">
+                            <div class="activity-icon shopping">🛍️</div>
+                            <div class="activity-main">
+                                <div class="activity-time">10:00-13:00</div>
+                                <h3 class="activity-name">Monastiraki Flea Market</h3>
+                                <span class="activity-location" onclick="copyToClipboard('Monastiraki')">📍 Monastiraki</span>
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <p class="activity-description">Słynny targ staroci (najlepszy w niedziele 9:00-16:00). Antyki, rękodzieło, skórzane sandały, ceramika, biżuteria, przyprawy. Targuj się!</p>
+                            <div class="activity-info">
+                                <span class="info-item">🕐 9:00-19:00 (niedziela najlepiej)</span>
+                            </div>
+                            <div class="activity-checkbox" onclick="toggleActivity('day3-2')">
+                                <input type="checkbox" id="check-day3-2">
+                                <label for="check-day3-2">Oznacz jako ukończone</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-card" data-activity="day3-3">
+                        <div class="activity-header">
+                            <div class="activity-icon meal">🥙</div>
+                            <div class="activity-main">
+                                <div class="activity-time">13:00-13:30</div>
+                                <h3 class="activity-name">Street food</h3>
+                                <span class="activity-location" onclick="copyToClipboard('O Thanasis (Mitropoleos 69)')">📍 O Thanasis (Mitropoleos 69)</span>
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <p class="activity-description">Najlepsze souvlaki w Atenach. Kebab z specjalnym sosem.</p>
+                            <div class="activity-checkbox" onclick="toggleActivity('day3-3')">
+                                <input type="checkbox" id="check-day3-3">
+                                <label for="check-day3-3">Oznacz jako ukończone</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-card" data-activity="day3-4">
+                        <div class="activity-header">
+                            <div class="activity-icon culture">🏛️</div>
+                            <div class="activity-main">
+                                <div class="activity-time">13:30-15:00</div>
+                                <h3 class="activity-name">Świątynia Zeusa Olimpijskiego</h3>
+                                <span class="activity-location" onclick="copyToClipboard('Temple of Olympian Zeus')">📍 Temple of Olympian Zeus</span>
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <p class="activity-description">Największa świątynia starożytnej Grecji. Budowana 638 lat! Pierwotnie 104 kolumny (17m wysokości), zachowało się 16. Obok: Łuk Hadriana.</p>
+                            <div class="activity-info">
+                                <span class="info-item">🎫 €8</span>
+                            </div>
+                            <div class="activity-checkbox" onclick="toggleActivity('day3-4')">
+                                <input type="checkbox" id="check-day3-4">
+                                <label for="check-day3-4">Oznacz jako ukończone</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-card" data-activity="day3-5">
+                        <div class="activity-header">
+                            <div class="activity-icon culture">🏟️</div>
+                            <div class="activity-main">
+                                <div class="activity-time">15:00-16:30</div>
+                                <h3 class="activity-name">Stadion Panatenajski</h3>
+                                <span class="activity-location" onclick="copyToClipboard('Panathenaic Stadium (Kallimarmaro)')">📍 Panathenaic Stadium (Kallimarmaro)</span>
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <p class="activity-description">Jedyny stadion na świecie z marmuru! Miejsce pierwszych nowoczesnych Igrzysk Olimpijskich (1896). Pomieści 50,000 widzów.</p>
+                            <div class="activity-info">
+                                <span class="info-item">🎫 €10</span>
+                            </div>
+                            <div class="activity-checkbox" onclick="toggleActivity('day3-5')">
+                                <input type="checkbox" id="check-day3-5">
+                                <label for="check-day3-5">Oznacz jako ukończone</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-card" data-activity="day3-6">
+                        <div class="activity-header">
+                            <div class="activity-icon culture">💂</div>
+                            <div class="activity-main">
+                                <div class="activity-time">16:30-18:00</div>
+                                <h3 class="activity-name">Plac Syntagma i Zmiana Warty</h3>
+                                <span class="activity-location" onclick="copyToClipboard('Syntagma Square')">📍 Syntagma Square</span>
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <p class="activity-description">Główny plac Aten. Grób Nieznanego Żołnierza z warciarzami Evzones. Zmiana warty: co godzinę, ceremonia w niedziele 11:00.</p>
+                            <div class="activity-checkbox" onclick="toggleActivity('day3-6')">
+                                <input type="checkbox" id="check-day3-6">
+                                <label for="check-day3-6">Oznacz jako ukończone</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-card" data-activity="day3-7">
+                        <div class="activity-header">
+                            <div class="activity-icon shopping">🛍️</div>
+                            <div class="activity-main">
+                                <div class="activity-time">18:00-19:00</div>
+                                <h3 class="activity-name">Zakupy i ciastko</h3>
+                                <span class="activity-location" onclick="copyToClipboard('Ermou Street + Ourse Patisserie')">📍 Ermou Street + Ourse Patisserie</span>
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <p class="activity-description">Ermou: główna ulica handlowa. Ourse: francuskie desery z greckim akcentem. Próbuj: St. Honoré, Paris-Aegina.</p>
+                            <div class="activity-checkbox" onclick="toggleActivity('day3-7')">
+                                <input type="checkbox" id="check-day3-7">
+                                <label for="check-day3-7">Oznacz jako ukończone</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-card" data-activity="day3-8">
+                        <div class="activity-header">
+                            <div class="activity-icon meal">🍷</div>
+                            <div class="activity-main">
+                                <div class="activity-time">19:30-22:00</div>
+                                <h3 class="activity-name">Pożegnalna kolacja</h3>
+                                <span class="activity-location" onclick="copyToClipboard('Art Lounge Rooftop (New Hotel)')">📍 Art Lounge Rooftop (New Hotel)</span>
+                            </div>
+                        </div>
+                        <div class="activity-details">
+                            <p class="activity-description">Kolacja na dachu z widokiem na Akropol, kreatywne dania, koktajle.</p>
+                            <div class="activity-checkbox" onclick="toggleActivity('day3-8')">
+                                <input type="checkbox" id="check-day3-8">
+                                <label for="check-day3-8">Oznacz jako ukończone</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Restaurants Section -->
+            <section id="restaurants" class="section">
+                <h2 class="section-title">🍽️ Restauracje i Kawiarnie</h2>
+                <p class="section-subtitle">Najlepsze miejsca na jedzenie w Atenach</p>
+                
+                <div class="search-container">
+                    <input type="text" class="search-input" id="restaurantSearch" placeholder="Szukaj restauracji...">
+                </div>
+
+                <div class="restaurant-categories">
+                    <div class="category-section">
+                        <h3 class="category-title">☕ Śniadania i Kawiarnie</h3>
+                        <div class="restaurant-grid" data-category="breakfast">
+                            <div class="restaurant-card">
+                                <div class="restaurant-name">Attica Bakeries</div>
+                                <div class="restaurant-address" onclick="copyToClipboard('Ermou 55')">Ermou 55</div>
+                            </div>
+                            <div class="restaurant-card">
+                                <div class="restaurant-name">To Koulouri tou Psiri</div>
+                                <div class="restaurant-address" onclick="copyToClipboard('Karaiskaki 23')">Karaiskaki 23</div>
+                            </div>
+                            <div class="restaurant-card">
+                                <div class="restaurant-name">Krinos Loukoumades</div>
+                                <div class="restaurant-address" onclick="copyToClipboard('Aiolou 87')">Aiolou 87</div>
+                            </div>
+                            <div class="restaurant-card">
+                                <div class="restaurant-name">Paul Boulangerie</div>
+                                <div class="restaurant-address" onclick="copyToClipboard('Panepistimiou 10')">Panepistimiou 10</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="category-section">
+                        <h3 class="category-title">☕ Kawiarnie na Kawę</h3>
+                        <div class="restaurant-grid" data-category="coffee">
+                            <div class="restaurant-card">
+                                <div class="restaurant-name">TAF Coffee</div>
+                                <div class="restaurant-address" onclick="copyToClipboard('Emmanouil Benaki 7, Psiri')">Emmanouil Benaki 7, Psiri</div>
+                            </div>
+                            <div class="restaurant-card">
+                                <div class="restaurant-name">Philos</div>
+                                <div class="restaurant-address" onclick="copyToClipboard('Solonos 32, Kolonaki')">Solonos 32, Kolonaki</div>
+                            </div>
+                            <div class="restaurant-card">
+                                <div class="restaurant-name">Mokka Specialty Coffee</div>
+                                <div class="restaurant-address" onclick="copyToClipboard('Athinas 44')">Athinas 44</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="category-section">
+                        <h3 class="category-title">🏺 Tradycyjne Tawerny</h3>
+                        <div class="restaurant-grid" data-category="tavernas">
+                            <div class="restaurant-card">
+                                <div class="restaurant-name">Taverna Saita</div>
+                                <div class="restaurant-address" onclick="copyToClipboard('Kidathineon 21, Plaka')">Kidathineon 21, Plaka</div>
+                            </div>
+                            <div class="restaurant-card">
+                                <div class="restaurant-name">Efcharis Restaurant</div>
+                                <div class="restaurant-address" onclick="copyToClipboard('Monastiraki')">Monastiraki</div>
+                            </div>
+                            <div class="restaurant-card">
+                                <div class="restaurant-name">Diporto</div>
+                                <div class="restaurant-address" onclick="copyToClipboard('Podziemna tawerna - szukaj brązowych drzwi')">Podziemna tawerna - szukaj brązowych drzwi</div>
+                            </div>
+                            <div class="restaurant-card">
+                                <div class="restaurant-name">Geros tou Moria</div>
+                                <div class="restaurant-address" onclick="copyToClipboard('Plaka')">Plaka</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="category-section">
+                        <h3 class="category-title">🌟 Nowoczesne Restauracje</h3>
+                        <div class="restaurant-grid" data-category="modern">
+                            <div class="restaurant-card">
+                                <div class="restaurant-name">Art Lounge Rooftop</div>
+                                <div class="restaurant-address" onclick="copyToClipboard('New Hotel')">New Hotel</div>
+                            </div>
+                            <div class="restaurant-card">
+                                <div class="restaurant-name">Grande Dame</div>
+                                <div class="restaurant-address" onclick="copyToClipboard('Plaka')">Plaka</div>
+                            </div>
+                            <div class="restaurant-card">
+                                <div class="restaurant-name">Ella Greek Cooking</div>
+                                <div class="restaurant-address" onclick="copyToClipboard('Plaka')">Plaka</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="category-section">
+                        <h3 class="category-title">🥙 Street Food</h3>
+                        <div class="restaurant-grid" data-category="street_food">
+                            <div class="restaurant-card">
+                                <div class="restaurant-name">O Thanasis</div>
+                                <div class="restaurant-address" onclick="copyToClipboard('Mitropoleos 69')">Mitropoleos 69</div>
+                            </div>
+                            <div class="restaurant-card">
+                                <div class="restaurant-name">Kostas Souvlaki</div>
+                                <div class="restaurant-address" onclick="copyToClipboard('Syntagma')">Syntagma</div>
+                            </div>
+                            <div class="restaurant-card">
+                                <div class="restaurant-name">Meat the Greek</div>
+                                <div class="restaurant-address" onclick="copyToClipboard('Plaka')">Plaka</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="category-section">
+                        <h3 class="category-title">🧁 Ciastkarnie i Desery</h3>
+                        <div class="restaurant-grid" data-category="pastries">
+                            <div class="restaurant-card">
+                                <div class="restaurant-name">Ourse Patisserie</div>
+                                <div class="restaurant-address" onclick="copyToClipboard('Glyfada')">Glyfada</div>
+                            </div>
+                            <div class="restaurant-card">
+                                <div class="restaurant-name">Krinos Loukoumades</div>
+                                <div class="restaurant-address" onclick="copyToClipboard('Aiolou 87')">Aiolou 87</div>
+                            </div>
+                            <div class="restaurant-card">
+                                <div class="restaurant-name">Madame Fraise</div>
+                                <div class="restaurant-address" onclick="copyToClipboard('Athens')">Athens</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Hidden Gems Section -->
+            <section id="gems" class="section">
+                <h2 class="section-title">💎 Ukryte Perełki</h2>
+                <p class="section-subtitle">Miejsca znane tylko tubylcom</p>
+                
+                <div class="gems-grid">
+                    <div class="gem-card">
+                        <div class="gem-icon">🏘️</div>
+                        <h3 class="gem-name">Anafiotika</h3>
+                        <p class="gem-description">Wioska w stylu cykladyjskim pod Akropolem - białe domy, niebieskie okiennice. Poczuj się jak na greckich wyspach bez opuszczania Aten!</p>
+                    </div>
+                    <div class="gem-card">
+                        <div class="gem-icon">🌬️</div>
+                        <h3 class="gem-name">Tower of the Winds</h3>
+                        <p class="gem-description">Starożytna stacja meteorologiczna z VIII w. p.n.e. Oktagonalna wieża z płaskorzeźbami wiatrów - fascynujące połączenie nauki i sztuki.</p>
+                    </div>
+                    <div class="gem-card">
+                        <div class="gem-icon">🚪</div>
+                        <h3 class="gem-name">Diporto</h3>
+                        <p class="gem-description">Ukryta podziemna tawerna przez proste brązowe drzwi. Bez menu, bez turystów - tylko autentyczne greckie jedzenie i lokalna atmosfera.</p>
+                    </div>
+                    <div class="gem-card">
+                        <div class="gem-icon">🎨</div>
+                        <h3 class="gem-name">Psyrri Street Art</h3>
+                        <p class="gem-description">Dzielnica pełna murali - Sarri Street, Louka Nika. Spaceruj i odkrywaj kolorowe graffiti od najlepszych greckich artystów.</p>
+                    </div>
+                    <div class="gem-card">
+                        <div class="gem-icon">🗿</div>
+                        <h3 class="gem-name">Goulandris Museum</h3>
+                        <p class="gem-description">Muzeum sztuki cykladyjskiej inspirujące Picassa. Minimalistyczne posągi sprzed 5000 lat - piękno w prostocie.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Practical Tips Section -->
+            <section id="tips" class="section">
+                <h2 class="section-title">💡 Praktyczne Wskazówki</h2>
+                <p class="section-subtitle">Wszystko, co musisz wiedzieć przed wyjazdem</p>
+                
+                <div class="tips-grid">
+                    <div class="tip-card">
+                        <div class="tip-header">
+                            <div class="tip-icon">🌤️</div>
+                            <h3 class="tip-title">Pogoda i Co Spakować</h3>
+                        </div>
+                        <div class="tip-content">
+                            <p><strong>Luty w Atenach:</strong> 12-15°C w dzień, 4-7°C w nocy. Możliwe deszcze.</p>
+                            <p><strong>Pakuj:</strong> Ciepłą kurtkę, szalik, przeciwdeszczową kurtkę, ubrania warstwowe, wygodne buty do chodzenia, parasol.</p>
+                        </div>
+                    </div>
+
+                    <div class="tip-card">
+                        <div class="tip-header">
+                            <div class="tip-icon">🚇</div>
+                            <h3 class="tip-title">Transport</h3>
+                        </div>
+                        <div class="tip-content">
+                            <p><strong>Metro:</strong> Czyste, szybkie, bezpieczne. Linia 3 z lotniska do centrum.</p>
+                            <p><strong>Bilet dzienny:</strong> €4.50 - nielimitowane przejazdy metro, autobusy, tramwaje.</p>
+                            <p><strong>Spacery:</strong> Większość atrakcji w centrum można zwiedzić pieszo.</p>
+                        </div>
+                    </div>
+
+                    <div class="tip-card">
+                        <div class="tip-header">
+                            <div class="tip-icon">🎫</div>
+                            <h3 class="tip-title">Bilety i Ceny</h3>
+                        </div>
+                        <div class="tip-content">
+                            <p><strong>Bilet kombinowany:</strong> €30 (ważny 5 dni)</p>
+                            <p>Obejmuje: Akropol, Starożytną Agorę, Świątynię Zeusa, Bibliotekę Hadriana, Kerameikos, Agorę Rzymską.</p>
+                            <p><strong>Oszczędność:</strong> Kupując osobno zapłacisz €60+. To must-have!</p>
+                        </div>
+                    </div>
+
+                    <div class="tip-card">
+                        <div class="tip-header">
+                            <div class="tip-icon">💰</div>
+                            <h3 class="tip-title">Targowanie się</h3>
+                        </div>
+                        <div class="tip-content">
+                            <p><strong>Monastiraki Flea Market:</strong> Targuj się! Szczególnie przy antykach, biżuterii, ubraniach.</p>
+                            <p><strong>Taktyka:</strong> Zacznij od 50-60% ceny początkowej. Uśmiechaj się i bądź przyjazny.</p>
+                            <p><strong>Nie targuj się:</strong> W restauracjach, kawiarniach, sklepach z ustalonymi cenami.</p>
+                        </div>
+                    </div>
+
+                    <div class="tip-card">
+                        <div class="tip-header">
+                            <div class="tip-icon">🗣️</div>
+                            <h3 class="tip-title">Język i Podstawowe Zwroty</h3>
+                        </div>
+                        <div class="tip-content">
+                            <p><strong>Kalimera</strong> (ka-lee-MEH-rah) - Dzień dobry</p>
+                            <p><strong>Efharisto</strong> (ef-ha-ree-STOH) - Dziękuję</p>
+                            <p><strong>Parakalo</strong> (pa-ra-ka-LOH) - Proszę / Nie ma za co</p>
+                            <p><strong>Yamas!</strong> (YA-mas) - Na zdrowie!</p>
+                            <p>Większość Greków w turystycznych miejscach mówi po angielsku.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Accommodation Section -->
+            <section id="accommodation" class="section">
+                <h2 class="section-title">🏨 Noclegi</h2>
+                <p class="section-subtitle">Gdzie się zatrzymać w Atenach dla 6 osób</p>
+                
+                <div class="accommodation-info">
+                    <h3>🌟 Polecane Dzielnice</h3>
+                    <p><strong>Plaka:</strong> Najstarsza dzielnica, u stóp Akropolu. Malownicze uliczki, tawerny, blisko wszystkich atrakcji. Może być głośno wieczorami.</p>
+                    <p><strong>Koukaki:</strong> Spokojna, lokalna dzielnica tuż pod Akropolem. Doskonałe restauracje, świetne połączenie z metro, bezpieczna. NAJLEPSZA OPCJA dla grup!</p>
+                    <p><strong>Syntagma:</strong> Centrum handlowe Aten. Blisko do metro, sklepów, restauracji. Idealne dla pierwszej wizyty.</p>
+                    <p><strong>Monastiraki:</strong> Tętniąca życiem dzielnica z targiem, nocnym życiem. Może być hałaśliwa.</p>
+
+                    <h3>💰 Budżet i Typ Zakwaterowania</h3>
+                    <p><strong>Cena:</strong> €150-250/noc za 6 osób (€25-42 na osobę/noc)</p>
+                    <p><strong>Typ:</strong> Szukaj apartamentów 2-3 sypialne z kuchnią. Airbnb lub Booking.com.</p>
+                    <p><strong>Słowa kluczowe na Booking.com:</strong> "apartment 6 people Koukaki", "family apartment Plaka Athens", "3 bedroom Athens center"</p>
+
+                    <h3>✅ Na Co Zwracać Uwagę</h3>
+                    <p>✓ Klimatyzacja/Ogrzewanie (luty może być chłodny)<br>
+                    ✓ Wi-Fi<br>
+                    ✓ Bliskość stacji metra (Akropoli, Syntagma, Monastiraki)<br>
+                    ✓ Oceny 8.5+ na Booking.com<br>
+                    ✓ Winda (wiele budynków nie ma!)<br>
+                    ✓ Bezpłatna anulacja (elastyczność)</p>
+
+                    <h3>🔗 Jak Szukać</h3>
+                    <p>1. Wejdź na <strong>Booking.com</strong><br>
+                    2. Wpisz: "Athens, Greece"<br>
+                    3. Daty: 19.02.2026 - 22.02.2026<br>
+                    4. Goście: 6 dorosłych<br>
+                    5. Filtry: Typ → Apartamenty, Dzielnica → Koukaki lub Plaka, Ocena → 8.5+</p>
+                </div>
+            </section>
+        </main>
+
+        <!-- Utility Buttons -->
+        <div class="utility-bar">
+            <button class="utility-btn" onclick="window.print()" title="Drukuj">
+                🖨️
+            </button>
+            <button class="utility-btn" onclick="shareItinerary()" title="Udostępnij">
+                📤
+            </button>
+            <button class="utility-btn" onclick="scrollToTop()" title="Do góry">
+                ⬆️
+            </button>
+        </div>
+
+        <!-- Toast Notification -->
+        <div class="toast" id="toast"></div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>⚠️ Pamiętaj o sprawdzeniu godzin otwarcia i cen przed wizytą - mogą ulec zmianie.</p>
+            <p class="footer-credit">✨ Stworzono dla niezapomnianej przygody w Atenach ✨</p>
+        </footer>
+    </div>
+
+    <script>
+        // State management with JavaScript objects (no localStorage due to sandbox)
+        const appState = {
+            completedActivities: new Set(),
+            currentSection: 'day1'
+        };
+
+        // Navigation
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const section = btn.dataset.section;
+                showSection(section);
+                
+                // Update active button
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            appState.currentSection = sectionId;
+            scrollToTop();
+        }
+
+        // Copy to clipboard
+        function copyToClipboard(text) {
+            // Create temporary textarea
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                showToast('📋 Skopiowano: ' + text);
+            } catch (err) {
+                showToast('❌ Nie udało się skopiować');
+            }
+            
+            document.body.removeChild(textarea);
+        }
+
+        // Toggle activity completion
+        function toggleActivity(activityId) {
+            const checkbox = document.getElementById('check-' + activityId);
+            const card = document.querySelector(`[data-activity="${activityId}"]`);
+            const checkboxContainer = card.querySelector('.activity-checkbox');
+            
+            if (appState.completedActivities.has(activityId)) {
+                appState.completedActivities.delete(activityId);
+                checkbox.checked = false;
+                checkboxContainer.classList.remove('completed');
+            } else {
+                appState.completedActivities.add(activityId);
+                checkbox.checked = true;
+                checkboxContainer.classList.add('completed');
+                showToast('✅ Ukończono!');
+            }
+        }
+
+        // Toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Share itinerary
+        function shareItinerary() {
+            const summary = `🏛️ Atheny 2026 - 3-Dniowa Przygoda\n19-22 lutego 2026 | 6 osób\n\nDzień 1: Akropol i Antyczne Ateny\nDzień 2: Lokalne klejnoty i współczesne Ateny\nDzień 3: Targowiska, zabytki rzymskie i zakupy\n\n20+ atrakcji | 15+ restauracji | 5 ukrytych perełek\n\nTwój kompletny przewodnik po Atenach!`;
+            
+            copyToClipboard(summary);
+        }
+
+        // Scroll to top
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Restaurant search
+        const restaurantSearch = document.getElementById('restaurantSearch');
+        if (restaurantSearch) {
+            restaurantSearch.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const restaurantCards = document.querySelectorAll('.restaurant-card');
+                
+                restaurantCards.forEach(card => {
+                    const name = card.querySelector('.restaurant-name').textContent.toLowerCase();
+                    const address = card.querySelector('.restaurant-address').textContent.toLowerCase();
+                    
+                    if (name.includes(searchTerm) || address.includes(searchTerm)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        // Initialize checkboxes on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set up checkbox event listeners
+            document.querySelectorAll('.activity-checkbox input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+            });
+        });
+    </script>
+</body>
+</html>

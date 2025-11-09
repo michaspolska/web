@@ -1,0 +1,247 @@
+{
+  "trip_details": {
+    "dates": "19-22 lutego 2026",
+    "duration": "3 dni",
+    "group_size": "6 osób",
+    "neighborhoods_recommended": [
+      "Plaka",
+      "Koukaki",
+      "Monastiraki",
+      "Syntagma"
+    ]
+  },
+  "day1": {
+    "title": "Dzień 1: Akropol i Antyczne Ateny",
+    "theme": "Najważniejsze zabytki starożytne",
+    "schedule": [
+      {
+        "time": "08:00",
+        "activity": "Śniadanie i kawa",
+        "location": "Attica Bakeries (Ermou 55)",
+        "description": "Świeże pieczywo i grecka kawa na początek dnia"
+      },
+      {
+        "time": "08:30-12:00",
+        "activity": "Akropol i Partenon",
+        "location": "Akropol",
+        "description": "Najważniejsza atrakcja Aten. Zbudowany w V w. p.n.e., symbol starożytnej Grecji. Zawiera Partenon (świątynia Ateny), Erechtejon z kariatydami, świątynię Ateny Nike. Przyjedź wcześnie, aby uniknąć tłumów. Zabierz wodę i kapelusz.",
+        "ticket_info": "€30 (zima €15, luty=zima)",
+        "opening_hours": "08:00-18:00"
+      },
+      {
+        "time": "12:30-14:00",
+        "activity": "Muzeum Akropolu",
+        "location": "Muzeum Akropolu",
+        "description": "Jedno z najlepszych muzeów archeologicznych świata. Zawiera oryginalne rzeźby z Akropolu, fryz Partenonu, karyatydy. Nowoczesna architektura z widokiem na Akropol.",
+        "opening_hours": "09:00-20:00"
+      },
+      {
+        "time": "14:00-15:30",
+        "activity": "Lunch",
+        "location": "Taverna Saita (Kidathineon 21, Plaka)",
+        "description": "Tradycyjna tawerna rodzinna od 1970 roku. Próbuj: gołąbki z ryżem, smażone cukinie, dorsz z skordalia (czosnek-ziemniaki)."
+      },
+      {
+        "time": "15:30-17:00",
+        "activity": "Anafiotika - ukryta wioska",
+        "location": "Anafiotika",
+        "description": "Malownicza dzielnica u podnóża Akropolu z białymi domami w stylu cykladyjskim, niebieskimi okiennicami i kwiatami. Przypomina greckie wyspy. Idealne na spacer i zdjęcia."
+      },
+      {
+        "time": "17:00-18:30",
+        "activity": "Starożytna Agora",
+        "location": "Starożytna Agora Ateńska",
+        "description": "Serce starożytnych Aten - centrum polityczne, handlowe i społeczne. Świątynia Hefajstosa (najlepiej zachowana świątynia grecka), Stoa Attalosa. Tu filozofowali Sokrates i Platon.",
+        "ticket_info": "Wliczone w bilet kombinowany"
+      },
+      {
+        "time": "19:00-21:00",
+        "activity": "Kolacja",
+        "location": "Efcharis Restaurant (Monastiraki)",
+        "description": "Tradycyjne greckie jedzenie w przystępnych cenach. Próbuj: musaka, souvlaki, grecka sałatka."
+      }
+    ]
+  },
+  "day2": {
+    "title": "Dzień 2: Lokalne klejnoty i współczesne Ateny",
+    "theme": "Ukryte perełki i autentyczne doświadczenia",
+    "schedule": [
+      {
+        "time": "08:00-09:00",
+        "activity": "Śniadanie",
+        "location": "To Koulouri tou Psiri (Georg. Karaiskaki 23)",
+        "description": "Najsłynniejsze koulouri (bułeczki sezamowe) w mieście. Od lat 60-tych, rodzinny biznes."
+      },
+      {
+        "time": "09:00-12:00",
+        "activity": "Narodowe Muzeum Archeologiczne",
+        "location": "Narodowe Muzeum Archeologiczne",
+        "description": "Największe muzeum archeologiczne Grecji. Must-see: Złota Maska Agamemnona, Posejdon z Artemision, Jeździec z Artemision, Mechanizm z Antykithery. Ponad 11,000 eksponatów od neolitu po rzymskie czasy.",
+        "opening_hours": "09:00-16:00",
+        "ticket_info": "€12"
+      },
+      {
+        "time": "12:30-14:00",
+        "activity": "Lunch",
+        "location": "Diporto (ukryta podziemna tawerna)",
+        "description": "Autentyczna podziemna tawerna dostępna przez proste brązowe drzwi. Lokalna atmosfera, domowe jedzenie, brak menu - pytaj co mają tego dnia."
+      },
+      {
+        "time": "14:00-16:00",
+        "activity": "Muzeum Sztuki Cykladyjskiej",
+        "location": "Goulandris Museum of Cycladic Art",
+        "description": "Ukryty klejnot - prywatne muzeum z artefaktami cywilizacji cykladyjskiej: posągi, ceramika, figurki. Inspiracja dla Picassa. 4,500 eksponatów."
+      },
+      {
+        "time": "16:00-17:00",
+        "activity": "Kawa i ciastko",
+        "location": "Philos (Solonos 32, Kolonaki) lub TAF Coffee (Emmanouil Benaki 7, Psiri)",
+        "description": "Philos: elegancka kawiarnia w Kolonaki z espresso i śródziemnomorskim śniadaniem. TAF: galeria+kawiarnia w Psiri, autentyczne parzenie kawy."
+      },
+      {
+        "time": "17:00-19:00",
+        "activity": "Wzgórze Lycabettus",
+        "location": "Lycabettus Hill",
+        "description": "Najwyższy punkt Aten (277m). Niesamowite 360° widoki na miasto, Akropol i Morze Egejskie. Kolejka linowa lub spacer pieszo. Najlepiej na zachód słońca.",
+        "cable_car": "€10 powrotnie, działa 09:00-01:30"
+      },
+      {
+        "time": "19:30-22:00",
+        "activity": "Kolacja i wieczór",
+        "location": "Psyrri (dzielnica)",
+        "description": "Modna dzielnica ze street artem, tawerny z żywą muzyką, bary. Liosporos Bistro (jazz café-ouzeri), Cantina Social (ukryty bar). Autentyczna atmosfera lokalna."
+      }
+    ]
+  },
+  "day3": {
+    "title": "Dzień 3: Targowiska, zabytki rzymskie i zakupy",
+    "theme": "Połączenie kultury z lokalnym życiem",
+    "schedule": [
+      {
+        "time": "08:30-10:00",
+        "activity": "Śniadanie",
+        "location": "Krinos Loukoumades (Aiolou 87)",
+        "description": "Od 1922 roku. Świeże loukoumades (greckie pączki z miodem), gorąca czekolada, bougatsa."
+      },
+      {
+        "time": "10:00-13:00",
+        "activity": "Monastiraki Flea Market",
+        "location": "Monastiraki",
+        "description": "Słynny targ staroci (najlepszy w niedziele 9:00-16:00). Antyki, rękodzieło, skórzane sandały, ceramika, biżuteria, przyprawy, oliwa. Targuj się! Okoliczne sklepy czynne codziennie 9:00-19:00.",
+        "best_day": "Niedziela"
+      },
+      {
+        "time": "13:00-13:30",
+        "activity": "Street food",
+        "location": "O Thanasis (Mitropoleos 69) lub Kostas Souvlaki",
+        "description": "Najlepsze souvlaki w Atenach. O Thanasis: kebab z specjalnym sosem. Kostas: legendarny od lat, klasyczny souvlaki wieprzowy."
+      },
+      {
+        "time": "13:30-15:00",
+        "activity": "Świątynia Zeusa Olimpijskiego i Łuk Hadriana",
+        "location": "Temple of Olympian Zeus",
+        "description": "Największa świątynia starożytnej Grecji. Budowana 638 lat (VI w. p.n.e. - II w. n.e.)! Pierwotnie 104 kolumny z marmuru (17m wysokości), zachowało się 16. Ukończona przez cesarza Hadriana. Obok: Łuk Hadriana (granica między starożytnymi a rzymskimi Atenami).",
+        "ticket_info": "€8"
+      },
+      {
+        "time": "15:00-16:30",
+        "activity": "Stadion Panatenajski (Kallimarmaro)",
+        "location": "Panathenaic Stadium",
+        "description": "Jedyny stadion na świecie zbudowany całkowicie z marmuru pentelickiego! Miejsce pierwszych nowoczesnych Igrzysk Olimpijskich (1896). Zbudowany IV w. p.n.e., przebudowany przez Heroda Attyka w II w. n.e. Pomieści 50,000 widzów.",
+        "ticket_info": "€10"
+      },
+      {
+        "time": "16:30-18:00",
+        "activity": "Plac Syntagma i Zmiana Warty",
+        "location": "Syntagma Square",
+        "description": "Główny plac Aten. Grób Nieznanego Żołnierza z warciarzami Evzones w tradycyjnych strojach. Zmiana warty: co godzinę, ceremonia w niedziele 11:00."
+      },
+      {
+        "time": "18:00-19:00",
+        "activity": "Zakupy i ciastko",
+        "location": "Ermou Street + Ourse Patisserie",
+        "description": "Ermou: główna ulica handlowa. Ourse: francuskie desery z greckim akcentem. Próbuj: St. Honoré, tarta migdałowa, Paris-Aegina (pistacje)."
+      },
+      {
+        "time": "19:30-22:00",
+        "activity": "Pożegnalna kolacja",
+        "location": "Art Lounge Rooftop (New Hotel) lub Grande Dame",
+        "description": "Art Lounge: kolacja na dachu z widokiem na Akropol, kreatywne dania, koktajle. Grande Dame: tradycja z nowoczesnym twistem w neoklasycznym budynku z 1817."
+      }
+    ]
+  },
+  "restaurants_cafes": {
+    "breakfast_cafes": [
+      "Attica Bakeries (Ermou 55)",
+      "To Koulouri tou Psiri (Karaiskaki 23)",
+      "Krinos Loukoumades (Aiolou 87)",
+      "Paul Boulangerie (Panepistimiou 10)"
+    ],
+    "coffee_spots": [
+      "TAF Coffee (Emmanouil Benaki 7, Psiri)",
+      "Philos (Solonos 32, Kolonaki)",
+      "Mokka Specialty Coffee (Athinas 44, Exarchia)"
+    ],
+    "traditional_tavernas": [
+      "Taverna Saita (Kidathineon 21, Plaka)",
+      "Efcharis Restaurant (Monastiraki)",
+      "Diporto (podziemna tawerna)",
+      "Geros tou Moria (Plaka)"
+    ],
+    "modern_dining": [
+      "Art Lounge Rooftop (New Hotel)",
+      "Grande Dame (Plaka)",
+      "Ella Greek Cooking (Plaka)"
+    ],
+    "street_food": [
+      "O Thanasis (Mitropoleos 69)",
+      "Kostas Souvlaki (Syntagma)",
+      "Meat the Greek (Plaka)",
+      "Elvis Souvlaki"
+    ],
+    "pastries_desserts": [
+      "Ourse Patisserie (Mystra 39, Glyfada)",
+      "Krinos Loukoumades (Aiolou 87)",
+      "Madame Fraise",
+      "Antonis Selekos"
+    ]
+  },
+  "hidden_gems": [
+    {
+      "name": "Anafiotika",
+      "description": "Wioska w stylu cykladyjskim pod Akropolem - białe domy, niebieskie okiennice, kwiaty"
+    },
+    {
+      "name": "Tower of the Winds",
+      "description": "Starożytna stacja meteorologiczna z VIII w. p.n.e."
+    },
+    {
+      "name": "Diporto",
+      "description": "Ukryta podziemna tawerna przez proste brązowe drzwi"
+    },
+    {
+      "name": "Psyrri Street Art",
+      "description": "Dzielnica pełna murali i sztuki ulicznej - Sarri Street, Louka Nika"
+    },
+    {
+      "name": "Goulandris Museum Cycladic Art",
+      "description": "Prywatne muzeum z artefaktami inspirującymi Picassa"
+    }
+  ],
+  "practical_tips": {
+    "weather": "Luty: 12-15°C dzień, 4-7°C noc. Możliwe deszcze. Zabierz: ciepłą kurtkę, szalik, wygodne buty, przeciwdeszczową kurtkę, warstwy ubrań",
+    "transport": "Metro, autobusy, taxi. Wiele można zwiedzić pieszo. Bilet dzienny metro: €4.50",
+    "tickets": "Bilet kombinowany na zabytki starożytne: €30 (5 dni, wlicza Akropol, Agorę, świątynię Zeusa i więcej)",
+    "bargaining": "Na Monastiraki targuj się! Szczególnie przy antykach i unikalnych przedmiotach",
+    "language": "Angielski powszechny w centrów. Podstawowe greckie: Kalimera (dzień dobry), Efharisto (dziękuję), Parakalo (proszę)"
+  },
+  "accommodation_tips": {
+    "best_areas": [
+      "Plaka",
+      "Koukaki",
+      "Syntagma",
+      "Monastiraki"
+    ],
+    "recommendations": "Szukaj apartamentów dla 6 osób w Koukaki (spokojnie, blisko Akropolu) lub Plaka (centrum, urocze). Średnia cena: €150-250/noc za 6 osób. Sprawdź: 2 bedroom apartments, Koukaki Acropolis area, family apartments."
+  }
+}
