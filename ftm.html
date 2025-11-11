@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finansowy Tycoon - Gra Inwestycyjna</title>
+    <style>
+        /* Design System */
+        :root {
+            --color-bg-dark: #0a0e27;
+            --color-bg-secondary: #151b2f;
+            --color-bg-card: #1a2138;
+            --color-text-primary: #e5e5e5;
+            --color-text-muted: #8a92a3;
+            --color-gain: #00d166;
+            --color-loss: #ff3333;
+            --color-accent: #00b4ff;
+            --color-gold: #ffd700;
+            --color-buy: #00d166;
+            --color-sell: #ff3333;
+            --color-border: rgba(138, 146, 163, 0.2);
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 12px;
+            --space-8: 8px;
+            --space-12: 12px;
+            --space-16: 16px;
+            --space-24: 24px;
+            --transition-fast: 150ms;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--color-bg-dark);
+            color: var(--color-text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-size: 16px;
+        }
+
+        /* ===== HEADER - MOBILNY ===== */
+        .header {
+            background: var(--color-bg-secondary);
+            padding: var(--space-12) var(--space-16);
+            border-bottom: 2px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--space-12);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--color-accent);
+            display: flex;
+            align-items: center;
+            gap: var(--space-8);
+            white-space: nowrap;
+        }
+
+        .header-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-8);
+            width: 100%;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 0;
+        }
+
+        .stat-label {
+            font-size: 0.65rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .stat-value {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .stat-value.positive {
+            color: var(--color-gain);
+        }
+
+        .stat-value.negative {
+            color: var(--color-loss);
+        }
+
+        /* ===== MAIN LAYOUT - MOBILNE FIRST ===== */
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-12);
+            padding: var(--space-12);
+            max-width: 100%;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* ===== CARD ===== */
+        .card {
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-16);
+            border: 1px solid var(--color-border);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: var(--space-12);
+            color: var(--color-text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-8);
+        }
+
+        /* ===== STAGE BANNER ===== */
+        .stage-banner {
+            background: linear-gradient(135deg, var(--color-accent) 0%, #0080cc 100%);
+            padding: var(--space-12) var(--space-16);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-12);
+            text-align: center;
+            width: 100%;
+        }
+
+        .stage-banner h2 {
+            font-size: 1rem;
+            margin-bottom: var(--space-8);
+        }
+
+        .stage-banner p {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        /* ===== INSTRUMENTS TABLE - RESPONSIVE ===== */
+        .instruments-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .instruments-table th {
+            text-align: left;
+            padding: var(--space-8);
+            font-size: 0.7rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        .instruments-table td {
+            padding: var(--space-8);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .instruments-table tbody tr {
+            transition: background var(--transition-fast);
+        }
+
+        .instruments-table tbody tr:hover {
+            background: var(--color-bg-card);
+        }
+
+        .instrument-name {
+            font-weight: 600;
+            color: var(--color-text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-8);
+            flex-wrap: wrap;
+        }
+
+        .instrument-type {
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            background: rgba(0, 180, 255, 0.15);
+            color: var(--color-accent);
+            white-space: nowrap;
+        }
+
+        .price {
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .change {
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .change.positive {
+            color: var(--color-gain);
+        }
+
+        .change.negative {
+            color: var(--color-loss);
+        }
+
+        /* ===== BUTTONS - MOBILE TOUCH TARGET ===== */
+        .btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            min-height: 44px;
+            min-width: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-buy {
+            background: var(--color-buy);
+            color: #fff;
+        }
+
+        .btn-buy:hover {
+            background: #00b855;
+            transform: translateY(-1px);
+        }
+
+        .btn-sell {
+            background: var(--color-sell);
+            color: #fff;
+        }
+
+        .btn-sell:hover {
+            background: #dd2222;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--color-bg-card);
+            color: var(--color-text-primary);
+            border: 1px solid var(--color-border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(138, 146, 163, 0.1);
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: var(--space-8);
+            flex-wrap: wrap;
+        }
+
+        /* ===== PORTFOLIO ===== */
+        .portfolio-item {
+            background: var(--color-bg-card);
+            padding: var(--space-12);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-12);
+            border: 1px solid var(--color-border);
+        }
+
+        .portfolio-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-8);
+            gap: var(--space-8);
+        }
+
+        .portfolio-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .portfolio-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-8);
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+        }
+
+        .portfolio-profit {
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-top: var(--space-8);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: var(--space-16);
+            color: var(--color-text-muted);
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
+        /* ===== NEWS TICKER ===== */
+        .news-ticker {
+            background: var(--color-bg-card);
+            padding: var(--space-12);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-12);
+            overflow: hidden;
+            position: relative;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .news-item {
+            padding: var(--space-8);
+            margin-bottom: var(--space-8);
+            border-radius: var(--radius-sm);
+            border-left: 3px solid;
+            font-size: 0.8rem;
+        }
+
+        .news-item.positive {
+            background: rgba(0, 209, 102, 0.1);
+            border-color: var(--color-gain);
+        }
+
+        .news-item.negative {
+            background: rgba(255, 51, 51, 0.1);
+            border-color: var(--color-loss);
+        }
+
+        .news-item.neutral {
+            background: rgba(138, 146, 163, 0.1);
+            border-color: var(--color-text-muted);
+        }
+
+        .news-time {
+            font-size: 0.7rem;
+            color: var(--color-text-muted);
+            margin-bottom: 2px;
+        }
+
+        /* ===== MISSIONS ===== */
+        .mission-item {
+            background: var(--color-bg-card);
+            padding: var(--space-12);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-12);
+            border: 1px solid var(--color-border);
+        }
+
+        .mission-name {
+            font-weight: 600;
+            margin-bottom: var(--space-8);
+            font-size: 0.95rem;
+        }
+
+        .mission-desc {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-8);
+        }
+
+        .mission-reward {
+            font-size: 0.8rem;
+            color: var(--color-gold);
+            font-weight: 600;
+        }
+
+        .mission-completed {
+            opacity: 0.6;
+            border-color: var(--color-gain);
+        }
+
+        .mission-status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-top: var(--space-8);
+        }
+
+        .mission-status.active {
+            background: rgba(0, 180, 255, 0.15);
+            color: var(--color-accent);
+        }
+
+        .mission-status.completed {
+            background: rgba(0, 209, 102, 0.15);
+            color: var(--color-gain);
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 1000;
+            padding: var(--space-16);
+        }
+
+        .modal {
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            padding: var(--space-16);
+            max-width: 100%;
+            width: 100%;
+            max-height: 90vh;
+            border: 2px solid var(--color-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
+        }
+
+        .modal-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: var(--space-16);
+            color: var(--color-text-primary);
+        }
+
+        .modal-body {
+            margin-bottom: var(--space-16);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-12);
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: var(--space-8);
+            color: var(--color-text-muted);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: var(--space-12);
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            color: var(--color-text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-accent);
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--space-8) 0;
+            font-size: 0.85rem;
+        }
+
+        .info-label {
+            color: var(--color-text-muted);
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: var(--space-12);
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .alert {
+            padding: var(--space-12);
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--space-12);
+            font-size: 0.85rem;
+        }
+
+        .alert-error {
+            background: rgba(255, 51, 51, 0.15);
+            color: var(--color-loss);
+            border: 1px solid var(--color-loss);
+        }
+
+        .alert-success {
+            background: rgba(0, 209, 102, 0.15);
+            color: var(--color-gain);
+            border: 1px solid var(--color-gain);
+        }
+
+        /* ===== CONTROL PANEL ===== */
+        .control-panel {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-12);
+            margin-bottom: var(--space-12);
+            width: 100%;
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: var(--space-8);
+            background: var(--color-bg-card);
+            padding: var(--space-8) var(--space-12);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border);
+            overflow-x: auto;
+            justify-content: flex-start;
+        }
+
+        .speed-label {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            white-space: nowrap;
+        }
+
+        /* ===== ACHIEVEMENTS ===== */
+        .achievement-item {
+            background: var(--color-bg-card);
+            padding: var(--space-12);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-12);
+            border: 1px solid var(--color-border);
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-12);
+        }
+
+        .achievement-icon {
+            font-size: 1.8rem;
+            flex-shrink: 0;
+        }
+
+        .achievement-unlocked {
+            border-color: var(--color-gold);
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
+        }
+
+        .achievement-unlocked .achievement-icon {
+            filter: grayscale(0);
+        }
+
+        .achievement-locked .achievement-icon {
+            filter: grayscale(1);
+            opacity: 0.4;
+        }
+
+        .achievement-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .achievement-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+            font-size: 0.9rem;
+        }
+
+        .achievement-desc {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+        }
+
+        /* ===== MENTOR DIALOG ===== */
+        .mentor-dialog {
+            background: linear-gradient(135deg, #1a2138 0%, #0a0e27 100%);
+            border: 2px solid var(--color-accent);
+            padding: var(--space-16);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-12);
+            position: relative;
+        }
+
+        .mentor-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-12);
+            margin-bottom: var(--space-12);
+        }
+
+        .mentor-avatar {
+            font-size: 2.5rem;
+            flex-shrink: 0;
+        }
+
+        .mentor-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--color-accent);
+        }
+
+        .mentor-message {
+            line-height: 1.5;
+            color: var(--color-text-primary);
+            font-size: 0.9rem;
+        }
+
+        .mentor-close {
+            position: absolute;
+            top: var(--space-12);
+            right: var(--space-12);
+            background: none;
+            border: none;
+            color: var(--color-text-muted);
+            font-size: 1.3rem;
+            cursor: pointer;
+            padding: 4px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all var(--transition-fast);
+        }
+
+        .mentor-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--color-text-primary);
+        }
+
+        /* ===== HIDDEN ===== */
+        .hidden {
+            display: none;
+        }
+
+        /* ===== TABLET BREAKPOINT (768px) ===== */
+        @media (min-width: 768px) {
+            .header {
+                padding: var(--space-16) var(--space-24);
+            }
+
+            .header-stats {
+                grid-template-columns: repeat(4, 1fr);
+                width: auto;
+                gap: var(--space-16);
+            }
+
+            .stat-label {
+                font-size: 0.75rem;
+            }
+
+            .stat-value {
+                font-size: 1.1rem;
+            }
+
+            .main-container {
+                grid-template-columns: 2fr 1fr;
+                gap: var(--space-16);
+                padding: var(--space-16);
+            }
+
+            .card {
+                padding: var(--space-24);
+            }
+
+            .card-title {
+                font-size: 1.2rem;
+            }
+
+            .instruments-table th,
+            .instruments-table td {
+                padding: var(--space-12);
+            }
+
+            .instruments-table th {
+                font-size: 0.8rem;
+            }
+
+            .instruments-table td {
+                font-size: 0.9rem;
+            }
+
+            .btn {
+                padding: 8px 16px;
+                font-size: 0.8rem;
+                min-width: 65px;
+            }
+
+            .control-panel {
+                grid-template-columns: auto 1fr;
+            }
+
+            .speed-control {
+                grid-column: 1;
+            }
+
+            .modal-overlay {
+                align-items: center;
+            }
+
+            .modal {
+                border-radius: var(--radius-lg);
+                max-width: 500px;
+            }
+        }
+
+        /* ===== DESKTOP BREAKPOINT (1024px) ===== */
+        @media (min-width: 1024px) {
+            :root {
+                font-size: 16px;
+            }
+
+            .header {
+                padding: var(--space-16) var(--space-24);
+            }
+
+            .header-stats {
+                gap: var(--space-24);
+            }
+
+            .logo {
+                font-size: 1.8rem;
+            }
+
+            .main-container {
+                grid-template-columns: 2fr 1fr;
+                gap: var(--space-24);
+                max-width: 1600px;
+                padding: var(--space-24);
+            }
+
+            .card {
+                padding: var(--space-24);
+            }
+
+            .card-title {
+                font-size: 1.4rem;
+            }
+
+            .stage-banner h2 {
+                font-size: 1.2rem;
+            }
+
+            .stage-banner p {
+                font-size: 0.9rem;
+            }
+
+            .instruments-table th {
+                font-size: 0.85rem;
+            }
+
+            .instruments-table td {
+                font-size: 1rem;
+                padding: var(--space-12);
+            }
+
+            .price {
+                font-size: 1.1rem;
+            }
+
+            .btn {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+                min-width: 70px;
+            }
+
+            .control-panel {
+                grid-template-columns: auto 1fr;
+                gap: var(--space-16);
+            }
+
+            .speed-control {
+                gap: var(--space-12);
+            }
+
+            .news-ticker {
+                max-height: 400px;
+            }
+
+            .modal {
+                max-width: 550px;
+            }
+
+            .mentor-avatar {
+                font-size: 3rem;
+            }
+
+            .mentor-name {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* ===== LARGE DESKTOP (1400px) ===== */
+        @media (min-width: 1400px) {
+            .main-container {
+                max-width: 1800px;
+            }
+
+            .header-stats {
+                gap: var(--space-32);
+            }
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--color-bg-card);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--color-text-muted);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--color-text-primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <span>💰</span>
+            <span>Tycoon</span>
+        </div>
+        <div class="header-stats">
+            <div class="stat-item">
+                <div class="stat-label">💵 Gotówka</div>
+                <div class="stat-value" id="cashDisplay">10,000 zł</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">📊 Portfel</div>
+                <div class="stat-value" id="portfolioValue">10,000 zł</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">📈 Zysk</div>
+                <div class="stat-value" id="totalProfit">0 zł (0%)</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">📅 Dzień</div>
+                <div class="stat-value" id="dayDisplay">1</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left Column -->
+        <div>
+            <!-- Mentor Message -->
+            <div id="mentorDialog" class="mentor-dialog hidden">
+                <button class="mentor-close" onclick="closeMentor()" aria-label="Zamknij">×</button>
+                <div class="mentor-header">
+                    <div class="mentor-avatar">👨‍💼</div>
+                    <div>
+                        <div class="mentor-name">Pan Kamil</div>
+                        <div style="font-size: 0.75rem; color: var(--color-text-muted);">Mentor</div>
+                    </div>
+                </div>
+                <div class="mentor-message" id="mentorMessage"></div>
+            </div>
+
+            <!-- Stage Banner -->
+            <div class="stage-banner">
+                <h2 id="stageName">Etap 1: Pierwsze kroki</h2>
+                <p id="stageDescription">Zbuduj swoją pierwszą pozycję. Cel: 15% zysku</p>
+            </div>
+
+            <!-- Control Panel -->
+            <div class="control-panel">
+                <div class="speed-control">
+                    <span class="speed-label">⚡ Prędkość:</span>
+                    <button class="btn btn-secondary" onclick="setGameSpeed(1)">1x</button>
+                    <button class="btn btn-secondary" onclick="setGameSpeed(2)">2x</button>
+                    <button class="btn btn-secondary" onclick="setGameSpeed(5)">5x</button>
+                </div>
+                <button class="btn btn-secondary" onclick="resetGame()">🔄 Reset</button>
+            </div>
+
+            <!-- News Ticker -->
+            <div class="card">
+                <div class="card-title">📰 Wiadomości</div>
+                <div class="news-ticker" id="newsContainer">
+                    <div class="empty-state">Czekaj na wiadomości...</div>
+                </div>
+            </div>
+
+            <!-- Instruments Table -->
+            <div class="card">
+                <div class="card-title">📊 Giełda</div>
+                <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+                    <table class="instruments-table">
+                        <thead>
+                            <tr>
+                                <th>Instrument</th>
+                                <th>Cena</th>
+                                <th>Zmiana</th>
+                                <th>Akcje</th>
+                            </tr>
+                        </thead>
+                        <tbody id="instrumentsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div>
+            <!-- Portfolio -->
+            <div class="card">
+                <div class="card-title">💼 Portfel</div>
+                <div id="portfolioContainer">
+                    <div class="empty-state">Twój portfel jest pusty</div>
+                </div>
+            </div>
+
+            <!-- Missions -->
+            <div class="card">
+                <div class="card-title">🎯 Misje</div>
+                <div id="missionsContainer">
+                </div>
+            </div>
+
+            <!-- Achievements -->
+            <div class="card">
+                <div class="card-title">🏆 Osiągnięcia</div>
+                <div id="achievementsContainer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modalOverlay" class="modal-overlay hidden">
+        <div class="modal">
+            <h2 class="modal-title" id="modalTitle">Kup akcje</h2>
+            <div class="modal-body" id="modalBody">
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
