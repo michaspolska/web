@@ -1,7 +1,8 @@
 // ============================================
 // FINANSOWY TYCOON - Improved Game Logic
 // Implementacja naturalnych wahań kursu z GBM
-// Wolniejsze wahania + więcej firm
+// 1 dzień gry = 60 sekund rzeczywistych
+// Zmiana kursu co 20 sekund (3 razy na dzień)
 // ============================================
 
 // Generator liczb z rozkładu normalnego (Box-Muller)
@@ -16,8 +17,8 @@ function gaussianRandom() {
 const gameState = {
     cash: 10000,
     day: 1,
+    dayProgress: 0,  // Śledzi postęp w dniu (0-60)
     stage: 1,
-    gameSpeed: 1,
     portfolio: {},
     totalInvested: 0,
     peakValue: 10000,
@@ -36,8 +37,8 @@ const instruments = {
             type: 'stock',
             basePrice: 100,
             price: 100,
-            trend: 0.00015,      // Zmniejszona: 0.0005 -> 0.00015
-            volatility: 0.04,     // Zmniejszona: 0.12 -> 0.04
+            trend: 0.00015,
+            volatility: 0.04,
             priceHistory: [100],
             owned: 0,
             boughtAt: 0
@@ -434,46 +435,30 @@ const stageInfo = {
 };
 
 // ============================================
-// FUNKCJE AKTUALIZACJI CEN - GEOMETRYCZNY RUCH BROWNA
+// FUNKCJE AKTUALIZACJI CEN
 // ============================================
 
-/**
- * Aktualizacja ceny pojedynczego instrumentu - WOLNIEJSZA ZMIENNOŚĆ
- * Wykorzystuje model GBM (Geometric Brownian Motion)
- */
 function updateInstrumentPrice(instrument) {
-    // Pobierz parametry GBM
-    let mu = instrument.trend;      // Bardzo mały trend
-    let sigma = instrument.volatility; // Zmniejszona zmienność (3-5.8% zamiast 8-15%)
-    let dt = 1;                     // Długość kroku = 1 dzień gry
+    let mu = instrument.trend;
+    let sigma = instrument.volatility;
+    let dt = 1;
     
-    // Generator liczb z rozkładu normalnego
     let epsilon = gaussianRandom();
-    
-    // Wzór GBM: S_new = S_old * exp((mu - sigma^2/2) * dt + sigma * sqrt(dt) * epsilon)
-    // Epsilon jest mnożony przez mniejszy współczynnik aby zmianę były wolniejsze
     let factor = Math.exp((mu - 0.5 * sigma * sigma) * dt + sigma * Math.sqrt(dt) * epsilon * 0.3);
     
-    // Nowa cena - zapewniaj, że nie spadnie do zera
     let oldPrice = instrument.price;
     instrument.price = Math.max(0.01, oldPrice * factor);
     
-    // Przechowaj historię cen (ostatnie 100 dni)
     if (instrument.priceHistory.length > 100) {
         instrument.priceHistory.shift();
     }
     instrument.priceHistory.push(instrument.price);
 }
 
-/**
- * Aplikuj wpływ wiadomości na instrument
- */
 function applyNewsEffect(instrument, percentChange) {
-    // Tymczasowy wzrost trendu na skutek wiadomości
     let priceChange = instrument.price * (percentChange / 100);
     instrument.price = Math.max(0.01, instrument.price + priceChange);
     
-    // Aktualizuj historię
     if (instrument.priceHistory.length > 100) {
         instrument.priceHistory.shift();
     }
@@ -481,46 +466,58 @@ function applyNewsEffect(instrument, percentChange) {
 }
 
 /**
- * Główna pętla aktualizacji gry
+ * Aktualizuj ceny wszystkich instrumentów
  */
-function gameLoop() {
-    // Aktualizuj ceny wszystkich instrumentów
+function updateAllPrices() {
     let currentInstruments = [...Object.values(instruments.stage1)];
     if (gameState.stage >= 2) {
         currentInstruments = [...currentInstruments, ...Object.values(instruments.stage2)];
     }
     
     currentInstruments.forEach(inst => {
-        if (inst.type !== 'bond') {  // Obligacje się nie zmieniają
+        if (inst.type !== 'bond') {
             updateInstrumentPrice(inst);
         }
     });
     
-    // Logika krachu w etapie 3 (dzień 91-110)
+    // Logika krachu w etapie 3
     if (gameState.stage >= 3 && gameState.day >= 91 && gameState.day <= 110) {
         currentInstruments.forEach(inst => {
             if (inst.type === 'stock') {
                 if (gameState.day === 91) {
-                    // Pierwszy dzień krachu - duży spadek
-                    inst.price *= 0.60;  // -40%
+                    inst.price *= 0.60;
                 } else if (gameState.day > 111) {
-                    // Odbicie po kryzysie
                     inst.trend = 0.0005;
                 }
             }
         });
     }
     
-    // Losowe wiadomości (co 3-5 dni)
-    if (gameState.day % 4 === 0 && Math.random() > 0.5) {
-        generateRandomNews();
+    updateInstrumentsTable();
+    updatePortfolio();
+}
+
+/**
+ * Główna pętla - uruchamia się co 1 sekundę (60 sekund = 1 dzień)
+ */
+function gameTickEverySecond() {
+    gameState.dayProgress += 1;
+    
+    // Koniec dnia - przejdź do następnego
+    if (gameState.dayProgress >= 60) {
+        gameState.day += 1;
+        gameState.dayProgress = 0;
+        
+        // Losowe wiadomości
+        if (gameState.day % 4 === 0 && Math.random() > 0.5) {
+            generateRandomNews();
+        }
+        
+        // Sprawdzaj etapy
+        checkStageMilestones();
     }
     
-    // Przejście między etapami
-    checkStageMilestones();
-    
-    // Aktualizuj UI
-    updateUI();
+    updateHeader();
 }
 
 /**
@@ -537,7 +534,6 @@ function generateRandomNews() {
         effect: newsItem.effect
     };
     
-    // Aplikuj efekt na instrumenty
     Object.keys(newsItem.effect).forEach(instrName => {
         let instruments_list = [...Object.values(instruments.stage1)];
         if (gameState.stage >= 2) {
@@ -552,10 +548,11 @@ function generateRandomNews() {
     
     gameState.newsHistory.push(newsEvent);
     
-    // Pokaż maksymalnie 5 ostatnich wiadomości
     if (gameState.newsHistory.length > 5) {
         gameState.newsHistory.shift();
     }
+    
+    updateNews();
 }
 
 /**
@@ -565,14 +562,12 @@ function checkStageMilestones() {
     let portfolioValue = getPortfolioValue();
     let totalProfit = portfolioValue - 10000;
     
-    // Etap 1 -> Etap 2 (15% zysku, dzień 30)
     if (gameState.stage === 1 && gameState.day >= 30 && totalProfit >= 1500) {
         gameState.stage = 2;
         showMentorMessage(stageInfo[2].mentor);
         showNotification('Przeszedłeś do Etapu 2: Dywersyfikacja!', 'success');
     }
     
-    // Etap 2 -> Etap 3 (dzień 91 = kryzys)
     if (gameState.stage === 2 && gameState.day >= 91) {
         gameState.stage = 3;
         showMentorMessage(stageInfo[3].mentor);
@@ -616,7 +611,6 @@ function buyInstrument(instrName, quantity) {
     
     gameState.totalInvested += totalCost;
     
-    // Sprawdzaj misje
     checkMissionProgress('buy_first');
     
     showNotification(`✅ Kupiłeś ${quantity} ${instrName}!`, 'success');
@@ -698,7 +692,7 @@ function checkMissionProgress(missionId) {
         completed = gameState.day >= 120;
     } else if (missionId === 'survive_crash') {
         let loss = 10000 - getPortfolioValue();
-        completed = loss < 3000;  // <30%
+        completed = loss < 3000;
     }
     
     if (completed && !mission.completed) {
@@ -732,11 +726,9 @@ function updateHeader() {
         `${formatCurrency(totalProfit)} (${profitPercent}%)`;
     document.getElementById('dayDisplay').textContent = gameState.day;
     
-    // Aktualizuj stage
     document.getElementById('stageName').textContent = stageInfo[gameState.stage].name;
     document.getElementById('stageDescription').textContent = stageInfo[gameState.stage].desc;
     
-    // Zmień kolor jeśli strata
     let profitElement = document.getElementById('totalProfit');
     profitElement.classList.remove('positive', 'negative');
     profitElement.classList.add(totalProfit >= 0 ? 'positive' : 'negative');
@@ -745,17 +737,21 @@ function updateHeader() {
 function updateInstrumentsTable() {
     let tbody = document.getElementById('instrumentsTableBody');
     tbody.innerHTML = '';
-    
+
     let instruments_list = [...Object.values(instruments.stage1)];
-    if (gameState.stage >= 2) {
+    if (gameState.stage >= 2)
         instruments_list = [...instruments_list, ...Object.values(instruments.stage2)];
-    }
-    
+
     instruments_list.forEach(inst => {
-        let dayChange = inst.priceHistory.length > 1 ? 
-            ((inst.price - inst.priceHistory[inst.priceHistory.length - 2]) / 
-            inst.priceHistory[inst.priceHistory.length - 2]) * 100 : 0;
-        
+        let dayChange = inst.priceHistory.length > 1
+            ? ((inst.price - inst.priceHistory[inst.priceHistory.length - 2]) /
+                inst.priceHistory[inst.priceHistory.length - 2]) * 100
+            : 0;
+
+        // Bezpiecznie sprawdzamy czy instrument jest w portfelu i ilość > 0
+        const myHolding = gameState.portfolio[inst.name];
+        const canSell = myHolding && myHolding.quantity > 0;
+
         let row = document.createElement('tr');
         row.innerHTML = `
             <td>
@@ -771,13 +767,15 @@ function updateInstrumentsTable() {
             <td>
                 <div class="btn-group">
                     <button class="btn btn-buy" onclick="openBuyModal('${inst.name}')">KUP</button>
-                    <button class="btn btn-sell" onclick="openSellModal('${inst.name}')">SPRZEDAJ</button>
+                    <button class="btn btn-sell" onclick="openSellModal('${inst.name}')" ${!canSell ? 'disabled' : ''}>SPRZEDAJ</button>
                 </div>
             </td>
         `;
         tbody.appendChild(row);
     });
 }
+
+
 
 function updatePortfolio() {
     let container = document.getElementById('portfolioContainer');
@@ -826,16 +824,16 @@ function updateNews() {
     container.innerHTML = '';
     
     if (gameState.newsHistory.length === 0) {
-        container.innerHTML = '<div class="empty-state">Czekaj na pierwsz wiadomości...</div>';
+        container.innerHTML = '<div class="empty-state">Czekaj na pierwsze wiadomości...</div>';
         return;
     }
     
-    gameState.newsHistory.forEach(news => {
+    gameState.newsHistory.forEach(newsItem => {
         let item = document.createElement('div');
-        item.className = `news-item ${news.type}`;
+        item.className = `news-item ${newsItem.type}`;
         item.innerHTML = `
-            <div class="news-time">Dzień ${news.day}</div>
-            <div>${news.text}</div>
+            <div class="news-time">Dzień ${newsItem.day}</div>
+            <div>${newsItem.text}</div>
         `;
         container.appendChild(item);
     });
@@ -1040,12 +1038,7 @@ function formatCurrency(amount) {
 }
 
 function showNotification(message, type) {
-    // Prosta notyfikacja - można rozszerzyć
     console.log(`[${type.toUpperCase()}] ${message}`);
-}
-
-function setGameSpeed(speed) {
-    gameState.gameSpeed = speed;
 }
 
 function resetGame() {
@@ -1059,16 +1052,18 @@ function resetGame() {
 // ============================================
 
 function initGame() {
-    // Pokaż wiadomość mentora na start
     showMentorMessage(stageInfo[1].mentor);
     
-    // Uruchom pętlę gry
+    // Główna pętla gry - co 1 sekundę
     setInterval(() => {
-        gameState.day += gameState.gameSpeed;
-        gameLoop();
-    }, 1000 / gameState.gameSpeed);
+        gameTickEverySecond();
+    }, 1000);
     
-    // Aktualizuj UI
+    // Aktualizacja cen - co 20 sekund
+    setInterval(() => {
+        updateAllPrices();
+    }, 20000);
+    
     updateUI();
 }
 
