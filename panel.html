@@ -51,7 +51,6 @@
     const ADD_URL    = "https://a1.justmike.space/app/add_order.pl";
     const LOGIN_PAGE = "/login.html";
 
-    // pomocniczo: pobierz token CSRF z sessionStorage
     function getCsrfToken() {
       return sessionStorage.getItem("csrfToken") || "";
     }
@@ -75,7 +74,7 @@
           headers: {
             "Accept": "application/json",
             "Content-Type": "application/json",
-            "X-CSRF-Token": csrfToken      // <<<<< NOWY NAGŁÓWEK
+            "X-CSRF-Token": csrfToken
           },
           body: JSON.stringify({ product, price })
         });
@@ -121,16 +120,27 @@
       errorBox.textContent = "";
       tbody.innerHTML = "<tr><td colspan='3'>Ładowanie...</td></tr>";
 
+      const csrfToken = getCsrfToken();
+
       try {
         const resp = await fetch(API_URL, {
           method: "GET",
           credentials: "include",
-          headers: { "Accept": "application/json" }
+          headers: {
+            "Accept": "application/json",
+            "X-CSRF-Token": csrfToken
+          }
         });
 
         if (resp.status === 401) {
           tbody.innerHTML = "";
           errorBox.textContent = "Brak autoryzacji – zaloguj się ponownie.";
+          return;
+        }
+
+        if (resp.status === 403) {
+          tbody.innerHTML = "";
+          errorBox.textContent = "Błąd bezpieczeństwa (CSRF) – zaloguj się ponownie.";
           return;
         }
 
@@ -172,14 +182,13 @@
           credentials: "include",
           headers: {
             "Accept": "application/json",
-            "X-CSRF-Token": csrfToken      // <<<<< TU TEŻ
+            "X-CSRF-Token": csrfToken
           }
         });
       } catch (e) {
         // ignorujemy błąd – i tak przekierujemy
       }
 
-      // wyczyść token po stronie klienta
       sessionStorage.removeItem("csrfToken");
       window.location.href = LOGIN_PAGE;
     }
