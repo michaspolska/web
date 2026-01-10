@@ -17,6 +17,17 @@
   <div style="margin-bottom: 1rem;">
     <button id="logoutBtn">Wyloguj</button>
     <button id="reloadBtn">Odśwież</button>
+    <h2>Dodaj zamówienie</h2>
+<div>
+  <label>Produkt:
+    <input type="text" id="newProduct">
+  </label>
+  <label>Cena:
+    <input type="number" id="newPrice" step="0.01">
+  </label>
+  <button id="addBtn">Dodaj</button>
+</div>
+
   </div>
 
   <div id="error"></div>
@@ -38,6 +49,55 @@
     const API_URL    = "https://a1.justmike.space/app/list_orders.pl";
     const LOGOUT_URL = "https://a1.justmike.space/app/logout.pl";
     const LOGIN_PAGE = "/login.html";
+
+    const ADD_URL = "https://a1.justmike.space/app/add_order.pl";
+
+async function addOrder() {
+  const product = document.getElementById("newProduct").value.trim();
+  const price   = document.getElementById("newPrice").value.trim();
+  const errorBox = document.getElementById("error");
+
+  if (!product || !price) {
+    errorBox.textContent = "Podaj produkt i cenę.";
+    return;
+  }
+
+  try {
+    const resp = await fetch(ADD_URL, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ product, price })
+    });
+
+    if (resp.status === 401) {
+      errorBox.textContent = "Brak autoryzacji – zaloguj się ponownie.";
+      return;
+    }
+
+    if (!resp.ok) {
+      errorBox.textContent = "Błąd dodawania: " + resp.status;
+      return;
+    }
+
+    const data = await resp.json();
+    if (data.ok) {
+      document.getElementById("newProduct").value = "";
+      document.getElementById("newPrice").value = "";
+      await loadOrders();  // przeładuj listę
+    } else {
+      errorBox.textContent = "Błąd dodawania: " + (data.error || "unknown");
+    }
+  } catch (e) {
+    errorBox.textContent = "Błąd połączenia: " + e;
+  }
+}
+
+document.getElementById("addBtn").addEventListener("click", addOrder);
+
 
     async function loadOrders() {
       const errorBox = document.getElementById("error");
