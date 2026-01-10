@@ -97,28 +97,50 @@
         const res = await fetch('https://51.210.148.184/cgi-bin/login.pl', {
           method: 'POST',
           body: formData,
-          credentials: 'include', // ważne dla ciasteczka sesji
+          credentials: 'include', // wysyłamy cookie sesji
           headers: {
             'Accept': 'application/json'
           }
         });
 
-        const data = await res.json();
+        console.log('HTTP status:', res.status, res.statusText);
 
-        if (!res.ok || !data.ok) {
+        // najpierw obsłuż błędy HTTP (np. 401, 500)
+        if (!res.ok) {
+          const text = await res.text().catch(() => '');
+          console.error('Błąd HTTP body:', text);
+          errorBox.textContent = 'Błąd logowania (HTTP ' + res.status + ').';
+          errorBox.style.display = 'block';
+          return;
+        }
+
+        // potem parsuj JSON – jeśli odpowiedź nie jest JSON, złapiemy to niżej
+        let data;
+        try {
+          data = await res.json();
+        } catch (e) {
+          console.error('Błąd parsowania JSON:', e);
+          errorBox.textContent = 'Błędna odpowiedź serwera.';
+          errorBox.style.display = 'block';
+          return;
+        }
+
+        console.log('Odpowiedź JSON:', data);
+
+        if (!data.ok) {
           errorBox.textContent = 'Nieprawidłowy login lub hasło.';
           errorBox.style.display = 'block';
           return;
         }
 
         successBox.style.display = 'block';
-        // po udanym logowaniu możesz przekierować do głównego SPA:
         setTimeout(() => {
-          window.location.href = '/cennik.html'; // np. Twój obecny plik z tabelami
+          window.location.href = '/cennik.html';
         }, 800);
 
       } catch (err) {
-        console.error(err);
+        // tu trafiają tylko błędy sieci/CORS, nie 401/500
+        console.error('fetch error:', err);
         errorBox.textContent = 'Błąd połączenia z serwerem.';
         errorBox.style.display = 'block';
       }
