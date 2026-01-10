@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel zamówień</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: sans-serif; max-width: 800px; margin: 2rem auto; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: 0.4rem 0.6rem; text-align: left; }
+    #error { color: darkred; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Twoje zamówienia</h1>
+
+  <button id="reloadBtn">Odśwież</button>
+  <div id="error"></div>
+
+  <table id="ordersTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Produkt</th>
+        <th>Cena</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- wiersze wypełni JS -->
+    </tbody>
+  </table>
+
+  <script>
+    const API_URL = "https://a1.justmike.space/cgi-bin/list_orders.pl";
+
+    async function loadOrders() {
+      const errorBox = document.getElementById("error");
+      const tbody = document.querySelector("#ordersTable tbody");
+      errorBox.textContent = "";
+      tbody.innerHTML = "<tr><td colspan='3'>Ładowanie...</td></tr>";
+
+      try {
+        const resp = await fetch(API_URL, {
+          method: "GET",
+          credentials: "include",     // TU używamy cookies sesyjnego
+          headers: {
+            "Accept": "application/json"
+          }
+        });
+
+        if (resp.status === 401) {
+          tbody.innerHTML = "";
+          errorBox.textContent = "Brak autoryzacji – zaloguj się ponownie.";
+          return;
+        }
+
+        if (!resp.ok) {
+          tbody.innerHTML = "";
+          errorBox.textContent = "Błąd serwera: " + resp.status;
+          return;
+        }
+
+        const data = await resp.json();  // oczekujemy listy zamówień
+        tbody.innerHTML = "";
+
+        if (!Array.isArray(data) || data.length === 0) {
+          tbody.innerHTML = "<tr><td colspan='3'>Brak zamówień.</td></tr>";
+          return;
+        }
+
+        for (const row of data) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${row.id}</td>
+            <td>${row.product}</td>
+            <td>${row.price}</td>
+          `;
+          tbody.appendChild(tr);
+        }
+      } catch (e) {
+        tbody.innerHTML = "";
+        errorBox.textContent = "Błąd połączenia: " + e;
+      }
+    }
+
+    document.getElementById("reloadBtn").addEventListener("click", loadOrders);
+    window.addEventListener("load", loadOrders);
+  </script>
+</body>
+</html>
