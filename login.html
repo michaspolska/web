@@ -94,7 +94,7 @@
       const formData = new FormData(form);
 
       try {
-        const res = await fetch('https://a1.justmike.space/cgi-bin/login.pl', {
+        const res = await fetch('https://a1.justmike.space/app/login.pl', {
           method: 'POST',
           body: formData,
           credentials: 'include', // wysyłamy cookie sesji
