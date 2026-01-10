@@ -15,7 +15,6 @@
   <h1>Twoje zamówienia</h1>
 
   <div style="margin-bottom: 1rem;">
-    <button id="backBtn">Powrót do logowania</button>
     <button id="logoutBtn">Wyloguj</button>
     <button id="reloadBtn">Odśwież</button>
   </div>
@@ -38,7 +37,7 @@
   <script>
     const API_URL    = "https://a1.justmike.space/app/list_orders.pl";
     const LOGOUT_URL = "https://a1.justmike.space/app/logout.pl";
-    const LOGIN_PAGE = "/login.html";   // ścieżka na https://justmike.space
+    const LOGIN_PAGE = "/login.html";
 
     async function loadOrders() {
       const errorBox = document.getElementById("error");
@@ -103,9 +102,6 @@
 
     document.getElementById("reloadBtn").addEventListener("click", loadOrders);
     document.getElementById("logoutBtn").addEventListener("click", doLogout);
-    document.getElementById("backBtn").addEventListener("click", () => {
-      window.location.href = LOGIN_PAGE;
-    });
 
     window.addEventListener("load", loadOrders);
   </script>
