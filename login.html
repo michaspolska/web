@@ -97,7 +97,7 @@
         const res = await fetch('https://a1.justmike.space/app/login.pl', {
           method: 'POST',
           body: formData,
-          credentials: 'include', // wysyłamy cookie sesji
+          credentials: 'include',
           headers: {
             'Accept': 'application/json'
           }
@@ -105,7 +105,6 @@
 
         console.log('HTTP status:', res.status, res.statusText);
 
-        // najpierw obsłuż błędy HTTP (np. 401, 500)
         if (!res.ok) {
           const text = await res.text().catch(() => '');
           console.error('Błąd HTTP body:', text);
@@ -114,7 +113,6 @@
           return;
         }
 
-        // potem parsuj JSON – jeśli odpowiedź nie jest JSON, złapiemy to niżej
         let data;
         try {
           data = await res.json();
@@ -133,13 +131,20 @@
           return;
         }
 
+        // >>> ZAPIS TOKENU CSRF PO UDANYM LOGOWANIU <<<
+        if (data.csrf_token) {
+          sessionStorage.setItem('csrfToken', data.csrf_token);
+        } else {
+          // jeśli serwer nie zwróci tokenu, lepiej nie wpuścić dalej
+          console.warn('Brak csrf_token w odpowiedzi – panel może nie działać.');
+        }
+
         successBox.style.display = 'block';
         setTimeout(() => {
           window.location.href = 'https://justmike.space/panel.html';
         }, 800);
 
       } catch (err) {
-        // tu trafiają tylko błędy sieci/CORS, nie 401/500
         console.error('fetch error:', err);
         errorBox.textContent = 'Błąd połączenia z serwerem.';
         errorBox.style.display = 'block';
