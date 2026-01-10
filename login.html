@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Logowanie – Cennik</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+    .login-box {
+      max-width: 360px;
+      margin: 80px auto;
+      background: #fff;
+      border-radius: 8px;
+      padding: 24px 28px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    h1 {
+      font-size: 1.4rem;
+      margin-top: 0;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 8px 10px;
+      margin-bottom: 12px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: 4px;
+      border: none;
+      background: #21808d;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #1b6a75;
+    }
+    .error {
+      color: #d1002a;
+      margin-top: 8px;
+      font-size: 0.9rem;
+      display: none;
+    }
+    .success {
+      color: #0a8a0a;
+      margin-top: 8px;
+      font-size: 0.9rem;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h1>Logowanie do cennika</h1>
+    <form id="login-form">
+      <label for="login">Login</label>
+      <input type="text" id="login" name="login" autocomplete="username" required>
+
+      <label for="password">Hasło</label>
+      <input type="password" id="password" name="password" autocomplete="current-password" required>
+
+      <button type="submit">Zaloguj</button>
+      <div id="error" class="error">Nieprawidłowy login lub hasło.</div>
+      <div id="success" class="success">Zalogowano, trwa przekierowanie...</div>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('login-form');
+    const errorBox = document.getElementById('error');
+    const successBox = document.getElementById('success');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorBox.style.display = 'none';
+      successBox.style.display = 'none';
+
+      const formData = new FormData(form);
+
+      try {
+        const res = await fetch('https://51.210.148.184/cgi-bin/login.pl', {
+          method: 'POST',
+          body: formData,
+          credentials: 'include', // ważne dla ciasteczka sesji
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || !data.ok) {
+          errorBox.textContent = 'Nieprawidłowy login lub hasło.';
+          errorBox.style.display = 'block';
+          return;
+        }
+
+        successBox.style.display = 'block';
+        // po udanym logowaniu możesz przekierować do głównego SPA:
+        setTimeout(() => {
+          window.location.href = '/cennik.html'; // np. Twój obecny plik z tabelami
+        }, 800);
+
+      } catch (err) {
+        console.error(err);
+        errorBox.textContent = 'Błąd połączenia z serwerem.';
+        errorBox.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>
