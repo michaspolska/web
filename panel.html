@@ -14,7 +14,12 @@
 <body>
   <h1>Twoje zamówienia</h1>
 
-  <button id="reloadBtn">Odśwież</button>
+  <div style="margin-bottom: 1rem;">
+    <button id="backBtn">Powrót do logowania</button>
+    <button id="logoutBtn">Wyloguj</button>
+    <button id="reloadBtn">Odśwież</button>
+  </div>
+
   <div id="error"></div>
 
   <table id="ordersTable">
@@ -31,21 +36,21 @@
   </table>
 
   <script>
-    const API_URL = "https://a1.justmike.space/app/list_orders.pl";
+    const API_URL    = "https://a1.justmike.space/app/list_orders.pl";
+    const LOGOUT_URL = "https://a1.justmike.space/app/logout.pl";
+    const LOGIN_PAGE = "/login.html";   // ścieżka na https://justmike.space
 
     async function loadOrders() {
       const errorBox = document.getElementById("error");
-      const tbody = document.querySelector("#ordersTable tbody");
+      const tbody    = document.querySelector("#ordersTable tbody");
       errorBox.textContent = "";
       tbody.innerHTML = "<tr><td colspan='3'>Ładowanie...</td></tr>";
 
       try {
         const resp = await fetch(API_URL, {
           method: "GET",
-          credentials: "include",     // TU używamy cookies sesyjnego
-          headers: {
-            "Accept": "application/json"
-          }
+          credentials: "include",
+          headers: { "Accept": "application/json" }
         });
 
         if (resp.status === 401) {
@@ -60,7 +65,7 @@
           return;
         }
 
-        const data = await resp.json();  // oczekujemy listy zamówień
+        const data = await resp.json();
         tbody.innerHTML = "";
 
         if (!Array.isArray(data) || data.length === 0) {
@@ -83,7 +88,25 @@
       }
     }
 
+    async function doLogout() {
+      try {
+        await fetch(LOGOUT_URL, {
+          method: "POST",
+          credentials: "include",
+          headers: { "Accept": "application/json" }
+        });
+      } catch (e) {
+        // ignorujemy błąd – i tak przekierujemy
+      }
+      window.location.href = LOGIN_PAGE;
+    }
+
     document.getElementById("reloadBtn").addEventListener("click", loadOrders);
+    document.getElementById("logoutBtn").addEventListener("click", doLogout);
+    document.getElementById("backBtn").addEventListener("click", () => {
+      window.location.href = LOGIN_PAGE;
+    });
+
     window.addEventListener("load", loadOrders);
   </script>
 </body>
