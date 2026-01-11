@@ -270,7 +270,8 @@
     const API_LOGOUT_URL       = "https://a1.justmike.space/app/logout.pl";
     const LOGIN_PAGE           = "/login.html";
 
-    let MASTER_PRODUCTS = []; // [{id,name,price_net} ...]
+    // products: {id, name, price_net, vat}
+    let MASTER_PRODUCTS = [];
 
     function getCsrfToken() {
       return sessionStorage.getItem("csrfToken") || "";
@@ -300,7 +301,6 @@
           return;
         }
         const data = await resp.json();
-        // oczekiwany format: [{id, name, price_net}, ...]
         MASTER_PRODUCTS = Array.isArray(data) ? data : [];
       } catch (e) {
         console.error("Błąd połączenia list_products.pl:", e);
@@ -344,7 +344,7 @@
       header.appendChild(nameEl);
       header.appendChild(headerBtns);
 
-      // formularz dodawania produktu (pole + datalist z nazwą i ceną)
+      // formularz dodawania produktu (nazwa + podpowiedzi; VAT i cena z mastera)
       const addRow = document.createElement("div");
       addRow.className = "supplier-add-product";
 
@@ -356,8 +356,9 @@
           ? formatPLN(prod.price_net)
           : "";
         const label = prettyPrice ? `${prod.name} – ${prettyPrice}` : prod.name;
-        // value = sama nazwa, cena i id w data-*
-        optionsHtml += `<option value="${prod.name}" data-price="${prod.price_net ?? ""}">${label}</option>`;
+        optionsHtml += `<option value="${prod.name}"
+                               data-price="${prod.price_net ?? ""}"
+                               data-vat="${prod.vat ?? ""}">${label}</option>`;
       }
 
       addRow.innerHTML = `
@@ -370,10 +371,11 @@
         <button type="button" class="primary btn-add-product">+ Dodaj produkt</button>
       `;
 
-      // po wyborze z listy ustaw cenę netto z data-price
       const nameInput = addRow.querySelector(".prod-name");
       const netInput  = addRow.querySelector(".prod-price-net");
+      const vatInput  = addRow.querySelector(".prod-vat");
 
+      // po wyborze nazwy z listy ustaw cenę i VAT z mastera
       nameInput.addEventListener("input", () => {
         const dl = document.getElementById(datalistId);
         if (!dl) return;
@@ -381,9 +383,13 @@
         const opts = dl.options;
         for (let i = 0; i < opts.length; i++) {
           if (opts[i].value === val) {
-            const p = opts[i].getAttribute("data-price");
+            const p   = opts[i].getAttribute("data-price");
+            const vat = opts[i].getAttribute("data-vat");
             if (p !== null && p !== "") {
               netInput.value = p;
+            }
+            if (vat !== null && vat !== "") {
+              vatInput.value = vat;
             }
             break;
           }
@@ -592,6 +598,7 @@
           return;
         }
 
+        // zaktualizuj master list (zawiera też vat)
         if (data.master_product) {
           MASTER_PRODUCTS.push(data.master_product);
         }
