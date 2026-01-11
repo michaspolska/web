@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <title>Lista dostawców i cenniki</title>
+  <title>Lista dostawców i ich cenniki</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     :root {
@@ -194,44 +194,9 @@
       color: var(--color-primary);
     }
 
-    .products-table tfoot td {
-      font-weight: 500;
-      background: #f9fafb;
-    }
-
     .products-table .tag-supplier {
       font-size: 0.8rem;
       color: var(--color-primary);
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 2px 7px;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      background: rgba(33, 128, 141, 0.1);
-      color: var(--color-primary);
-    }
-
-    .supplier-list {
-      margin-top: var(--space-sm);
-    }
-
-    .supplier-list-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: var(--color-surface);
-      box-shadow: var(--shadow);
-      margin-bottom: 6px;
-      font-size: 0.9rem;
-    }
-
-    .supplier-list-buttons {
-      display: flex;
-      gap: 6px;
     }
 
     #error {
@@ -278,19 +243,15 @@
       <!-- tutaj JS wstawi karty dostawców z tabelami produktów -->
     </div>
 
-    <div class="supplier-list" id="supplierList">
-      <!-- tutaj JS wstawi listę pozostałych dostawców z przyciskami „Rozwiń cennik / Usuń” -->
-    </div>
-
     <div id="error"></div>
   </div>
 
   <script>
-    const API_SUPPLIERS_URL = "https://a1.justmike.space/app/list_suppliers.pl";
-    const API_ADD_SUPPLIER  = "https://a1.justmike.space/app/add_supplier.pl";
+    const API_SUPPLIERS_URL   = "https://a1.justmike.space/app/list_suppliers.pl";
+    const API_ADD_SUPPLIER    = "https://a1.justmike.space/app/add_supplier.pl";
     const API_DELETE_SUPPLIER = "https://a1.justmike.space/app/delete_supplier.pl";
-    const API_LOGOUT_URL    = "https://a1.justmike.space/app/logout.pl";
-    const LOGIN_PAGE        = "/login.html";
+    const API_LOGOUT_URL      = "https://a1.justmike.space/app/logout.pl";
+    const LOGIN_PAGE          = "/login.html";
 
     function getCsrfToken() {
       return sessionStorage.getItem("csrfToken") || "";
@@ -409,52 +370,11 @@
       return card;
     }
 
-    function createSupplierListItem(supplier) {
-      const li = document.createElement("div");
-      li.className = "supplier-list-item";
-      li.dataset.supplierId = supplier.id;
-
-      const name = document.createElement("span");
-      name.textContent = supplier.name;
-
-      const btns = document.createElement("div");
-      btns.className = "supplier-list-buttons";
-
-      const expandBtn = document.createElement("button");
-      expandBtn.className = "outline";
-      expandBtn.textContent = "Rozwiń cennik";
-      expandBtn.addEventListener("click", () => {
-        const card = document.querySelector(`.supplier-card[data-supplier-id="${supplier.id}"]`);
-        if (card) {
-          const tableWrap = card.querySelector(".products-table-wrapper");
-          tableWrap.style.display = "block";
-          const toggleBtn = card.querySelector(".supplier-header-buttons button.outline");
-          if (toggleBtn) toggleBtn.textContent = "Zwiń cennik";
-          card.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-      });
-
-      const deleteBtn = document.createElement("button");
-      deleteBtn.className = "danger";
-      deleteBtn.textContent = "Usuń dostawcę";
-      deleteBtn.addEventListener("click", () => deleteSupplier(supplier.id));
-
-      btns.appendChild(expandBtn);
-      btns.appendChild(deleteBtn);
-
-      li.appendChild(name);
-      li.appendChild(btns);
-
-      return li;
-    }
-
     async function loadSuppliers() {
-      const errorBox = document.getElementById("error");
+      const errorBox  = document.getElementById("error");
       const container = document.getElementById("suppliersContainer");
-      const list = document.getElementById("supplierList");
       errorBox.textContent = "";
       container.innerHTML = "<p class='info'>Ładowanie cenników...</p>";
-      list.innerHTML = "";
 
       const csrf = getCsrfToken();
 
@@ -494,12 +414,10 @@
           return;
         }
 
+        // każdy dostawca tylko raz – jako karta
         for (const s of data) {
           const card = createSupplierCard(s);
           container.appendChild(card);
-
-          const li = createSupplierListItem(s);
-          list.appendChild(li);
         }
       } catch (e) {
         container.innerHTML = "";
@@ -509,8 +427,8 @@
 
     async function addSupplier() {
       const nameInput = document.getElementById("newSupplierName");
-      const name = nameInput.value.trim();
-      const errorBox = document.getElementById("error");
+      const name      = nameInput.value.trim();
+      const errorBox  = document.getElementById("error");
 
       if (!name) {
         errorBox.textContent = "Podaj nazwę dostawcy.";
