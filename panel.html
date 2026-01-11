@@ -206,6 +206,10 @@
       margin-bottom: 10px;
     }
 
+    .supplier-add-product select {
+      min-width: 220px;
+    }
+
     .supplier-add-product input {
       min-width: 140px;
     }
@@ -224,7 +228,6 @@
       .top-bar {
         flex-direction: column;
         align-items: flex-start;
-        gap: 8px;
       }
 
       .supplier-header {
@@ -266,8 +269,11 @@
     const API_ADD_SUPPLIER     = "https://a1.justmike.space/app/add_supplier.pl";
     const API_DELETE_SUPPLIER  = "https://a1.justmike.space/app/delete_supplier.pl";
     const API_ADD_PRODUCT      = "https://a1.justmike.space/app/add_supplier_product.pl";
+    const API_PRODUCTS_URL     = "https://a1.justmike.space/app/list_products.pl";
     const API_LOGOUT_URL       = "https://a1.justmike.space/app/logout.pl";
     const LOGIN_PAGE           = "/login.html";
+
+    let MASTER_PRODUCTS = [];
 
     function getCsrfToken() {
       return sessionStorage.getItem("csrfToken") || "";
@@ -278,6 +284,30 @@
       const num = Number(value);
       if (Number.isNaN(num)) return value;
       return num.toLocaleString("pl-PL", { style: "currency", currency: "PLN" });
+    }
+
+    async function loadMasterProducts() {
+      const csrf = getCsrfToken();
+      try {
+        const resp = await fetch(API_PRODUCTS_URL, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Accept": "application/json",
+            "X-CSRF-Token": csrf
+          }
+        });
+        if (!resp.ok) {
+          console.error("Błąd list_products.pl:", resp.status);
+          MASTER_PRODUCTS = [];
+          return;
+        }
+        const data = await resp.json();
+        MASTER_PRODUCTS = Array.isArray(data) ? data : [];
+      } catch (e) {
+        console.error("Błąd połączenia list_products.pl:", e);
+        MASTER_PRODUCTS = [];
+      }
     }
 
     function createSupplierCard(supplier) {
@@ -316,14 +346,22 @@
       header.appendChild(nameEl);
       header.appendChild(headerBtns);
 
-      // --- formularz dodawania produktu ---
+      // formularz dodawania produktu z listy
       const addRow = document.createElement("div");
       addRow.className = "supplier-add-product";
+
+      let optionsHtml = '<option value="">Wybierz produkt...</option>';
+      for (const prod of MASTER_PRODUCTS) {
+        optionsHtml += `<option value="${prod.id}">${prod.name}</option>`;
+      }
+
       addRow.innerHTML = `
-        <input type="text" class="prod-name" placeholder="Nazwa produktu">
+        <select class="prod-select">
+          ${optionsHtml}
+        </select>
         <input type="number" step="0.01" min="0" class="prod-price-net" placeholder="Cena netto">
         <input type="number" step="1" min="0" class="prod-vat" placeholder="VAT %" value="23">
-        <button type="button" class="primary btn-add-product">+ Nowy produkt</button>
+        <button type="button" class="primary btn-add-product">+ Dodaj produkt</button>
       `;
       const addBtn = addRow.querySelector(".btn-add-product");
       addBtn.addEventListener("click", () => addProductForSupplier(card, supplier.id));
@@ -372,7 +410,7 @@
 
       tableWrap.appendChild(table);
       card.appendChild(header);
-      card.appendChild(addRow);   // NOWA SEKCJA
+      card.appendChild(addRow);
       card.appendChild(tableWrap);
 
       return card;
@@ -478,16 +516,16 @@
 
     async function addProductForSupplier(cardEl, supplierId) {
       const errorBox = document.getElementById("error");
-      const nameInput  = cardEl.querySelector(".prod-name");
-      const netInput   = cardEl.querySelector(".prod-price-net");
-      const vatInput   = cardEl.querySelector(".prod-vat");
+      const select   = cardEl.querySelector(".prod-select");
+      const netInput = cardEl.querySelector(".prod-price-net");
+      const vatInput = cardEl.querySelector(".prod-vat");
 
-      const name = (nameInput.value || "").trim();
-      const price_net = (netInput.value || "").trim();
-      const vat = (vatInput.value || "").trim();
+      const product_id = select.value;
+      const price_net  = (netInput.value || "").trim();
+      const vat        = (vatInput.value || "").trim();
 
-      if (!name || !price_net) {
-        errorBox.textContent = "Podaj nazwę produktu i cenę netto.";
+      if (!product_id || !price_net) {
+        errorBox.textContent = "Wybierz produkt z listy i podaj cenę netto.";
         return;
       }
 
@@ -504,7 +542,7 @@
           },
           body: JSON.stringify({
             supplier_id: supplierId,
-            name,
+            product_id,
             price_net,
             vat
           })
@@ -523,11 +561,10 @@
         }
 
         // wyczyść pola
-        nameInput.value = "";
+        select.value   = "";
         netInput.value = "";
         vatInput.value = "23";
 
-        // dopisz wiersz do tabeli
         const tbody = cardEl.querySelector(".products-table tbody");
         const p = data.product;
         const tr = document.createElement("tr");
@@ -538,7 +575,6 @@
           <td class="price-cell">${formatPLN(p.price_gross)}</td>
           <td class="price-cell"></td>
         `;
-        // jeśli był wiersz „Brak produktów…”, usuń
         if (tbody.children.length === 1 &&
             tbody.children[0].querySelector("td[colspan]")) {
           tbody.innerHTML = "";
@@ -604,10 +640,17 @@
       window.location.href = LOGIN_PAGE;
     }
 
-    document.getElementById("reloadBtn").addEventListener("click", loadSuppliers);
+    document.getElementById("reloadBtn").addEventListener("click", async () => {
+      await loadMasterProducts();
+      await loadSuppliers();
+    });
     document.getElementById("addSupplierBtn").addEventListener("click", addSupplier);
     document.getElementById("logoutBtn").addEventListener("click", doLogout);
-    window.addEventListener("load", loadSuppliers);
+
+    window.addEventListener("load", async () => {
+      await loadMasterProducts();
+      await loadSuppliers();
+    });
   </script>
 </body>
 </html>
