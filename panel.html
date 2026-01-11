@@ -188,12 +188,6 @@
       background: #fafafa;
     }
 
-    .products-table tr.lowest td.price-cell-net {
-      font-weight: 600;
-      background: rgba(33, 128, 141, 0.08);
-      color: var(--color-primary);
-    }
-
     .products-table .tag-supplier {
       font-size: 0.8rem;
       color: var(--color-primary);
@@ -271,7 +265,7 @@
     const API_LOGOUT_URL           = "https://a1.justmike.space/app/logout.pl";
     const LOGIN_PAGE               = "/login.html";
 
-    // products: {id, name, price_net, vat}
+    // products: {id, name, price_net, vat, unit}
     let MASTER_PRODUCTS = [];
 
     function getCsrfToken() {
@@ -345,7 +339,7 @@
       header.appendChild(nameEl);
       header.appendChild(headerBtns);
 
-      // formularz dodawania produktu (nazwa + podpowiedzi; VAT i cena z mastera)
+      // formularz dodawania produktu (nazwa + podpowiedzi; VAT, cena i jednostka z mastera)
       const addRow = document.createElement("div");
       addRow.className = "supplier-add-product";
 
@@ -359,7 +353,8 @@
         const label = prettyPrice ? `${prod.name} – ${prettyPrice}` : prod.name;
         optionsHtml += `<option value="${prod.name}"
                                data-price="${prod.price_net ?? ""}"
-                               data-vat="${prod.vat ?? ""}">${label}</option>`;
+                               data-vat="${prod.vat ?? ""}"
+                               data-unit="${prod.unit ?? ""}">${label}</option>`;
       }
 
       addRow.innerHTML = `
@@ -367,6 +362,11 @@
         <datalist id="${datalistId}">
           ${optionsHtml}
         </datalist>
+        <select class="prod-unit">
+          <option value="szt">szt</option>
+          <option value="kg">kg</option>
+          <option value="l">l</option>
+        </select>
         <input type="number" step="0.01" min="0" class="prod-price-net" placeholder="Cena netto">
         <input type="number" step="1" min="0" class="prod-vat" placeholder="VAT %" value="23">
         <button type="button" class="primary btn-add-product">+ Dodaj produkt</button>
@@ -375,8 +375,9 @@
       const nameInput = addRow.querySelector(".prod-name");
       const netInput  = addRow.querySelector(".prod-price-net");
       const vatInput  = addRow.querySelector(".prod-vat");
+      const unitSelect = addRow.querySelector(".prod-unit");
 
-      // po wyborze nazwy z listy ustaw cenę i VAT z mastera
+      // po wyborze nazwy z listy ustaw cenę, VAT i jednostkę z mastera
       nameInput.addEventListener("input", () => {
         const dl = document.getElementById(datalistId);
         if (!dl) return;
@@ -384,13 +385,17 @@
         const opts = dl.options;
         for (let i = 0; i < opts.length; i++) {
           if (opts[i].value === val) {
-            const p   = opts[i].getAttribute("data-price");
-            const vat = opts[i].getAttribute("data-vat");
+            const p    = opts[i].getAttribute("data-price");
+            const vat  = opts[i].getAttribute("data-vat");
+            const unit = opts[i].getAttribute("data-unit");
             if (p !== null && p !== "") {
               netInput.value = p;
             }
             if (vat !== null && vat !== "") {
               vatInput.value = vat;
+            }
+            if (unit !== null && unit !== "") {
+              unitSelect.value = unit;
             }
             break;
           }
@@ -410,6 +415,7 @@
         <thead>
           <tr>
             <th>Produkt</th>
+            <th>Jednostka</th>
             <th>Cena netto</th>
             <th>VAT %</th>
             <th>Cena brutto</th>
@@ -428,6 +434,7 @@
           tr.dataset.supplierProductId = p.id; // p.id = supplier_products.id
           tr.innerHTML = `
             <td>${p.name}</td>
+            <td>${p.unit || ""}</td>
             <td class="price-cell price-cell-net">${formatPLN(p.price_net)}</td>
             <td>${p.vat != null ? p.vat + " %" : ""}</td>
             <td class="price-cell">${formatPLN(p.price_gross)}</td>
@@ -445,7 +452,7 @@
         }
       } else {
         const tr = document.createElement("tr");
-        tr.innerHTML = `<td colspan="6">Brak produktów w cenniku.</td>`;
+        tr.innerHTML = `<td colspan="7">Brak produktów w cenniku.</td>`;
         tbody.appendChild(tr);
       }
 
@@ -557,11 +564,13 @@
 
     async function addProductForSupplier(cardEl, supplierId) {
       const errorBox = document.getElementById("error");
-      const nameInput = cardEl.querySelector(".prod-name");
-      const netInput  = cardEl.querySelector(".prod-price-net");
-      const vatInput  = cardEl.querySelector(".prod-vat");
+      const nameInput  = cardEl.querySelector(".prod-name");
+      const unitSelect = cardEl.querySelector(".prod-unit");
+      const netInput   = cardEl.querySelector(".prod-price-net");
+      const vatInput   = cardEl.querySelector(".prod-vat");
 
       const new_name  = (nameInput.value || "").trim();
+      const unit      = unitSelect.value;
       const price_net = (netInput.value || "").trim();
       const vat       = (vatInput.value || "").trim();
 
@@ -589,6 +598,7 @@
             supplier_id: supplierId,
             product_id: null,
             new_name,
+            unit,
             price_net,
             vat
           })
@@ -610,9 +620,10 @@
           MASTER_PRODUCTS.push(data.master_product);
         }
 
-        nameInput.value = "";
-        netInput.value  = "";
-        vatInput.value  = "23";
+        nameInput.value  = "";
+        netInput.value   = "";
+        vatInput.value   = "23";
+        unitSelect.value = "szt";
 
         const tbody = cardEl.querySelector(".products-table tbody");
         const p = data.product;
@@ -620,6 +631,7 @@
         tr.dataset.supplierProductId = p.id;
         tr.innerHTML = `
           <td>${p.name}</td>
+          <td>${p.unit || ""}</td>
           <td class="price-cell price-cell-net">${formatPLN(p.price_net)}</td>
           <td>${p.vat != null ? p.vat + " %" : ""}</td>
           <td class="price-cell">${formatPLN(p.price_gross)}</td>
@@ -677,13 +689,12 @@
           return;
         }
 
-        // usuń wiersz z tabeli
         const tbody = tr.parentElement;
         tr.remove();
 
         if (tbody.children.length === 0) {
           const emptyTr = document.createElement("tr");
-          emptyTr.innerHTML = `<td colspan="6">Brak produktów w cenniku.</td>`;
+          emptyTr.innerHTML = `<td colspan="7">Brak produktów w cenniku.</td>`;
           tbody.appendChild(emptyTr);
         }
 
