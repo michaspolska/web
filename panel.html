@@ -257,10 +257,7 @@
       W cenniku dostawcy możesz skorygować VAT dla produktu, zmiana zaktualizuje stawkę tego produktu wszędzie.
     </p>
 
-    <div id="suppliersContainer">
-      <!-- tutaj JS wstawi karty dostawców z tabelami produktów -->
-    </div>
-
+    <div id="suppliersContainer"></div>
     <div id="error"></div>
   </div>
 
@@ -273,7 +270,7 @@
     const API_LOGOUT_URL       = "https://a1.justmike.space/app/logout.pl";
     const LOGIN_PAGE           = "/login.html";
 
-    let MASTER_PRODUCTS = [];
+    let MASTER_PRODUCTS = []; // [{id,name,price_net} ...]
 
     function getCsrfToken() {
       return sessionStorage.getItem("csrfToken") || "";
@@ -303,6 +300,7 @@
           return;
         }
         const data = await resp.json();
+        // oczekiwany format: [{id, name, price_net}, ...]
         MASTER_PRODUCTS = Array.isArray(data) ? data : [];
       } catch (e) {
         console.error("Błąd połączenia list_products.pl:", e);
@@ -346,17 +344,21 @@
       header.appendChild(nameEl);
       header.appendChild(headerBtns);
 
-      // formularz dodawania produktu (pole + podpowiedzi z datalist)
+      // formularz dodawania produktu (pole + datalist z nazwą i ceną)
       const addRow = document.createElement("div");
       addRow.className = "supplier-add-product";
 
+      const datalistId = `products-master-list-${supplier.id}`;
+
       let optionsHtml = "";
       for (const prod of MASTER_PRODUCTS) {
-        optionsHtml += `<option value="${prod.name}"></option>`;
+        const prettyPrice = prod.price_net != null && prod.price_net !== ""
+          ? formatPLN(prod.price_net)
+          : "";
+        const label = prettyPrice ? `${prod.name} – ${prettyPrice}` : prod.name;
+        // value = sama nazwa, cena i id w data-*
+        optionsHtml += `<option value="${prod.name}" data-price="${prod.price_net ?? ""}">${label}</option>`;
       }
-
-      // UWAGA: id datalist musi być unikalne w dokumencie, więc dodajemy suffix z id dostawcy
-      const datalistId = `products-master-list-${supplier.id}`;
 
       addRow.innerHTML = `
         <input list="${datalistId}" class="prod-name" placeholder="Nazwa produktu (możesz wpisać nowy)">
@@ -367,6 +369,27 @@
         <input type="number" step="1" min="0" class="prod-vat" placeholder="VAT %" value="23">
         <button type="button" class="primary btn-add-product">+ Dodaj produkt</button>
       `;
+
+      // po wyborze z listy ustaw cenę netto z data-price
+      const nameInput = addRow.querySelector(".prod-name");
+      const netInput  = addRow.querySelector(".prod-price-net");
+
+      nameInput.addEventListener("input", () => {
+        const dl = document.getElementById(datalistId);
+        if (!dl) return;
+        const val = nameInput.value;
+        const opts = dl.options;
+        for (let i = 0; i < opts.length; i++) {
+          if (opts[i].value === val) {
+            const p = opts[i].getAttribute("data-price");
+            if (p !== null && p !== "") {
+              netInput.value = p;
+            }
+            break;
+          }
+        }
+      });
+
       const addBtn = addRow.querySelector(".btn-add-product");
       addBtn.addEventListener("click", () => addProductForSupplier(card, supplier.id));
 
