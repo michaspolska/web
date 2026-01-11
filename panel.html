@@ -262,13 +262,14 @@
   </div>
 
   <script>
-    const API_SUPPLIERS_URL    = "https://a1.justmike.space/app/list_suppliers.pl";
-    const API_ADD_SUPPLIER     = "https://a1.justmike.space/app/add_supplier.pl";
-    const API_DELETE_SUPPLIER  = "https://a1.justmike.space/app/delete_supplier.pl";
-    const API_ADD_PRODUCT      = "https://a1.justmike.space/app/add_supplier_product.pl";
-    const API_PRODUCTS_URL     = "https://a1.justmike.space/app/list_products.pl";
-    const API_LOGOUT_URL       = "https://a1.justmike.space/app/logout.pl";
-    const LOGIN_PAGE           = "/login.html";
+    const API_SUPPLIERS_URL        = "https://a1.justmike.space/app/list_suppliers.pl";
+    const API_ADD_SUPPLIER         = "https://a1.justmike.space/app/add_supplier.pl";
+    const API_DELETE_SUPPLIER      = "https://a1.justmike.space/app/delete_supplier.pl";
+    const API_ADD_PRODUCT          = "https://a1.justmike.space/app/add_supplier_product.pl";
+    const API_DELETE_SUPPLIER_PROD = "https://a1.justmike.space/app/delete_supplier_product.pl";
+    const API_PRODUCTS_URL         = "https://a1.justmike.space/app/list_products.pl";
+    const API_LOGOUT_URL           = "https://a1.justmike.space/app/logout.pl";
+    const LOGIN_PAGE               = "/login.html";
 
     // products: {id, name, price_net, vat}
     let MASTER_PRODUCTS = [];
@@ -413,6 +414,7 @@
             <th>VAT %</th>
             <th>Cena brutto</th>
             <th>Najtańsza cena netto</th>
+            <th></th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -423,6 +425,7 @@
       if (Array.isArray(supplier.products) && supplier.products.length > 0) {
         for (const p of supplier.products) {
           const tr = document.createElement("tr");
+          tr.dataset.supplierProductId = p.id; // p.id = supplier_products.id
           tr.innerHTML = `
             <td>${p.name}</td>
             <td class="price-cell price-cell-net">${formatPLN(p.price_net)}</td>
@@ -432,12 +435,17 @@
               ${p.lowest_net != null ? formatPLN(p.lowest_net) : ""}
               ${p.lowest_supplier ? `<span class="tag-supplier">(${p.lowest_supplier})</span>` : ""}
             </td>
+            <td>
+              <button type="button" class="danger btn-del-product">Usuń</button>
+            </td>
           `;
+          const delBtn = tr.querySelector(".btn-del-product");
+          delBtn.addEventListener("click", () => deleteProductRow(tr));
           tbody.appendChild(tr);
         }
       } else {
         const tr = document.createElement("tr");
-        tr.innerHTML = `<td colspan="5">Brak produktów w cenniku.</td>`;
+        tr.innerHTML = `<td colspan="6">Brak produktów w cenniku.</td>`;
         tbody.appendChild(tr);
       }
 
@@ -598,7 +606,6 @@
           return;
         }
 
-        // zaktualizuj master list (zawiera też vat)
         if (data.master_product) {
           MASTER_PRODUCTS.push(data.master_product);
         }
@@ -610,18 +617,75 @@
         const tbody = cardEl.querySelector(".products-table tbody");
         const p = data.product;
         const tr = document.createElement("tr");
+        tr.dataset.supplierProductId = p.id;
         tr.innerHTML = `
           <td>${p.name}</td>
           <td class="price-cell price-cell-net">${formatPLN(p.price_net)}</td>
           <td>${p.vat != null ? p.vat + " %" : ""}</td>
           <td class="price-cell">${formatPLN(p.price_gross)}</td>
           <td class="price-cell"></td>
+          <td><button type="button" class="danger btn-del-product">Usuń</button></td>
         `;
+        const delBtn = tr.querySelector(".btn-del-product");
+        delBtn.addEventListener("click", () => deleteProductRow(tr));
+
         if (tbody.children.length === 1 &&
             tbody.children[0].querySelector("td[colspan]")) {
           tbody.innerHTML = "";
         }
         tbody.appendChild(tr);
+
+        errorBox.textContent = "";
+      } catch (e) {
+        errorBox.textContent = "Błąd połączenia: " + e.message;
+      }
+    }
+
+    async function deleteProductRow(tr) {
+      const errorBox = document.getElementById("error");
+      const supplierProductId = tr.dataset.supplierProductId;
+
+      if (!supplierProductId) {
+        errorBox.textContent = "Brak ID produktu do usunięcia.";
+        return;
+      }
+      if (!confirm("Na pewno usunąć ten produkt z cennika?")) return;
+
+      const csrf = getCsrfToken();
+
+      try {
+        const resp = await fetch(API_DELETE_SUPPLIER_PROD, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "X-CSRF-Token": csrf
+          },
+          body: JSON.stringify({ supplier_product_id: supplierProductId })
+        });
+
+        if (!resp.ok) {
+          const t = await resp.text();
+          errorBox.textContent = "Błąd usuwania produktu: " + t;
+          return;
+        }
+
+        const data = await resp.json();
+        if (!data.ok) {
+          errorBox.textContent = "Błąd usuwania produktu: " + (data.error || "unknown");
+          return;
+        }
+
+        // usuń wiersz z tabeli
+        const tbody = tr.parentElement;
+        tr.remove();
+
+        if (tbody.children.length === 0) {
+          const emptyTr = document.createElement("tr");
+          emptyTr.innerHTML = `<td colspan="6">Brak produktów w cenniku.</td>`;
+          tbody.appendChild(emptyTr);
+        }
 
         errorBox.textContent = "";
       } catch (e) {
