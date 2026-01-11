@@ -206,16 +206,12 @@
       margin-bottom: 10px;
     }
 
-    .supplier-add-product select {
-      min-width: 220px;
-    }
-
     .supplier-add-product input {
       min-width: 140px;
     }
 
-    .supplier-add-product .prod-new-name {
-      min-width: 200px;
+    .supplier-add-product .prod-name {
+      min-width: 260px;
     }
 
     .supplier-add-product .btn-add-product {
@@ -350,20 +346,23 @@
       header.appendChild(nameEl);
       header.appendChild(headerBtns);
 
-      // formularz dodawania produktu (z listy lub nowy)
+      // formularz dodawania produktu (pole + podpowiedzi z datalist)
       const addRow = document.createElement("div");
       addRow.className = "supplier-add-product";
 
-      let optionsHtml = '<option value="">Wybierz produkt...</option>';
+      let optionsHtml = "";
       for (const prod of MASTER_PRODUCTS) {
-        optionsHtml += `<option value="${prod.id}">${prod.name}</option>`;
+        optionsHtml += `<option value="${prod.name}"></option>`;
       }
 
+      // UWAGA: id datalist musi być unikalne w dokumencie, więc dodajemy suffix z id dostawcy
+      const datalistId = `products-master-list-${supplier.id}`;
+
       addRow.innerHTML = `
-        <select class="prod-select">
+        <input list="${datalistId}" class="prod-name" placeholder="Nazwa produktu (możesz wpisać nowy)">
+        <datalist id="${datalistId}">
           ${optionsHtml}
-        </select>
-        <input type="text" class="prod-new-name" placeholder="Albo wpisz nowy produkt">
+        </datalist>
         <input type="number" step="0.01" min="0" class="prod-price-net" placeholder="Cena netto">
         <input type="number" step="1" min="0" class="prod-vat" placeholder="VAT %" value="23">
         <button type="button" class="primary btn-add-product">+ Dodaj produkt</button>
@@ -521,18 +520,16 @@
 
     async function addProductForSupplier(cardEl, supplierId) {
       const errorBox = document.getElementById("error");
-      const select    = cardEl.querySelector(".prod-select");
-      const newInput  = cardEl.querySelector(".prod-new-name");
+      const nameInput = cardEl.querySelector(".prod-name");
       const netInput  = cardEl.querySelector(".prod-price-net");
       const vatInput  = cardEl.querySelector(".prod-vat");
 
-      const product_id = select.value;
-      const new_name   = (newInput.value || "").trim();
-      const price_net  = (netInput.value || "").trim();
-      const vat        = (vatInput.value || "").trim();
+      const new_name  = (nameInput.value || "").trim();
+      const price_net = (netInput.value || "").trim();
+      const vat       = (vatInput.value || "").trim();
 
-      if (!product_id && !new_name) {
-        errorBox.textContent = "Wybierz produkt z listy albo wpisz nową nazwę.";
+      if (!new_name) {
+        errorBox.textContent = "Podaj nazwę produktu.";
         return;
       }
       if (!price_net) {
@@ -553,8 +550,8 @@
           },
           body: JSON.stringify({
             supplier_id: supplierId,
-            product_id: product_id || null,
-            new_name:   new_name || null,
+            product_id: null,
+            new_name,
             price_net,
             vat
           })
@@ -572,16 +569,13 @@
           return;
         }
 
-        // jeśli backend utworzył nowy produkt w tabeli products
         if (data.master_product) {
           MASTER_PRODUCTS.push(data.master_product);
         }
 
-        // wyczyść pola
-        select.value   = "";
-        newInput.value = "";
-        netInput.value = "";
-        vatInput.value = "23";
+        nameInput.value = "";
+        netInput.value  = "";
+        vatInput.value  = "23";
 
         const tbody = cardEl.querySelector(".products-table tbody");
         const p = data.product;
