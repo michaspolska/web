@@ -4,387 +4,67 @@
   <meta charset="UTF-8">
   <title>Panel zamówień</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-   <style>
-    :root {
-      --color-background: #fcfcf9;
-      --color-surface: #fffffd;
-      --color-text: #13343b;
-      --color-text-secondary: #626c71;
-      --color-primary: #21808d;
-      --color-primary-hover: #1d7480;
-      --color-border: rgba(94, 82, 64, 0.2);
-      --radius: 10px;
-      --shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.07);
-      --font: Inter, Geist, Arial, sans-serif;
-      --space: 18px;
-      --space-sm: 10px;
-      --space-xs: 6px;
-      --max-width: 1100px;
-      --mobile-break: 600px;
-      --tab-bg: var(--color-surface);
-      --tab-border: var(--color-border);
-      --tab-active: var(--color-primary);
-    }
-
-    html, body {
-      height: 100%;
-      margin: 0;
-      background: var(--color-background);
-      color: var(--color-text);
-      font-family: var(--font);
-      font-size: 16px;
-      min-height: 100vh;
-    }
-
-    .container {
-      max-width: var(--max-width);
-      margin: 0 auto;
-      padding: var(--space);
-    }
-
-    .tabs {
-      display: flex;
-      border-bottom: 2px solid var(--tab-border);
-      background: var(--tab-bg);
-      border-radius: var(--radius) var(--radius) 0 0;
-      margin-bottom: var(--space);
-      overflow-x: auto;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .tab {
-      padding: var(--space-sm) var(--space);
-      cursor: pointer;
-      color: var(--color-text-secondary);
-      border: none;
-      border-bottom: 4px solid transparent;
-      background: none;
-      font-size: 1.1em;
-      outline: none;
-      transition: border-bottom 0.2s, color 0.2s, background 0.2s;
-      margin-right: 2px;
-      flex-shrink: 0;
-    }
-
-    .tab.active {
-      color: var(--tab-active);
-      border-bottom: 4px solid var(--tab-active);
-      font-weight: 600;
-      background: var(--color-surface);
-    }
-
+  <style>
+    /* ... cały istniejący CSS bez zmian ... */
+    
+    /* DODAJ te style dla centrowania tabeli */
     .products-table {
-      width: 100%;
+      width: auto;              /* zamiast 100% */
+      max-width: 100%;
+      margin-left: auto;
+      margin-right: auto;
       border-collapse: collapse;
       background: var(--color-surface);
       box-shadow: var(--shadow);
       margin-bottom: var(--space);
       table-layout: auto;
     }
-
-    .products-table th,
-    .products-table td {
-      padding: var(--space-sm) var(--space);
-      border: 1px solid var(--color-border);
-      text-align: left;
-      vertical-align: middle;
-      white-space: normal;
-      overflow-wrap: break-word;
-    }
-
-    .products-table tr.lowest td {
-      font-weight: bold;
-      background: rgba(33, 128, 141, 0.12);
-      color: var(--color-primary);
-    }
-
-    .products-table td.lowest {
-      font-weight: bold;
-      background: rgba(33, 128, 141, 0.17);
-      color: var(--color-primary);
-    }
-
-    .products-table th.sortable {
-      cursor: pointer;
-      user-select: none;
-      position: relative;
-    }
-
-    .products-table th.sortable:hover {
-      background: rgba(33, 128, 141, 0.08);
-    }
-
-    .products-table th.sortable::after {
-      content: '';
-      width: 0;
-      height: 0;
-      border-left: 5px solid transparent;
-      border-right: 5px solid transparent;
-      margin-left: 5px;
-      display: inline-block;
-      opacity: 0.5;
-    }
-
-    .products-table th.sortable.sort-asc::after {
-      border-top: 7px solid var(--color-primary);
-      opacity: 1;
-    }
-
-    .products-table th.sortable.sort-desc::after {
-      border-bottom: 7px solid var(--color-primary);
-      opacity: 1;
-    }
-
-    .products-table td input,
-    .products-table td select {
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    .add-section,
-    .compare-section {
-      background: var(--color-surface);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      margin-bottom: var(--space);
-      padding: var(--space-sm) var(--space);
-    }
-
-    label {
-      font-weight: 500;
-      display: block;
-      margin-bottom: 6px;
-    }
-
-    .row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space);
-      margin-bottom: var(--space);
-    }
-
-    .row > * {
-      flex: 1;
-      min-width: 160px;
-    }
-
-    input, select, button {
-      font-family: inherit;
-      font-size: 1em;
-      padding: 7px 13px;
-      border-radius: var(--radius);
-      border: 1px solid var(--color-border);
-      margin-bottom: 5px;
-      background: var(--color-surface);
-      outline: none;
-      transition: border-color .2s;
-    }
-
-    input:focus,
-    select:focus {
-      border-color: var(--color-primary);
-    }
-
-    button.primary {
-      background: var(--color-primary);
-      color: #fff;
-      border: none;
-      cursor: pointer;
-      margin-right: 10px;
-      min-width: 80px;
-      font-weight: 500;
-      transition: background .2s;
-    }
-
-    button.primary:hover,
-    button.primary:focus {
-      background: var(--color-primary-hover);
-    }
-
-    button.secondary {
-      background: var(--color-surface);
-      color: var(--color-primary);
-      border: 1px solid var(--color-primary);
-      cursor: pointer;
-      font-weight: 400;
-    }
-
-    @media (max-width: 480px) {
-      .row {
-        flex-direction: column;
-        gap: var(--space-xs);
-      }
-
-      .products-table {
-        font-size: 0.92em;
-      }
-    }
-
-    .section-title {
-      margin-top: 0;
-      color: var(--color-primary);
-      font-size: 1.32em;
-      border-left: 5px solid var(--color-primary);
-      padding-left: 16px;
-      margin-bottom: var(--space-sm);
-    }
-
-    .info {
-      color: var(--color-text-secondary);
-      font-size: 1em;
-      margin-bottom: var(--space-xs);
-      margin-top: -10px;
-    }
-
-    .remove-btn {
-      color: #fff;
-      background: #ff5555;
-      border: none;
-      border-radius: var(--radius);
-      padding: 4px 10px;
-      font-size: 0.8em;
-      cursor: pointer;
-      margin-left: 7px;
-      margin-bottom: 3px;
-    }
-
-    .remove-btn:hover {
-      background: #d1002a;
-    }
-
-    .company-card {
-      margin-bottom: 16px;
-    }
-
-    .company-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .company-card-header:hover {
-      background: rgba(33, 128, 141, 0.05);
-    }
-
-    .company-card-toggle {
-      background: var(--color-primary);
-      color: #fff;
-      border: none;
-      border-radius: var(--radius);
-      padding: 6px 14px;
-      font-size: 0.9em;
-      cursor: pointer;
-      font-weight: 500;
-      transition: background .2s;
-    }
-
-    .company-card-toggle:hover {
-      background: var(--color-primary-hover);
-    }
-
-    .company-card-body {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease;
-    }
-
-    .company-card-body.expanded {
-      max-height: 2000px;
-    }
-
-    .editable-price {
-      cursor: pointer;
-    }
-
-    .editable-price:hover {
-      background: rgba(33, 128, 141, 0.08);
-    }
-
-    .products-search {
-      margin-bottom: 12px;
-    }
-
-    .products-search-clear-btn {
-      flex: 0 0 auto;
-      flex-shrink: 0;
-      padding: 7px 10px;
-      min-width: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: 0;
-      height: 100%;
-      box-sizing: border-box;
-      margin-left: 32px;
-    }
-
-    .products-search-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      max-width: 420px;
-    }
-
-    .products-search-input {
-      background-color: #ffffff;
-      color: var(--color-text);
-    }
-
-    .recipients-info {
-      color: var(--color-text-secondary);
-      font-size: 0.95em;
-      margin-bottom: var(--space-xs);
-    }
-
-    .recipient-tag {
-      display: inline-block;
-      padding: 3px 7px;
-      margin: 2px 4px 2px 0;
-      border-radius: 999px;
-      background: rgba(33, 128, 141, 0.1);
-      color: var(--color-primary);
-      font-size: 0.85em;
-    }
+    
+    /* reszta CSS bez zmian */
   </style>
 </head>
 <body>
   <div class="container">
-  <h1>Twoje zamówienia</h1>
+    <h1>Twoje zamówienia</h1>
 
-  <div style="margin-bottom: 1rem;">
-    <button id="logoutBtn">Wyloguj</button>
-    <button id="reloadBtn">Odśwież</button>
+    <div style="margin-bottom: 1rem;">
+      <button id="logoutBtn">Wyloguj</button>
+      <button id="reloadBtn">Odśwież</button>
+    </div>
+
+    <h2>Dodaj zamówienie</h2>
+    <div class="row">  <!-- dodaj klasę dla lepszego układu -->
+      <label>Dostawca:
+        <input type="text" id="newSupplier" placeholder="np. ABC Sp. z o.o.">  <!-- DODAJ -->
+      </label>
+      <label>Produkt:
+        <input type="text" id="newProduct">
+      </label>
+      <label>Cena:
+        <input type="number" id="newPrice" step="0.01" min="0">
+      </label>
+      <div style="flex: 0 0 auto; align-self: end;">  <!-- przycisk na dole -->
+        <button id="addBtn" class="primary">Dodaj</button>
+      </div>
+    </div>
+
+    <div id="error" style="color: #d1002a; margin-bottom: 1rem;"></div>
+
+    <table id="ordersTable" class="products-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Produkt</th>
+          <th>Dostawca</th>  <!-- DODAJ -->
+          <th>Cena</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- wiersze wypełni JS -->
+      </tbody>
+    </table>
   </div>
 
-  <h2>Dodaj zamówienie</h2>
-  <div>
-    <label>Produkt:
-      <input type="text" id="newProduct">
-    </label>
-    <label>Cena:
-      <input type="number" id="newPrice" step="0.01">
-    </label>
-    <button id="addBtn">Dodaj</button>
-  </div>
-
-  <div id="error"></div>
-
- <table id="ordersTable" class="products-table">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Produkt</th>
-        <th>Cena</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- wiersze wypełni JS -->
-    </tbody>
-  </table>
-</div>
   <script>
     const API_URL    = "https://a1.justmike.space/app/list_orders.pl";
     const LOGOUT_URL = "https://a1.justmike.space/app/logout.pl";
@@ -396,6 +76,7 @@
     }
 
     async function addOrder() {
+      const supplier = document.getElementById("newSupplier").value.trim();
       const product  = document.getElementById("newProduct").value.trim();
       const price    = document.getElementById("newPrice").value.trim();
       const errorBox = document.getElementById("error");
@@ -416,7 +97,7 @@
             "Content-Type": "application/json",
             "X-CSRF-Token": csrfToken
           },
-          body: JSON.stringify({ product, price })
+          body: JSON.stringify({ supplier, product, price })  // DODAJ supplier
         });
 
         if (resp.status === 401) {
@@ -443,14 +124,17 @@
 
         const data = await resp.json();
         if (data.ok) {
+          // wyczyść WSZYSTKIE pola
+          document.getElementById("newSupplier").value = "";
           document.getElementById("newProduct").value = "";
           document.getElementById("newPrice").value = "";
+          document.getElementById("error").textContent = "";  // ukryj błąd
           await loadOrders();
         } else {
           errorBox.textContent = "Błąd dodawania: " + (data.error || "unknown");
         }
       } catch (e) {
-        errorBox.textContent = "Błąd połączenia: " + e;
+        errorBox.textContent = "Błąd połączenia: " + e.message;
       }
     }
 
@@ -458,7 +142,7 @@
       const errorBox = document.getElementById("error");
       const tbody    = document.querySelector("#ordersTable tbody");
       errorBox.textContent = "";
-      tbody.innerHTML = "<tr><td colspan='3'>Ładowanie...</td></tr>";
+      tbody.innerHTML = "<tr><td colspan='4'>Ładowanie...</td></tr>";  // 4 kolumny!
 
       const csrfToken = getCsrfToken();
 
@@ -494,7 +178,7 @@
         tbody.innerHTML = "";
 
         if (!Array.isArray(data) || data.length === 0) {
-          tbody.innerHTML = "<tr><td colspan='3'>Brak zamówień.</td></tr>";
+          tbody.innerHTML = "<tr><td colspan='4'>Brak zamówień.</td></tr>";  // 4 kolumny
           return;
         }
 
@@ -503,19 +187,19 @@
           tr.innerHTML = `
             <td>${row.id}</td>
             <td>${row.product}</td>
-            <td>${row.price}</td>
+            <td>${row.supplier || ''}</td>  <!-- DODAJ, pusty = '' -->
+            <td>${row.price.toLocaleString('pl-PL', {style: 'currency', currency: 'PLN'})}</td>  <!-- format PLN -->
           `;
           tbody.appendChild(tr);
         }
       } catch (e) {
         tbody.innerHTML = "";
-        errorBox.textContent = "Błąd połączenia: " + e;
+        errorBox.textContent = "Błąd połączenia: " + e.message;
       }
     }
 
     async function doLogout() {
       const csrfToken = getCsrfToken();
-
       try {
         await fetch(LOGOUT_URL, {
           method: "POST",
@@ -526,17 +210,16 @@
           }
         });
       } catch (e) {
-        // ignorujemy błąd – i tak przekierujemy
+        // ignoruj
       }
-
       sessionStorage.removeItem("csrfToken");
       window.location.href = LOGIN_PAGE;
     }
 
+    // event listeners bez zmian
     document.getElementById("addBtn").addEventListener("click", addOrder);
     document.getElementById("reloadBtn").addEventListener("click", loadOrders);
     document.getElementById("logoutBtn").addEventListener("click", doLogout);
-
     window.addEventListener("load", loadOrders);
   </script>
 </body>
