@@ -5,7 +5,6 @@
   <title>Lista dostawców i ich cenniki</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    /* ... ten sam CSS jak wcześniej ... */
     :root {
       --color-background: #fcfcf9;
       --color-surface: #fffffd;
@@ -23,21 +22,257 @@
       --max-width: 1100px;
     }
 
-    /* ... reszta CSS bez zmian ... */
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: var(--color-background);
+      color: var(--color-text);
+      font-family: var(--font);
+      font-size: 16px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: var(--space);
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 1.2rem;
+      border-left: 4px solid var(--color-primary);
+      padding-left: 10px;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-sm);
+    }
+
+    .top-bar-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    input, select, button {
+      font-family: inherit;
+      font-size: 0.95rem;
+      padding: 7px 13px;
+      border-radius: var(--radius);
+      border: 1px solid var(--color-border);
+      background: var(--color-surface);
+      outline: none;
+      transition: border-color .2s, background .2s;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--color-primary);
+    }
+
+    button.primary {
+      background: var(--color-primary);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      padding-inline: 18px;
+    }
+
+    button.primary:hover {
+      background: var(--color-primary-hover);
+    }
+
+    button.danger {
+      background: #ff5555;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    button.danger:hover {
+      background: #d1002a;
+    }
+
+    button.outline {
+      background: var(--color-surface);
+      color: var(--color-primary);
+      border-color: var(--color-primary);
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .supplier-add {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: var(--space-sm);
+      background: var(--color-surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: var(--space-sm);
+    }
+
+    .supplier-add input {
+      flex: 1;
+    }
+
+    .info {
+      font-size: 0.85rem;
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-sm);
+    }
+
+    .supplier-card {
+      background: var(--color-surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: var(--space);
+      padding: var(--space-sm);
+    }
+
+    .supplier-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-sm);
+    }
+
+    .supplier-name {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .supplier-header-buttons {
+      display: flex;
+      gap: 6px;
+    }
+
+    .products-table-wrapper {
+      overflow-x: auto;
+    }
+
+    .products-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--color-surface);
+      table-layout: auto;
+    }
+
+    .products-table th,
+    .products-table td {
+      padding: 8px 10px;
+      border: 1px solid var(--color-border);
+      text-align: left;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+
+    .products-table th {
+      background: #f5f7f8;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+    }
+
+    .products-table td.price-cell {
+      text-align: right;
+    }
+
+    .products-table tr:nth-child(even) {
+      background: #fafafa;
+    }
+
+    .products-table .tag-supplier {
+      font-size: 0.8rem;
+      color: var(--color-primary);
+    }
+
+    .supplier-add-product {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .supplier-add-product input {
+      min-width: 140px;
+    }
+
+    .supplier-add-product .prod-name {
+      min-width: 260px;
+    }
+
+    .supplier-add-product .btn-add-product {
+      flex: 0 0 auto;
+    }
+
+    #error {
+      color: #d1002a;
+      margin-top: 6px;
+      font-size: 0.9rem;
+      padding: 8px;
+      background: #fee;
+      border-radius: var(--radius);
+      border-left: 4px solid #ff5555;
+    }
+
+    .debug-info {
+      background: #e3f2fd;
+      padding: 12px;
+      margin-bottom: var(--space);
+      border-radius: var(--radius);
+      font-size: 0.85rem;
+      font-family: monospace;
+    }
+
+    @media (max-width: 700px) {
+      .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .supplier-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+    }
   </style>
 </head>
 <body>
-  <!-- ... ten sam HTML jak wcześniej ... -->
   <div class="container">
     <div class="top-bar">
       <h1>Lista dostawców i ich cenniki</h1>
       <div class="top-bar-buttons">
         <button id="logoutBtn" class="outline">Wyloguj</button>
         <button id="reloadBtn" class="outline">Odśwież</button>
-        <button id="testConnBtn" class="outline">Test połączenia</button>
+        <button id="testConnBtn" class="primary">🔍 Test połączenia</button>
       </div>
     </div>
-    <!-- ... reszta HTML bez zmian ... -->
+
+    <div class="debug-info" id="debugInfo" style="display: none;">
+      <strong>Debug info:</strong><br>
+      <span id="debugCsrf"></span><br>
+      <span id="debugOnline"></span>
+    </div>
+
+    <div class="supplier-add">
+      <input type="text" id="newSupplierName" placeholder="Wpisz nazwę dostawcy...">
+      <button id="addSupplierBtn" class="primary">Dodaj dostawcę</button>
+    </div>
+
+    <p class="info">
+      W cenniku dostawcy możesz skorygować VAT dla produktu, zmiana zaktualizuje stawkę tego produktu wszędzie.
+    </p>
+
+    <div id="suppliersContainer"></div>
+    <div id="error"></div>
   </div>
 
   <script>
@@ -56,6 +291,18 @@
       return sessionStorage.getItem("csrfToken") || "";
     }
 
+    function updateDebugInfo() {
+      const csrf = getCsrfToken();
+      const debugInfo = document.getElementById("debugInfo");
+      const debugCsrf = document.getElementById("debugCsrf");
+      const debugOnline = document.getElementById("debugOnline");
+
+      debugCsrf.textContent = `CSRF: ${csrf ? 'OK (' + csrf.substring(0,8) + '...)' : 'BRAK!'}`;
+      debugOnline.textContent = `Online: ${navigator.onLine ? '✅' : '❌'}`;
+      
+      debugInfo.style.display = 'block';
+    }
+
     function formatPLN(value) {
       if (value === null || value === undefined || value === "") return "";
       const num = Number(value);
@@ -63,7 +310,7 @@
       return num.toLocaleString("pl-PL", { style: "currency", currency: "PLN" });
     }
 
-    // 🔧 Ulepszona funkcja fetch z pełnym debugowaniem
+    // 🔧 Super debugowany apiFetch
     async function apiFetch(url, options = {}) {
       const csrf = getCsrfToken();
       const defaultOptions = {
@@ -77,78 +324,89 @@
 
       const config = { ...defaultOptions, ...options };
 
-      console.log(`🌐 API Request: ${url}`, {
-        method: config.method || 'GET',
-        csrf: csrf ? 'present' : 'missing',
-        credentials: config.credentials
-      });
+      console.group(`🌐 ${config.method || 'GET'} ${url}`);
+      console.log('Headers:', config.headers);
+      console.log('CSRF:', csrf ? 'present' : 'MISSING!');
+      console.log('Credentials:', config.credentials);
 
       try {
+        const startTime = Date.now();
         const response = await fetch(url, config);
+        const duration = Date.now() - startTime;
         
-        console.log(`📡 API Response: ${url} → ${response.status} ${response.statusText}`);
-        console.log('Headers:', [...response.headers.entries()]);
-
-        // Sprawdź CORS preflight
+        console.log(`📡 Response: ${response.status} ${response.statusText} (${duration}ms)`);
+        
         if (response.status === 0) {
-          throw new Error('CORS blocked (status 0)');
+          throw new Error('🛑 CORS BLOCKED (status 0)');
         }
 
         if (!response.ok) {
-          let errorText = '';
+          let errorText = 'No body';
           try {
             errorText = await response.text();
-          } catch {
-            errorText = 'No response body';
-          }
-          console.error('❌ API Error details:', { status: response.status, errorText });
+          } catch {}
+          console.error('❌ HTTP Error:', response.status, errorText);
           throw new Error(`HTTP ${response.status}: ${errorText}`);
         }
 
         const data = await response.json();
-        console.log('✅ API Success:', data);
+        console.log('✅ SUCCESS:', data);
+        console.groupEnd();
         return data;
 
       } catch (error) {
-        console.error(`💥 Fetch error dla ${url}:`, error);
+        console.error('💥 ERROR:', error);
+        console.groupEnd();
         
-        if (error.name === 'TypeError' && error.message.includes('fetch')) {
-          throw new Error(`Brak połączenia sieciowego lub CORS: ${error.message}`);
-        }
-        if (error.message.includes('CORS')) {
-          throw new Error('Błąd CORS - sprawdź czy serwer zezwala na żądania z tej domeny');
-        }
-        if (error.message.includes('Failed to fetch')) {
-          throw new Error('Failed to fetch - sprawdź: 1) połączenie internetowe, 2) czy serwer działa, 3) CORS');
+        let userMessage = error.message;
+        if (error.message.includes('fetch') || error.message.includes('Failed to fetch')) {
+          userMessage = '🔌 Brak połączenia / CORS / Serwer wyłączony';
+        } else if (error.message.includes('CORS')) {
+          userMessage = '🚫 BŁĄD CORS - serwer blokuje żądania';
+        } else if (error.message.includes('401')) {
+          userMessage = '🔐 Sesja wygasła - zaloguj się ponownie';
+          setTimeout(() => window.location.href = LOGIN_PAGE, 2000);
         }
         
-        throw error;
+        throw new Error(userMessage);
       }
     }
 
-    // 🔧 Test połączenia
     async function testConnection() {
       const errorBox = document.getElementById("error");
+      const testBtn = document.getElementById("testConnBtn");
+      
+      testBtn.textContent = '⏳ Test...';
+      testBtn.disabled = true;
+      
       try {
-        errorBox.innerHTML = '<span style="color: orange;">Testowanie połączenia...</span>';
+        errorBox.innerHTML = '<span style="color: orange;">Test 1/3: Główna strona...</span>';
         
-        // Test 1: prosty GET bez CSRF
-        const testResp = await fetch("https://a1.justmike.space/", { 
+        // Test 1: główna strona (bez CSRF)
+        const mainResp = await fetch("https://a1.justmike.space/", { 
           method: 'GET',
           credentials: 'include'
         });
+        console.log('🏠 Main page:', mainResp.status);
         
-        console.log('🏠 Main page test:', testResp.status);
+        errorBox.innerHTML = '<span style="color: orange;">Test 2/3: Produkty...</span>';
         
-        // Test 2: products z pełnym apiFetch
-        await apiFetch(API_PRODUCTS_URL, { method: 'GET' });
+        // Test 2: products
+        await apiFetch(API_PRODUCTS_URL);
         
-        errorBox.innerHTML = '<span style="color: green;">✅ Połączenie działa poprawnie!</span>';
-        setTimeout(() => errorBox.textContent = '', 3000);
+        errorBox.innerHTML = '<span style="color: green;">✅ Połączenie OK! Status: ' + mainResp.status + '</span>';
+        
+        setTimeout(() => {
+          errorBox.textContent = '';
+          testBtn.textContent = '🔍 Test połączenia';
+          testBtn.disabled = false;
+        }, 3000);
         
       } catch (e) {
-        console.error('🔴 Connection test failed:', e);
-        errorBox.innerHTML = `<span style="color: red;">❌ Błąd: ${e.message}</span>`;
+        console.error('🔴 Test failed:', e);
+        errorBox.innerHTML = `<span style="color: red;">❌ ${e.message}</span>`;
+        testBtn.textContent = '🔍 Test połączenia';
+        testBtn.disabled = false;
       }
     }
 
@@ -156,10 +414,10 @@
       try {
         const data = await apiFetch(API_PRODUCTS_URL);
         MASTER_PRODUCTS = Array.isArray(data) ? data : [];
-        console.log(`📦 Załadowano ${MASTER_PRODUCTS.length} produktów`);
+        console.log(`📦 ${MASTER_PRODUCTS.length} produktów z bazy`);
         return true;
       } catch (e) {
-        console.error('❌ Błąd ładowania produktów:', e);
+        console.error('❌ Produkty:', e);
         MASTER_PRODUCTS = [];
         throw e;
       }
@@ -174,11 +432,11 @@
         const priceTxt = prod.price_net != null && prod.price_net !== ""
           ? formatPLN(prod.price_net)
           : "";
-        let label = prod.name;
-        if (vatTxt) label += " – " + vatTxt;
-        if (priceTxt) label += " – " + priceTxt;
+        let label = prod.name || 'Brak nazwy';
+        if (vatTxt) label += ` – ${vatTxt}`;
+        if (priceTxt) label += ` – ${priceTxt}`;
 
-        optionsHtml += `<option value="${prod.name}"
+        optionsHtml += `<option value="${prod.name || ''}"
                                data-price="${prod.price_net ?? ""}"
                                data-vat="${prod.vat ?? ""}"
                                data-unit="${prod.unit ?? ""}">${label}</option>`;
@@ -186,9 +444,7 @@
 
       return `
         <input list="${datalistId}" class="prod-name" placeholder="Nazwa produktu (możesz wpisać nowy)">
-        <datalist id="${datalistId}">
-          ${optionsHtml}
-        </datalist>
+        <datalist id="${datalistId}">${optionsHtml}</datalist>
         <select class="prod-unit">
           <option value="szt">szt</option>
           <option value="kg">kg</option>
@@ -221,10 +477,10 @@
         const dl = document.getElementById(datalistId);
         if (!dl) return;
         
-        const val = nameInput.value;
+        const val = nameInput.value.trim();
         const opts = dl.options;
         for (let i = 0; i < opts.length; i++) {
-          if (opts[i].value === val) {
+          if (opts[i].value.trim() === val) {
             const container = nameInput.closest(".supplier-add-product");
             const netInput = container.querySelector(".prod-price-net");
             const vatInput = container.querySelector(".prod-vat");
@@ -234,63 +490,801 @@
             const vat = opts[i].getAttribute("data-vat");
             const unit = opts[i].getAttribute("data-unit");
             
-            if (p !== null && p !== "") netInput.value = p;
-            if (vat !== null && vat !== "") vatInput.value = vat;
-            if (unit !== null && unit !== "") unitSelect.value = unit;
+            if (p) netInput.value = p;
+            if (vat) vatInput.value = vat;
+            if (unit) unitSelect.value = unit;
             break;
           }
         }
       });
     }
 
-    // ... reszta funkcji createSupplierCard bez zmian (skrócona dla czytelności) ...
+    function createSupplierCard(supplier) {
+      const card = document.createElement("div");
+      card.className = "supplier-card";
+      card.dataset.supplierId = supplier.id;
+
+      const header = document.createElement("div");
+      header.className = "supplier-header";
+
+      const nameEl = document.createElement("div");
+      nameEl.className = "supplier-name";
+      nameEl.textContent = supplier.name;
+
+      const headerBtns = document.createElement("div");
+      headerBtns.className = "supplier-header-buttons";
+
+      const```html
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista dostawców i ich cenniki</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --color-background: #fcfcf9;
+      --color-surface: #fffffd;
+      --color-text: #13343b;
+      --color-text-secondary: #626c71;
+      --color-primary: #21808d;
+      --color-primary-hover: #1d7480;
+      --color-border: rgba(94, 82, 64, 0.2);
+      --radius: 10px;
+      --shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.07);
+      --font: Inter, Geist, Arial, sans-serif;
+      --space: 18px;
+      --space-sm: 10px;
+      --space-xs: 6px;
+      --max-width: 1100px;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: var(--color-background);
+      color: var(--color-text);
+      font-family: var(--font);
+      font-size: 16px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: var(--space);
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 1.2rem;
+      border-left: 4px solid var(--color-primary);
+      padding-left: 10px;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-sm);
+    }
+
+    .top-bar-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    input, select, button {
+      font-family: inherit;
+      font-size: 0.95rem;
+      padding: 7px 13px;
+      border-radius: var(--radius);
+      border: 1px solid var(--color-border);
+      background: var(--color-surface);
+      outline: none;
+      transition: border-color .2s, background .2s;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--color-primary);
+    }
+
+    button.primary {
+      background: var(--color-primary);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      padding-inline: 18px;
+    }
+
+    button.primary:hover {
+      background: var(--color-primary-hover);
+    }
+
+    button.danger {
+      background: #ff5555;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    button.danger:hover {
+      background: #d1002a;
+    }
+
+    button.outline {
+      background: var(--color-surface);
+      color: var(--color-primary);
+      border-color: var(--color-primary);
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .supplier-add {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: var(--space-sm);
+      background: var(--color-surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: var(--space-sm);
+    }
+
+    .supplier-add input {
+      flex: 1;
+    }
+
+    .info {
+      font-size: 0.85rem;
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-sm);
+    }
+
+    .supplier-card {
+      background: var(--color-surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: var(--space);
+      padding: var(--space-sm);
+    }
+
+    .supplier-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-sm);
+    }
+
+    .supplier-name {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .supplier-header-buttons {
+      display: flex;
+      gap: 6px;
+    }
+
+    .products-table-wrapper {
+      overflow-x: auto;
+    }
+
+    .products-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--color-surface);
+      table-layout: auto;
+    }
+
+    .products-table th,
+    .products-table td {
+      padding: 8px 10px;
+      border: 1px solid var(--color-border);
+      text-align: left;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+
+    .products-table th {
+      background: #f5f7f8;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+    }
+
+    .products-table td.price-cell {
+      text-align: right;
+    }
+
+    .products-table tr:nth-child(even) {
+      background: #fafafa;
+    }
+
+    .products-table .tag-supplier {
+      font-size: 0.8rem;
+      color: var(--color-primary);
+    }
+
+    .supplier-add-product {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .supplier-add-product input {
+      min-width: 140px;
+    }
+
+    .supplier-add-product .prod-name {
+      min-width: 260px;
+    }
+
+    .supplier-add-product .btn-add-product {
+      flex: 0 0 auto;
+    }
+
+    #error {
+      color: #d1002a;
+      margin-top: 6px;
+      font-size: 0.9rem;
+      padding: 10px;
+      background: #fee;
+      border-radius: var(--radius);
+      border-left: 4px solid #d1002a;
+    }
+
+    .debug-info {
+      background: #e3f2fd;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: var(--radius);
+      font-size: 0.85rem;
+      font-family: monospace;
+    }
+
+    @media (max-width: 700px) {
+      .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .supplier-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-bar">
+      <h1>Lista dostawców i ich cenniki</h1>
+      <div class="top-bar-buttons">
+        <button id="logoutBtn" class="outline">Wyloguj</button>
+        <button id="reloadBtn" class="outline">Odśwież</button>
+        <button id="testConnBtn" class="primary">🔍 Test połączenia</button>
+      </div>
+    </div>
+
+    <div class="debug-info" id="debugInfo" style="display: none;">
+      <strong>Debug info:</strong><br>
+      <span id="debugCsrf"></span><br>
+      <span id="debugOnline"></span>
+    </div>
+
+    <div class="supplier-add">
+      <input type="text" id="newSupplierName" placeholder="Wpisz nazwę dostawcy...">
+      <button id="addSupplierBtn" class="primary">Dodaj dostawcę</button>
+    </div>
+
+    <p class="info">
+      W cenniku dostawcy możesz skorygować VAT dla produktu, zmiana zaktualizuje stawkę tego produktu wszędzie.
+    </p>
+
+    <div id="suppliersContainer"></div>
+    <div id="error"></div>
+  </div>
+
+  <script>
+    const API_SUPPLIERS_URL        = "https://a1.justmike.space/app/list_suppliers.pl";
+    const API_ADD_SUPPLIER         = "https://a1.justmike.space/app/add_supplier.pl";
+    const API_DELETE_SUPPLIER      = "https://a1.justmike.space/app/delete_supplier.pl";
+    const API_ADD_PRODUCT          = "https://a1.justmike.space/app/add_supplier_product.pl";
+    const API_DELETE_SUPPLIER_PROD = "https://a1.justmike.space/app/delete_supplier_product.pl";
+    const API_PRODUCTS_URL         = "https://a1.justmike.space/app/list_products.pl";
+    const API_LOGOUT_URL           = "https://a1.justmike.space/app/logout.pl";
+    const LOGIN_PAGE               = "/login.html";
+
+    let MASTER_PRODUCTS = [];
+
+    function getCsrfToken() {
+      const token = sessionStorage.getItem("csrfToken");
+      updateDebugInfo(token ? '✅ CSRF OK' : '❌ Brak CSRF token');
+      return token || "";
+    }
+
+    function updateDebugInfo(csrfStatus) {
+      const debugEl = document.getElementById("debugInfo");
+      const csrfEl = document.getElementById("debugCsrf");
+      const onlineEl = document.getElementById("debugOnline");
+      
+      csrfEl.textContent = csrfStatus;
+      onlineEl.textContent = navigator.onLine ? '🌐 Online' : '🔌 Offline';
+      debugEl.style.display = 'block';
+    }
+
+    function formatPLN(value) {
+      if (value === null || value === undefined || value === "") return "";
+      const num = Number(value);
+      if (Number.isNaN(num)) return value;
+      return num.toLocaleString("pl-PL", { style: "currency", currency: "PLN" });
+    }
+
+    // 🔧 Super debugowany fetch
+    async function apiFetch(url, options = {}) {
+      const csrf = getCsrfToken();
+      const defaultOptions = {
+        credentials: "include",
+        headers: {
+          "Accept": "application/json",
+          "X-CSRF-Token": csrf,
+          ...(options.headers || {})
+        }
+      };
+
+      const config = { ...defaultOptions, ...options };
+
+      console.group(`🌐 ${config.method || 'GET'} ${url}`);
+      console.log('Config:', {
+        csrf: csrf ? 'present' : 'MISSING',
+        credentials: config.credentials,
+        headers: config.headers
+      });
+
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
+        const response = await fetch(url, { ...config, signal: controller.signal });
+        clearTimeout(timeoutId);
+
+        console.log(`📡 Response: ${response.status} ${response.statusText}`);
+        
+        if (response.status === 0) {
+          throw new Error('🚫 CORS BLOCKED (status 0)');
+        }
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('❌ HTTP Error:', response.status, errorText);
+          throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 200)}`);
+        }
+
+        const data = await response.json();
+        console.log('✅ Data:', data);
+        console.groupEnd();
+        return data;
+
+      } catch (error) {
+        console.error('💥 ERROR:', error);
+        console.groupEnd();
+        
+        if (error.name === 'AbortError') {
+          throw new Error('⏰ Timeout - serwer nie odpowiada (10s)');
+        }
+        if (error.message.includes('CORS')) {
+          throw new Error('🚫 BŁĄD CORS - serwer blokuje żądania z przeglądarki');
+        }
+        if (error.message.includes('Failed to fetch')) {
+          throw new Error('🌐 Failed to fetch:\n1. Sprawdź internet\n2. Serwer może być wyłączony\n3. Problem z CORS');
+        }
+        throw error;
+      }
+    }
+
+    async function testConnection() {
+      const errorBox = document.getElementById("error");
+      const btn = document.getElementById("testConnBtn");
+      
+      btn.textContent = '⏳ Test...';
+      btn.disabled = true;
+      
+      try {
+        errorBox.innerHTML = '<span style="color: orange;">Test 1/3: Strona główna...</span>';
+        
+        // Test 1: główna strona (bez API)
+        const homeResp = await fetch("https://a1.justmike.space/", { 
+          method: 'GET', 
+          credentials: 'include' 
+        });
+        console.log('🏠 Home test:', homeResp.status);
+        
+        errorBox.innerHTML = '<span style="color: orange;">Test 2/3: Produkty...</span>';
+        
+        // Test 2: API products
+        await apiFetch(API_PRODUCTS_URL);
+        
+        errorBox.innerHTML = '<span style="color: green;">✅ Połączenie OK! Kliknij Odśwież</span>';
+        
+        setTimeout(() => {
+          errorBox.textContent = '';
+          btn.textContent = '🔍 Test połączenia';
+          btn.disabled = false;
+        }, 3000);
+        
+      } catch (e) {
+        console.error('🔴 Test failed:', e);
+        errorBox.innerHTML = `<strong style="color: red;">❌ ${e.message}</strong>`;
+        btn.textContent = '🔍 Test połączenia';
+        btn.disabled = false;
+      }
+    }
+
+    async function loadMasterProducts() {
+      try {
+        const data = await apiFetch(API_PRODUCTS_URL);
+        MASTER_PRODUCTS = Array.isArray(data) ? data : [];
+        console.log(`📦 ${MASTER_PRODUCTS.length} produktów z bazy`);
+        return true;
+      } catch (e) {
+        console.error('❌ Produkty:', e.message);
+        MASTER_PRODUCTS = [];
+        throw new Error(`Nie można załadować listy produktów: ${e.message}`);
+      }
+    }
+
+    function createDatalistHtml(supplierId) {
+      const datalistId = `products-master-list-${supplierId}`;
+      let optionsHtml = "";
+      
+      for (const prod of MASTER_PRODUCTS) {
+        const vatTxt = prod.vat != null && prod.vat !== "" ? `${prod.vat} %` : "";
+        const priceTxt = prod.price_net != null && prod.price_net !== ""
+          ? formatPLN(prod.price_net)
+          : "";
+        let label = prod.name;
+        if (vatTxt) label += ` – ${vatTxt}`;
+        if (priceTxt) label += ` – ${priceTxt}`;
+
+        optionsHtml += `<option value="${prod.name}"
+                               data-price="${prod.price_net ?? ""}"
+                               data-vat="${prod.vat ?? ""}"
+                               data-unit="${prod.unit ?? ""}">${label}</option>`;
+      }
+
+      return `
+        <input list="${datalistId}" class="prod-name" placeholder="Nazwa produktu (z listy lub nowy)">
+        <datalist id="${datalistId}">${optionsHtml}</datalist>
+        <select class="prod-unit">
+          <option value="szt">szt</option>
+          <option value="kg">kg</option>
+          <option value="l">l</option>
+        </select>
+        <input type="number" step="0.01" min="0" class="prod-price-net" placeholder="Cena netto">
+        <input type="number" step="1" min="0" class="prod-vat" placeholder="VAT %" value="23">
+        <button type="button" class="primary btn-add-product">+ Dodaj</button>
+      `;
+    }
+
+    function refreshAllDatalists() {
+      document.querySelectorAll(".supplier-card").forEach(card => {
+        const supplierId = card.dataset.supplierId;
+        const addRow = card.querySelector(".supplier-add-product");
+        if (!addRow) return;
+
+        addRow.innerHTML = createDatalistHtml(supplierId);
+        
+        // Event listenery
+        const nameInput = addRow.querySelector(".prod-name");
+        setupProductNameListener(nameInput, supplierId);
+        const addBtn = addRow.querySelector(".btn-add-product");
+        addBtn.addEventListener("click", () => addProductForSupplier(card, supplierId));
+      });
+    }
+
+    function setupProductNameListener(nameInput, supplierId) {
+      nameInput.addEventListener("input", () => {
+        const datalistId = `products-master-list-${supplierId}`;
+        const dl = document.getElementById(datalistId);
+        if (!dl) return;
+        
+        const val = nameInput.value.trim();
+        const opts = Array.from(dl.options);
+        const match = opts.find(opt => opt.value === val);
+        
+        if (match) {
+          const container = nameInput.closest(".supplier-add-product");
+          const netInput = container.querySelector(".prod-price-net");
+          const vatInput = container.querySelector(".prod-vat");
+          const unitSelect = container.querySelector(".prod-unit");
+          
+          netInput.value = match.dataset.price || '';
+          vatInput.value = match.dataset.vat || '23';
+          unitSelect.value = match.dataset.unit || 'szt';
+        }
+      });
+    }
+
+    function createSupplierCard(supplier) {
+      const card = document.createElement("div");
+      card.className = "supplier-card";
+      card.dataset.supplierId = supplier.id;
+
+      const header = document.createElement("div");
+      header.className = "supplier-header";
+
+      const nameEl = document.createElement("div");
+      nameEl.className = "supplier-name";
+      nameEl.textContent = supplier.name;
+
+      const headerBtns = document.createElement("div");
+      headerBtns.className = "supplier-header-buttons";
+
+      const toggleBtn = document.createElement("button");
+      toggleBtn.className = "outline";
+      toggleBtn.textContent = "Zwiń cennik";
+      toggleBtn.onclick = () => {
+        const tableWrap = card.querySelector(".products-table-wrapper");
+        const isHidden = tableWrap.style.display === "none";
+        tableWrap.style.display = isHidden ? "block" : "none";
+        toggleBtn.textContent = isHidden ? "Zwiń cennik" : "Rozwiń cennik";
+      };
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "danger";
+      deleteBtn.textContent = "🗑️ Usuń";
+      deleteBtn.onclick = () => deleteSupplier(supplier.id);
+
+      headerBtns.append(toggleBtn, deleteBtn);
+      header.append(nameEl, headerBtns);
+
+      const addRow = document.createElement("div");
+      addRow.className = "supplier-add-product";
+      addRow.innerHTML = createDatalistHtml(supplier.id);
+
+      setupProductNameListener(addRow.querySelector(".prod-name"), supplier.id);
+      addRow.querySelector(".btn-add-product").onclick = () => addProductForSupplier(card, supplier.id);
+
+      const tableWrap = document.createElement("div");
+      tableWrap.className = "products-table-wrapper";
+      tableWrap.style.display = "block";
+
+      const table = document.createElement("table");
+      table.className = "products-table";
+      table.innerHTML = `
+        <thead>
+          <tr>
+            <th>Produkt</th><th>Jednostka</th><th>Cena netto</th><th>VAT %</th>
+            <th>Cena brutto</th><th>Najtańszy</th><th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      `;
+
+      const tbody = table.querySelector("tbody");
+      if (supplier.products?.length) {
+        supplier.products.forEach(p => {
+          const tr = document.createElement("tr");
+          tr.dataset.supplierProductId = p.id;
+          tr.innerHTML = `
+            <td>${p.name}</td>
+            <td>${p.unit || ''}</td>
+            <td class="price-cell">${formatPLN(p.price_net)}</td>
+            <td>${p.vat ? p.vat + ' %' : ''}</td>
+            <td class="price-cell">${formatPLN(p.price_gross)}</td>
+            <td class="price-cell">
+              ${p.lowest_net ? formatPLN(p.lowest_net) : ''}
+              ${p.lowest_supplier ? `<span class="tag-supplier">(${p.lowest_supplier})</span>` : ''}
+            </td>
+            <td><button class="danger btn-del-product">🗑️</button></td>
+          `;
+          tr.querySelector(".btn-del-product").onclick = () => deleteProductRow(tr);
+          tbody.appendChild(tr);
+        });
+      } else {
+        tbody.innerHTML = '<tr><td colspan="7">Brak produktów</td></tr>';
+      }
+
+      tableWrap.appendChild(table);
+      card.append(header, addRow, tableWrap);
+      return card;
+    }
 
     async function loadSuppliers() {
       const errorBox = document.getElementById("error");
       const container = document.getElementById("suppliersContainer");
       
-      errorBox.textContent = "";
-      container.innerHTML = "<p class='info'>Ładowanie cenników...</p>";
+      errorBox.textContent = '';
+      container.innerHTML = '<p class="info">🔄 Ładowanie...</p>';
 
       try {
-        // 1. Najpierw produkty
         await loadMasterProducts();
-        
-        // 2. Potem dostawcy
         const suppliers = await apiFetch(API_SUPPLIERS_URL);
-        container.innerHTML = "";
-
-        if (!Array.isArray(suppliers) || suppliers.length === 0) {
-          container.innerHTML = "<p class='info'>Brak dostawców.</p>";
+        
+        container.innerHTML = '';
+        if (!suppliers?.length) {
+          container.innerHTML = '<p class="info">Brak dostawców</p>';
           return;
         }
 
-        for (const s of suppliers) {
-          const card = createSupplierCard(s);
-          container.appendChild(card);
-        }
+        suppliers.forEach(s => container.appendChild(createSupplierCard(s)));
+        
       } catch (e) {
-        console.error('💥 loadSuppliers error:', e);
-        container.innerHTML = "";
+        container.innerHTML = '';
         errorBox.textContent = e.message;
+        console.error('loadSuppliers:', e);
       }
     }
 
-    // ... reszta funkcji (addSupplier, addProductForSupplier, etc.) bez zmian tylko z apiFetch zamiast fetch ...
+    async function addSupplier() {
+      const nameInput = document.getElementById("newSupplierName");
+      const name = nameInput.value.trim();
+      const errorBox = document.getElementById("error");
 
-    // Event listenery z debugowaniem
-    document.getElementById("testConnBtn")?.addEventListener("click", testConnection);
-    document.getElementById("reloadBtn").addEventListener("click", loadSuppliers);
+      if (!name) return errorBox.textContent = 'Podaj nazwę dostawcy';
 
+      try {
+        const data = await apiFetch(API_ADD_SUPPLIER, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name })
+        });
+
+        if (!data.ok) throw new Error(data.error || 'Błąd serwera');
+        
+        nameInput.value = '';
+        errorBox.textContent = '';
+        await loadSuppliers();
+        
+      } catch (e) {
+        errorBox.textContent = `Dodawanie dostawcy: ${e.message}`;
+      }
+    }
+
+    async function addProductForSupplier(card, supplierId) {
+      const errorBox = document.getElementById("error");
+      const addRow = card.querySelector(".supplier-add-product");
+      const inputs = {
+        name: addRow.querySelector(".prod-name").value.trim(),
+        unit: addRow.querySelector(".prod-unit").value,
+        price_net: addRow.querySelector(".prod-price-net").value.trim(),
+        vat: addRow.querySelector(".prod-vat").value.trim()
+      };
+
+      if (!inputs.name || !inputs.price_net) {
+        return errorBox.textContent = 'Nazwa i cena netto wymagane';
+      }
+
+      try {
+        const data = await apiFetch(API_ADD_PRODUCT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            supplier_id: supplierId,
+            product_id: null,
+            new_name: inputs.name,
+            unit: inputs.unit,
+            price_net: inputs.price_net,
+            vat: inputs.vat
+          })
+        });
+
+        if (!data.ok) throw new Error(data.error || 'Błąd');
+
+        // Odśwież produkty jeśli nowy master product
+        if (data.master_product) {
+          await loadMasterProducts();
+          refreshAllDatalist();
+        }
+
+        // Wyczyść formularz i dodaj wiersz
+        addRow.querySelector(".prod-name").value = '';
+        addRow.querySelector(".prod-price-net").value = '';
+        addRow.querySelector(".prod-vat").value = '23';
+        addRow.querySelector(".prod-unit").value = 'szt';
+
+        const tbody = card.querySelector("tbody");
+        const p = data.product;
+        const tr = document.createElement("tr");
+        tr.dataset.supplierProductId = p.id;
+        tr.innerHTML = `
+          <td>${p.name}</td><td>${p.unit||''}</td>
+          <td class="price-cell">${formatPLN(p.price_net)}</td>
+          <td>${p.vat?p.vat+' %':''}</td>
+          <td class="price-cell">${formatPLN(p.price_gross)}</td>
+          <td></td>
+          <td><button class="danger btn-del-product">🗑️</button></td>
+        `;
+        tr.querySelector(".btn-del-product").onclick = () => deleteProductRow(tr);
+        
+        if (tbody.children.textContent.includes('Brak')) {
+          tbody.innerHTML = '';
+        }
+        tbody.appendChild(tr);
+
+        errorBox.textContent = '';
+
+      } catch (e) {
+        errorBox.textContent = `Produkt: ${e.message}`;
+      }
+    }
+
+    async function deleteProductRow(tr) {
+      if (!confirm('Usunąć produkt?')) return;
+      
+      const supplierProductId = tr.dataset.supplierProductId;
+      const errorBox = document.getElementById("error");
+
+      try {
+        const data = await apiFetch(API_DELETE_SUPPLIER_PROD, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ supplier_product_id: supplierProductId })
+        });
+
+        if (!data.ok) throw new Error(data.error || 'Błąd');
+        
+        tr.remove();
+        const tbody = tr.parentElement;
+        if (!tbody.children.length) {
+          tbody.innerHTML = '<tr><td colspan="7">Brak produktów</td></tr>';
+        }
+        errorBox.textContent = '';
+
+      } catch (e) {
+        errorBox.textContent = `Usuwanie: ${e.message}`;
+      }
+    }
+
+    async function deleteSupplier(id) {
+      if (!confirm('Usunąć dostawcę i cały cennik?')) return;
+      
+      try {
+        const data = await apiFetch(API_DELETE_SUPPLIER, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ supplier_id: id })
+        });
+
+        if (!data.ok) throw new Error(data.error || 'Błąd');
+        await loadSuppliers();
+
+      } catch (e) {
+        document.getElementById("error").textContent = `Usuwanie dostawcy: ${e.message}`;
+      }
+    }
+
+    async function doLogout() {
+      try {
+        await apiFetch(API_LOGOUT_URL, { method: 'POST' });
+      } catch {}
+      sessionStorage.removeItem("csrfToken");
+      window.location.href = LOGIN_PAGE;
+    }
+
+    // 📡 Event Listenery
+    document.getElementById("testConnBtn").onclick = testConnection;
+    document.getElementById("reloadBtn").onclick = loadSuppliers;
+    document.getElementById("addSupplierBtn").onclick = addSupplier;
+    document.getElementById("logoutBtn").onclick = doLogout;
+
+    // 🌐 Network status
+    window.addEventListener('online', () => updateDebugInfo(getCsrfToken() ? '✅ CSRF OK' : '❌ Brak CSRF'));
+    window.addEventListener('offline', () => updateDebugInfo('🔌 Offline'));
+
+    // 🚀 Start
     window.addEventListener("load", async () => {
-      console.log('🚀 Aplikacja startuje...');
-      console.log('CSRF:', getCsrfToken() ? 'OK' : 'BRAK');
+      console.log('🎯 Aplikacja uruchomiona');
+      getCsrfToken(); // Update debug
       await loadSuppliers();
     });
-
-    // 🔍 Debug konsoli
-    window.addEventListener('online', () => console.log('🌐 Online'));
-    window.addEventListener('offline', () => console.log('🔌 Offline'));
   </script>
 </body>
 </html>
