@@ -303,6 +303,29 @@
       }
     }
 
+    // przebuduj wszystkie datalisty wg MASTER_PRODUCTS
+    function refreshAllDatalists() {
+      document.querySelectorAll(".supplier-card").forEach(card => {
+        const supplierId = card.dataset.supplierId;
+        const datalistId = `products-master-list-${supplierId}`;
+        const dl = document.getElementById(datalistId);
+        if (!dl) return;
+
+        let optionsHtml = "";
+        for (const prod of MASTER_PRODUCTS) {
+          const prettyPrice = prod.price_net != null && prod.price_net !== ""
+            ? formatPLN(prod.price_net)
+            : "";
+          const label = prettyPrice ? `${prod.name} – ${prettyPrice}` : prod.name;
+          optionsHtml += `<option value="${prod.name}"
+                                 data-price="${prod.price_net ?? ""}"
+                                 data-vat="${prod.vat ?? ""}"
+                                 data-unit="${prod.unit ?? ""}">${label}</option>`;
+        }
+        dl.innerHTML = optionsHtml;
+      });
+    }
+
     function createSupplierCard(supplier) {
       const card = document.createElement("div");
       card.className = "supplier-card";
@@ -339,7 +362,7 @@
       header.appendChild(nameEl);
       header.appendChild(headerBtns);
 
-      // formularz dodawania produktu (nazwa + podpowiedzi; VAT, cena i jednostka z mastera)
+      // formularz dodawania produktu
       const addRow = document.createElement("div");
       addRow.className = "supplier-add-product";
 
@@ -372,9 +395,9 @@
         <button type="button" class="primary btn-add-product">+ Dodaj produkt</button>
       `;
 
-      const nameInput = addRow.querySelector(".prod-name");
-      const netInput  = addRow.querySelector(".prod-price-net");
-      const vatInput  = addRow.querySelector(".prod-vat");
+      const nameInput  = addRow.querySelector(".prod-name");
+      const netInput   = addRow.querySelector(".prod-price-net");
+      const vatInput   = addRow.querySelector(".prod-vat");
       const unitSelect = addRow.querySelector(".prod-unit");
 
       // po wyborze nazwy z listy ustaw cenę, VAT i jednostkę z mastera
@@ -431,7 +454,7 @@
       if (Array.isArray(supplier.products) && supplier.products.length > 0) {
         for (const p of supplier.products) {
           const tr = document.createElement("tr");
-          tr.dataset.supplierProductId = p.id; // p.id = supplier_products.id
+          tr.dataset.supplierProductId = p.id;
           tr.innerHTML = `
             <td>${p.name}</td>
             <td>${p.unit || ""}</td>
@@ -563,14 +586,14 @@
     }
 
     async function addProductForSupplier(cardEl, supplierId) {
-      const errorBox = document.getElementById("error");
-      const nameInput  = cardEl.querySelector(".prod-name");
-      const unitSelect = cardEl.querySelector(".prod-unit");
-      const netInput   = cardEl.querySelector(".prod-price-net");
-      const vatInput   = cardEl.querySelector(".prod-vat");
+      const errorBox  = document.getElementById("error");
+      const nameInput = cardEl.querySelector(".prod-name");
+      const unitSel   = cardEl.querySelector(".prod-unit");
+      const netInput  = cardEl.querySelector(".prod-price-net");
+      const vatInput  = cardEl.querySelector(".prod-vat");
 
       const new_name  = (nameInput.value || "").trim();
-      const unit      = unitSelect.value;
+      const unit      = unitSel.value;
       const price_net = (netInput.value || "").trim();
       const vat       = (vatInput.value || "").trim();
 
@@ -616,14 +639,16 @@
           return;
         }
 
+        // zaktualizuj master list i wszystkie datalisty, jeśli powstał/zmienił się produkt master
         if (data.master_product) {
           MASTER_PRODUCTS.push(data.master_product);
+          refreshAllDatalists();
         }
 
         nameInput.value  = "";
         netInput.value   = "";
         vatInput.value   = "23";
-        unitSelect.value = "szt";
+        unitSel.value    = "szt";
 
         const tbody = cardEl.querySelector(".products-table tbody");
         const p = data.product;
