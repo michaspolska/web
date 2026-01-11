@@ -312,16 +312,17 @@
         if (!dl) return;
 
         let optionsHtml = "";
-        for (const prod of MASTER_PRODUCTS) {
-          const prettyPrice = prod.price_net != null && prod.price_net !== ""
-            ? formatPLN(prod.price_net)
-            : "";
-          const label = prettyPrice ? `${prod.name} – ${prettyPrice}` : prod.name;
-          optionsHtml += `<option value="${prod.name}"
-                                 data-price="${prod.price_net ?? ""}"
-                                 data-vat="${prod.vat ?? ""}"
-                                 data-unit="${prod.unit ?? ""}">${label}</option>`;
-        }
+       for (const prod of MASTER_PRODUCTS) {
+  const vatTxt = prod.vat != null && prod.vat !== ""
+    ? prod.vat + " %"
+    : "";
+  const label = vatTxt ? `${prod.name} – ${vatTxt}` : prod.name;
+  optionsHtml += `<option value="${prod.name}"
+                         data-price="${prod.price_net ?? ""}"
+                         data-vat="${prod.vat ?? ""}"
+                         data-unit="${prod.unit ?? ""}">${label}</option>`;
+}
+
         dl.innerHTML = optionsHtml;
       });
     }
