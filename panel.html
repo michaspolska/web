@@ -255,7 +255,7 @@
     <div id="error"></div>
   </div>
 
-  <script>
+   <script>
     const API_SUPPLIERS_URL        = "https://a1.justmike.space/app/list_suppliers.pl";
     const API_ADD_SUPPLIER         = "https://a1.justmike.space/app/add_supplier.pl";
     const API_DELETE_SUPPLIER      = "https://a1.justmike.space/app/delete_supplier.pl";
@@ -303,7 +303,7 @@
       }
     }
 
-    // przebuduj wszystkie datalisty wg MASTER_PRODUCTS
+    // przebuduj wszystkie datalisty wg MASTER_PRODUCTS (nazwa + VAT)
     function refreshAllDatalists() {
       document.querySelectorAll(".supplier-card").forEach(card => {
         const supplierId = card.dataset.supplierId;
@@ -312,16 +312,16 @@
         if (!dl) return;
 
         let optionsHtml = "";
-       for (const prod of MASTER_PRODUCTS) {
-  const vatTxt = prod.vat != null && prod.vat !== ""
-    ? prod.vat + " %"
-    : "";
-  const label = vatTxt ? `${prod.name} – ${vatTxt}` : prod.name;
-  optionsHtml += `<option value="${prod.name}"
-                         data-price="${prod.price_net ?? ""}"
-                         data-vat="${prod.vat ?? ""}"
-                         data-unit="${prod.unit ?? ""}">${label}</option>`;
-}
+        for (const prod of MASTER_PRODUCTS) {
+          const vatTxt = prod.vat != null && prod.vat !== ""
+            ? prod.vat + " %"
+            : "";
+          const label = vatTxt ? `${prod.name} – ${vatTxt}` : prod.name;
+          optionsHtml += `<option value="${prod.name}"
+                                 data-price="${prod.price_net ?? ""}"
+                                 data-vat="${prod.vat ?? ""}"
+                                 data-unit="${prod.unit ?? ""}">${label}</option>`;
+        }
 
         dl.innerHTML = optionsHtml;
       });
@@ -371,10 +371,10 @@
 
       let optionsHtml = "";
       for (const prod of MASTER_PRODUCTS) {
-        const prettyPrice = prod.price_net != null && prod.price_net !== ""
-          ? formatPLN(prod.price_net)
+        const vatTxt = prod.vat != null && prod.vat !== ""
+          ? prod.vat + " %"
           : "";
-        const label = prettyPrice ? `${prod.name} – ${prettyPrice}` : prod.name;
+        const label = vatTxt ? `${prod.name} – ${vatTxt}` : prod.name;
         optionsHtml += `<option value="${prod.name}"
                                data-price="${prod.price_net ?? ""}"
                                data-vat="${prod.vat ?? ""}"
@@ -640,7 +640,6 @@
           return;
         }
 
-        // zaktualizuj master list i wszystkie datalisty, jeśli powstał/zmienił się produkt master
         if (data.master_product) {
           MASTER_PRODUCTS.push(data.master_product);
           refreshAllDatalists();
@@ -795,5 +794,6 @@
       await loadSuppliers();
     });
   </script>
+
 </body>
 </html>
