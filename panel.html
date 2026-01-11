@@ -214,6 +214,10 @@
       min-width: 140px;
     }
 
+    .supplier-add-product .prod-new-name {
+      min-width: 200px;
+    }
+
     .supplier-add-product .btn-add-product {
       flex: 0 0 auto;
     }
@@ -346,7 +350,7 @@
       header.appendChild(nameEl);
       header.appendChild(headerBtns);
 
-      // formularz dodawania produktu z listy
+      // formularz dodawania produktu (z listy lub nowy)
       const addRow = document.createElement("div");
       addRow.className = "supplier-add-product";
 
@@ -359,6 +363,7 @@
         <select class="prod-select">
           ${optionsHtml}
         </select>
+        <input type="text" class="prod-new-name" placeholder="Albo wpisz nowy produkt">
         <input type="number" step="0.01" min="0" class="prod-price-net" placeholder="Cena netto">
         <input type="number" step="1" min="0" class="prod-vat" placeholder="VAT %" value="23">
         <button type="button" class="primary btn-add-product">+ Dodaj produkt</button>
@@ -516,16 +521,22 @@
 
     async function addProductForSupplier(cardEl, supplierId) {
       const errorBox = document.getElementById("error");
-      const select   = cardEl.querySelector(".prod-select");
-      const netInput = cardEl.querySelector(".prod-price-net");
-      const vatInput = cardEl.querySelector(".prod-vat");
+      const select    = cardEl.querySelector(".prod-select");
+      const newInput  = cardEl.querySelector(".prod-new-name");
+      const netInput  = cardEl.querySelector(".prod-price-net");
+      const vatInput  = cardEl.querySelector(".prod-vat");
 
       const product_id = select.value;
+      const new_name   = (newInput.value || "").trim();
       const price_net  = (netInput.value || "").trim();
       const vat        = (vatInput.value || "").trim();
 
-      if (!product_id || !price_net) {
-        errorBox.textContent = "Wybierz produkt z listy i podaj cenę netto.";
+      if (!product_id && !new_name) {
+        errorBox.textContent = "Wybierz produkt z listy albo wpisz nową nazwę.";
+        return;
+      }
+      if (!price_net) {
+        errorBox.textContent = "Podaj cenę netto.";
         return;
       }
 
@@ -542,7 +553,8 @@
           },
           body: JSON.stringify({
             supplier_id: supplierId,
-            product_id,
+            product_id: product_id || null,
+            new_name:   new_name || null,
             price_net,
             vat
           })
@@ -560,8 +572,14 @@
           return;
         }
 
+        // jeśli backend utworzył nowy produkt w tabeli products
+        if (data.master_product) {
+          MASTER_PRODUCTS.push(data.master_product);
+        }
+
         // wyczyść pola
         select.value   = "";
+        newInput.value = "";
         netInput.value = "";
         vatInput.value = "23";
 
