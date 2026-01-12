@@ -331,6 +331,65 @@
     });
   }
 
+  // NOWE: globalna funkcja licząca najtańszą cenę netto
+  function recomputeLowestNetPrices() {
+    // mapa: nazwa produktu -> { price: number, supplierName: string }
+    const minByProduct = new Map();
+
+    document.querySelectorAll(".supplier-card").forEach(card => {
+      const supplierName = card.querySelector(".supplier-name")?.textContent || "";
+      const rows = card.querySelectorAll("tbody tr");
+
+      rows.forEach(tr => {
+        const tds = tr.querySelectorAll("td");
+        if (!tds.length) return;
+        // kolumny: 0: nazwa, 2: cena netto
+        const nameCell = tds[0];
+        const netCell  = tds[2];
+
+        const name = nameCell.textContent.trim();
+        const netText = netCell.textContent.trim()
+          .replace(/\s/g, "")
+          .replace("zł", "")
+          .replace(",", ".");
+
+        const price = parseFloat(netText);
+        if (!name || isNaN(price)) return;
+
+        const current = minByProduct.get(name);
+        if (!current || price < current.price) {
+          minByProduct.set(name, { price, supplierName });
+        }
+      });
+    });
+
+    // wstawienie najtańszej ceny do kolumny "Najtańsza cena netto"
+    document.querySelectorAll(".supplier-card").forEach(card => {
+      const supplierName = card.querySelector(".supplier-name")?.textContent || "";
+      const rows = card.querySelectorAll("tbody tr");
+      rows.forEach(tr => {
+        const tds = tr.querySelectorAll("td");
+        if (tds.length < 6) return;
+
+        const name = tds[0].textContent.trim();
+        const lowestCell = tds[5]; // kolumna "Najtańsza cena netto"
+        const entry = minByProduct.get(name);
+        if (!entry) {
+          lowestCell.textContent = "";
+          return;
+        }
+
+        const isThisSupplier = supplierName === entry.supplierName;
+        lowestCell.innerHTML = `
+          ${formatPLN(entry.price)}
+          ${isThisSupplier
+            ? '<span class="tag-supplier">(tu)</span>'
+            : `<span class="tag-supplier">(${entry.supplierName})</span>`}
+        `;
+      });
+    });
+  }
+
   function createSupplierCard(supplier) {
     const card = document.createElement("div");
     card.className = "supplier-card";
@@ -497,62 +556,65 @@
   }
 
   async function loadSuppliers() {
-  const errorBox  = document.getElementById("error");
-  const container = document.getElementById("suppliersContainer");
-  errorBox.textContent = "";
-  container.innerHTML = "<p class='info'>Ładowanie cenników...</p>";
+    const errorBox  = document.getElementById("error");
+    const container = document.getElementById("suppliersContainer");
+    errorBox.textContent = "";
+    container.innerHTML = "<p class='info'>Ładowanie cenników...</p>";
 
-  // ZAWSZE pobierz świeżą listę produktów
-  await loadMasterProducts();
+    // ZAWSZE pobierz świeżą listę produktów
+    await loadMasterProducts();
 
-  const csrf = getCsrfToken();
+    const csrf = getCsrfToken();
 
-  try {
-    const resp = await fetch(API_SUPPLIERS_URL, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Accept": "application/json",
-        "X-CSRF-Token": csrf
+    try {
+      const resp = await fetch(API_SUPPLIERS_URL, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Accept": "application/json",
+          "X-CSRF-Token": csrf
+        }
+      });
+
+      if (resp.status === 401) {
+        container.innerHTML = "";
+        errorBox.textContent = "Brak autoryzacji – zaloguj się ponownie.";
+        return;
       }
-    });
 
-    if (resp.status === 401) {
+      if (resp.status === 403) {
+        container.innerHTML = "";
+        errorBox.textContent = "Błąd bezpieczeństwa (CSRF) – zaloguj się ponownie.";
+        return;
+      }
+
+      if (!resp.ok) {
+        container.innerHTML = "";
+        errorBox.textContent = "Błąd serwera: " + resp.status;
+        return;
+      }
+
+      const data = await resp.json();
       container.innerHTML = "";
-      errorBox.textContent = "Brak autoryzacji – zaloguj się ponownie.";
-      return;
-    }
 
-    if (resp.status === 403) {
+      if (!Array.isArray(data) || data.length === 0) {
+        container.innerHTML = "<p class='info'>Brak dostawców.</p>";
+        return;
+      }
+
+      for (const s of data) {
+        const card = createSupplierCard(s);
+        container.appendChild(card);
+      }
+
+      // NOWE: po zbudowaniu kart przelicz najtańsze ceny
+      recomputeLowestNetPrices();
+
+    } catch (e) {
       container.innerHTML = "";
-      errorBox.textContent = "Błąd bezpieczeństwa (CSRF) – zaloguj się ponownie.";
-      return;
+      errorBox.textContent = "Błąd połączenia: " + e.message;
     }
-
-    if (!resp.ok) {
-      container.innerHTML = "";
-      errorBox.textContent = "Błąd serwera: " + resp.status;
-      return;
-    }
-
-    const data = await resp.json();
-    container.innerHTML = "";
-
-    if (!Array.isArray(data) || data.length === 0) {
-      container.innerHTML = "<p class='info'>Brak dostawców.</p>";
-      return;
-    }
-
-    for (const s of data) {
-      const card = createSupplierCard(s);
-      container.appendChild(card);
-    }
-  } catch (e) {
-    container.innerHTML = "";
-    errorBox.textContent = "Błąd połączenia: " + e.message;
   }
-}
-
 
   async function addSupplier() {
     const nameInput = document.getElementById("newSupplierName");
@@ -684,6 +746,9 @@
       }
       tbody.appendChild(tr);
 
+      // NOWE: po dodaniu produktu przelicz najtańsze
+      recomputeLowestNetPrices();
+
       errorBox.textContent = "";
     } catch (e) {
       errorBox.textContent = "Błąd połączenia: " + e.message;
@@ -734,6 +799,9 @@
         emptyTr.innerHTML = `<td colspan="7">Brak produktów w cenniku.</td>`;
         tbody.appendChild(emptyTr);
       }
+
+      // NOWE: po usunięciu przelicz najtańsze
+      recomputeLowestNetPrices();
 
       errorBox.textContent = "";
     } catch (e) {
@@ -802,11 +870,11 @@
   document.getElementById("logoutBtn").addEventListener("click", doLogout);
 
   window.addEventListener("load", async () => {
-  await loadMasterProducts();  // primera lista
-  await loadSuppliers();        // juz zawiera loadMasterProducts()
-});
-
+    await loadMasterProducts();  // pierwsza lista
+    await loadSuppliers();       // już zawiera loadMasterProducts() wewnątrz
+  });
 </script>
+
 
 
 </body>
