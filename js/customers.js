@@ -194,12 +194,17 @@ async function addCustomer() {
   }
 }
 
-async function addProductForCustomer(cardEl, customerId) {
+async function addProductForCustomer(cardEl, customerId) {  // przerób na async
   const nameInput = cardEl.querySelector(".cust-prod-name");
   const name = (nameInput.value || "").trim();
-  if (!name) return;
+  if (!name) return alert('Wybierz produkt');
 
   const csrf = getCsrfToken();
+  const payload = {  // debug
+    customer_id: customerId.toString(),
+    product_name: name
+  };
+  console.log('Sending to add_customer_product.pl:', payload);  // <<-- DEBUG
 
   try {
     const resp = await fetch(API_ADD_CUSTOMER_PRODUCT, {
@@ -210,50 +215,56 @@ async function addProductForCustomer(cardEl, customerId) {
         "Content-Type": "application/json",
         "X-CSRF-Token": csrf
       },
-      body: JSON.stringify({
-        customer_id: customerId,
-        product_name: name
-      })
+      body: JSON.stringify(payload)
     });
 
-    if (!resp.ok) return;
+    console.log('Response status:', resp.status, 'ok:', resp.ok);  // <<-- DEBUG
     const data = await resp.json();
-    if (!data.ok) return;
+    console.log('Full response:', data);  // <<-- DEBUG
+
+    if (!resp.ok || !data.ok) {
+      alert(`Błąd: ${data.error || 'HTTP ' + resp.status} ${data.msg || ''}`);
+      return;
+    }
 
     const p = data.product;
     const tbody = cardEl.querySelector(".products-table tbody");
     const tr = document.createElement("tr");
     tr.dataset.customerId = customerId;
-    tr.dataset.productId = p.product_id || "";
+    tr.dataset.productName = p.name;  // <<-- do delete po nazwie (jak add)
     tr.innerHTML = `
       <td>${p.name}</td>
-      <td>${p.unit || ""}</td>
-      <td class="price-cell">${formatPLN(p.price_net)}</td>
+      <td>${p.unit}</td>
+      <td class="price-cell">${formatPLN(p.price_gross)}</td>  // gross!
       <td><button type="button" class="danger btn-del-cust-product">Usuń</button></td>
     `;
     tr.querySelector(".btn-del-cust-product")
       .addEventListener("click", () => deleteCustomerProductRow(tr));
 
-    if (tbody.children.length === 1 &&
-        tbody.children[0].querySelector("td[colspan]")) {
+    if (tbody.children.length === 1 && tbody.children[0].querySelector("td[colspan]")) {
       tbody.innerHTML = "";
     }
     tbody.appendChild(tr);
 
     nameInput.value = "";
-  } catch (e) {}
+    alert(`Dodano: ${p.name} ${formatPLN(p.price_gross)}`);
+  } catch (e) {
+    console.error('Fetch error:', e);
+    alert('Błąd połączenia');
+  }
 }
 
 async function deleteCustomerProductRow(tr) {
   const customerId = tr.dataset.customerId;
-  const productId  = tr.dataset.productId;
-  if (!customerId || !productId) {
+  const productName = tr.dataset.productName || tr.querySelector('td:first-child').textContent.trim();  // fallback
+  if (!customerId || !productName) {
     tr.remove();
-    return;
+    return alert('Brak danych do usunięcia');
   }
-  if (!confirm("Usunąć produkt z cennika odbiorcy?")) return;
+  if (!confirm(`Usunąć "${productName}" z odbiorcy?`)) return;
 
   const csrf = getCsrfToken();
+  console.log('Deleting:', {customer_id: customerId, product_name: productName});  // debug
 
   try {
     const resp = await fetch(API_DEL_CUSTOMER_PRODUCT, {
@@ -266,13 +277,17 @@ async function deleteCustomerProductRow(tr) {
       },
       body: JSON.stringify({
         customer_id: customerId,
-        product_id: productId
+        product_name: productName  // po nazwie (jak add)
       })
     });
 
-    if (!resp.ok) return;
     const data = await resp.json();
-    if (!data.ok) return;
+    console.log('Delete response:', data);
+
+    if (!resp.ok || !data.ok) {
+      alert(`Błąd usuwania: ${data.error || resp.status}`);
+      return;
+    }
 
     const tbody = tr.parentElement;
     tr.remove();
@@ -281,8 +296,12 @@ async function deleteCustomerProductRow(tr) {
       emptyTr.innerHTML = `<td colspan="4">Brak produktów w cenniku odbiorcy.</td>`;
       tbody.appendChild(emptyTr);
     }
-  } catch (e) {}
+  } catch (e) {
+    console.error(e);
+    alert('Błąd połączenia');
+  }
 }
+
 
 async function deleteCustomer(id) {
   if (!confirm("Usunąć odbiorcę wraz z jego cennikiem?")) return;
