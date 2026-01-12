@@ -151,7 +151,6 @@ async function loadCustomers() {
   }
 }
 
-
 async function addCustomer() {
   const input = document.getElementById('newCustomerName');
   const name = input.value.trim();
@@ -290,7 +289,7 @@ async function deleteCustomer(id) {
   const csrf = getCsrfToken();
 
   try {
-    const resp = await fetch("/app/delete_customer.pl", {
+    const resp = await fetch(API_DELETE_CUSTOMER, {
       method: "POST",
       credentials: "include",
       headers: {
