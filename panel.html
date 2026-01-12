@@ -259,6 +259,14 @@
       display: block;
     }
 
+    .products-search {
+      margin-bottom: 8px;
+    }
+
+    .products-search input {
+      width: 100%;
+    }
+
     @media (max-width: 700px) {
       .top-bar {
         flex-direction: column;
@@ -288,9 +296,16 @@
       <button class="tab-btn" data-tab="tab-suppliers">Dostawcy</button>
     </div>
 
-    <!-- Zakładka: Produkty (główna tabela jak na screenie) -->
+    <!-- Zakładka: Produkty -->
     <div id="tab-products" class="tab-panel active">
       <h2>Lista produktów i porównanie cen</h2>
+      <div class="products-search">
+        <input
+          type="text"
+          id="productsSearch"
+          placeholder="Wpisz nazwę produktu..."
+        >
+      </div>
       <p class="info">
         Porównaj ceny wszystkich produktów we wszystkich firmach. Najtańsza oferta jest podświetlona.
       </p>
@@ -307,7 +322,7 @@
       </div>
     </div>
 
-    <!-- Zakładka: Dostawcy (karty z cennikami) -->
+    <!-- Zakładka: Dostawcy -->
     <div id="tab-suppliers" class="tab-panel">
       <div class="supplier-add">
         <input type="text" id="newSupplierName" placeholder="Wpisz nazwę dostawcy...">
@@ -402,7 +417,6 @@
       // produkt -> { unit, prices: Map<supplierName, price> }
       const productsMap = new Map();
 
-      // 1) zbierz dane z kart dostawców
       document.querySelectorAll(".supplier-card").forEach(card => {
         const supplierName = card.querySelector(".supplier-name")?.textContent || "";
         const rows = card.querySelectorAll("tbody tr");
@@ -434,7 +448,6 @@
         });
       });
 
-      // lista dostawców (kolumny tabeli)
       const suppliersSet = new Set();
       productsMap.forEach(entry => {
         entry.prices.forEach((_, supplierName) => suppliersSet.add(supplierName));
@@ -442,7 +455,6 @@
       const suppliersList = Array.from(suppliersSet)
         .sort((a, b) => a.localeCompare(b, "pl"));
 
-      // 2) tabela PRODUKTY
       const headerRow = document.getElementById("productsHeaderRow");
       const body = document.querySelector("#productsTable tbody");
       if (!headerRow || !body) return;
@@ -487,7 +499,7 @@
         body.appendChild(tr);
       });
 
-      // 3) kolumna „Najtańsza cena netto” i kolorowanie w kartach dostawców
+      // kolumna „Najtańsza cena netto” i kolor w kartach dostawców
       document.querySelectorAll(".supplier-card").forEach(card => {
         const rows = card.querySelectorAll("tbody tr");
 
@@ -1004,6 +1016,18 @@
       btn.classList.add("active");
       document.querySelectorAll(".tab-panel").forEach(p => {
         p.classList.toggle("active", p.id === tabId);
+      });
+    });
+
+    // filtrowanie tabeli produktów
+    document.getElementById("productsSearch").addEventListener("input", (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      const rows = document.querySelectorAll("#productsTable tbody tr");
+      rows.forEach(row => {
+        const nameCell = row.querySelector("td");
+        if (!nameCell) return;
+        const text = nameCell.textContent.toLowerCase();
+        row.style.display = text.includes(q) ? "" : "none";
       });
     });
 
