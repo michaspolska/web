@@ -1167,18 +1167,16 @@
       }
     }
 
-    async function addCustomer() {
-  console.log('addCustomer start');
+ async function addCustomer() {
   const input = document.getElementById('newCustomerName');
-  console.log('input =', input);
   const name = input.value.trim();
   const errorBox = document.getElementById('error');
-  console.log('name =', name);
+
+  console.log('addCustomer()', 'name =', name);
 
   if (errorBox) errorBox.textContent = '';
   if (!name) {
     if (errorBox) errorBox.textContent = 'Podaj nazwę odbiorcy.';
-    alert('Brak nazwy odbiorcy'); // tymczasowo
     return;
   }
 
@@ -1196,13 +1194,13 @@
       },
       body: JSON.stringify({ name })
     });
-    console.log('resp status', resp.status);
+    console.log('resp status =', resp.status);
     if (!resp.ok) {
       if (errorBox) errorBox.textContent = 'Błąd dodawania odbiorcy.';
       return;
     }
     const data = await resp.json();
-    console.log('data =', data);
+    console.log('resp data =', data);
     if (!data.ok) {
       if (errorBox) errorBox.textContent = 'Błąd dodawania odbiorcy.';
       return;
@@ -1216,6 +1214,7 @@
     if (errorBox) errorBox.textContent = 'Błąd połączenia.';
   }
 }
+
 
 
     async function addProductForCustomer(cardEl, customerId) {
