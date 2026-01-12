@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <title>Lista dostawców i cenniki</title>
+  <title>Lista dostawców i porównanie cen</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     :root {
@@ -219,13 +219,17 @@
       margin-left: 4px;
     }
 
+    .cell-cheapest {
+      background: #d6f4e5;
+      font-weight: 600;
+    }
+
     #error {
       color: #d1002a;
       margin-top: 6px;
       font-size: 0.9rem;
     }
 
-    /* zakładki */
     .tabs {
       display: flex;
       gap: 8px;
@@ -272,7 +276,7 @@
 <body>
   <div class="container">
     <div class="top-bar">
-      <h1>Lista dostawców i cenniki</h1>
+      <h1>Lista produktów i porównanie cen</h1>
       <div class="top-bar-buttons">
         <button id="logoutBtn" class="outline">Wyloguj</button>
         <button id="reloadBtn" class="outline">Odśwież</button>
@@ -280,12 +284,31 @@
     </div>
 
     <div class="tabs">
-      <button class="tab-btn active" data-tab="tab-suppliers">Dostawcy</button>
-      <button class="tab-btn" data-tab="tab-products">Produkty</button>
+      <button class="tab-btn active" data-tab="tab-products">Produkty</button>
+      <button class="tab-btn" data-tab="tab-suppliers">Dostawcy</button>
     </div>
 
-    <!-- Zakładka: Dostawcy -->
-    <div id="tab-suppliers" class="tab-panel active">
+    <!-- Zakładka: Produkty (główna tabela jak na screenie) -->
+    <div id="tab-products" class="tab-panel active">
+      <h2>Lista produktów i porównanie cen</h2>
+      <p class="info">
+        Porównaj ceny wszystkich produktów we wszystkich firmach. Najtańsza oferta jest podświetlona.
+      </p>
+      <div class="products-table-wrapper">
+        <table id="productsTable" class="products-table">
+          <thead>
+            <tr id="productsHeaderRow">
+              <th>Produkt</th>
+              <!-- kolumny dostawców generowane w JS -->
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Zakładka: Dostawcy (karty z cennikami) -->
+    <div id="tab-suppliers" class="tab-panel">
       <div class="supplier-add">
         <input type="text" id="newSupplierName" placeholder="Wpisz nazwę dostawcy...">
         <button id="addSupplierBtn" class="primary">Dodaj dostawcę</button>
@@ -297,27 +320,6 @@
 
       <div id="suppliersContainer"></div>
       <div id="error"></div>
-    </div>
-
-    <!-- Zakładka: Produkty -->
-    <div id="tab-products" class="tab-panel">
-      <h2>Lista produktów i najtańsze ceny</h2>
-      <p class="info">
-        Poniżej widać najniższą cenę netto i dostawcę dla każdego produktu.
-      </p>
-      <div class="products-table-wrapper">
-        <table id="productsSummaryTable" class="products-table">
-          <thead>
-            <tr>
-              <th>Produkt</th>
-              <th>Jednostka</th>
-              <th>Najtańsza cena netto</th>
-              <th>Dostawca</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
     </div>
   </div>
 
@@ -331,7 +333,6 @@
     const API_LOGOUT_URL           = "https://a1.justmike.space/app/logout.pl";
     const LOGIN_PAGE               = "/login.html";
 
-    // products: {id, name, price_net, vat, unit}
     let MASTER_PRODUCTS = [];
 
     function getCsrfToken() {
@@ -369,7 +370,6 @@
       }
     }
 
-    // przebuduj wszystkie datalisty wg MASTER_PRODUCTS (nazwa + VAT + cena)
     function refreshAllDatalists() {
       document.querySelectorAll(".supplier-card").forEach(card => {
         const supplierId = card.dataset.supplierId;
@@ -397,12 +397,12 @@
       });
     }
 
-    // globalna funkcja licząca najtańszą cenę netto
+    // buduje tabelę „Produkty” i podświetla najtańsze ceny
     function recomputeLowestNetPrices() {
-      // mapa: nazwa produktu -> { price: number, supplierName: string, unit: string }
-      const minByProduct = new Map();
+      // produkt -> { unit, prices: Map<supplierName, price> }
+      const productsMap = new Map();
 
-      // 1) zbierz minimalną cenę dla każdego produktu
+      // 1) zbierz dane z kart dostawców
       document.querySelectorAll(".supplier-card").forEach(card => {
         const supplierName = card.querySelector(".supplier-name")?.textContent || "";
         const rows = card.querySelectorAll("tbody tr");
@@ -424,52 +424,108 @@
           const price = parseFloat(netText);
           if (isNaN(price)) return;
 
-          const current = minByProduct.get(name);
-          if (!current || price < current.price) {
-            minByProduct.set(name, { price, supplierName, unit });
+          let entry = productsMap.get(name);
+          if (!entry) {
+            entry = { unit, prices: new Map() };
+            productsMap.set(name, entry);
           }
+          entry.unit = entry.unit || unit;
+          entry.prices.set(supplierName, price);
         });
       });
 
-      // 2) wstaw najtańszą cenę + nazwę firmy do kolumny "Najtańsza cena netto" w kartach
+      // lista dostawców (kolumny tabeli)
+      const suppliersSet = new Set();
+      productsMap.forEach(entry => {
+        entry.prices.forEach((_, supplierName) => suppliersSet.add(supplierName));
+      });
+      const suppliersList = Array.from(suppliersSet)
+        .sort((a, b) => a.localeCompare(b, "pl"));
+
+      // 2) tabela PRODUKTY
+      const headerRow = document.getElementById("productsHeaderRow");
+      const body = document.querySelector("#productsTable tbody");
+      if (!headerRow || !body) return;
+
+      headerRow.innerHTML = "<th>Produkt</th>";
+      suppliersList.forEach(sName => {
+        const th = document.createElement("th");
+        th.textContent = sName;
+        headerRow.appendChild(th);
+      });
+
+      body.innerHTML = "";
+      const sortedProducts = Array.from(productsMap.entries())
+        .sort((a, b) => a[0].localeCompare(b[0], "pl"));
+
+      sortedProducts.forEach(([name, entry]) => {
+        let minPrice = Infinity;
+        entry.prices.forEach(price => {
+          if (price < minPrice) minPrice = price;
+        });
+
+        const tr = document.createElement("tr");
+        const nameTd = document.createElement("td");
+        nameTd.innerHTML = `${name}<br><span style="color:#626c71;font-size:0.8rem;">${entry.unit || ""}</span>`;
+        tr.appendChild(nameTd);
+
+        suppliersList.forEach(sName => {
+          const td = document.createElement("td");
+          const price = entry.prices.get(sName);
+          if (price != null) {
+            td.textContent = formatPLN(price);
+            td.classList.add("price-cell");
+            if (price === minPrice) {
+              td.classList.add("cell-cheapest");
+            }
+          } else {
+            td.textContent = "-";
+          }
+          tr.appendChild(td);
+        });
+
+        body.appendChild(tr);
+      });
+
+      // 3) kolumna „Najtańsza cena netto” i kolorowanie w kartach dostawców
       document.querySelectorAll(".supplier-card").forEach(card => {
         const rows = card.querySelectorAll("tbody tr");
+
         rows.forEach(tr => {
           const tds = tr.querySelectorAll("td");
           if (tds.length < 6) return;
 
+          tds[2].classList.remove("cell-cheapest");
           const name = tds[0].textContent.trim();
-          const lowestCell = tds[5]; // kolumna "Najtańsza cena netto"
-          const entry = minByProduct.get(name);
+          const entry = productsMap.get(name);
           if (!entry) {
-            lowestCell.textContent = "";
+            tds[5].textContent = "";
             return;
           }
 
-          lowestCell.innerHTML = `
-            ${formatPLN(entry.price)}
-            <span class="tag-supplier">(${entry.supplierName})</span>
+          let minPrice = Infinity;
+          let minSupplier = "";
+          entry.prices.forEach((price, sName) => {
+            if (price < minPrice) {
+              minPrice = price;
+              minSupplier = sName;
+            }
+          });
+
+          tds[5].innerHTML = `
+            ${isFinite(minPrice) ? formatPLN(minPrice) : ""}
+            ${minSupplier ? `<span class="tag-supplier">(${minSupplier})</span>` : ""}
           `;
+
+          const netText = tds[2].textContent.trim()
+            .replace(/\s/g, "")
+            .replace("zł", "")
+            .replace(",", ".");
+          const thisPrice = parseFloat(netText);
+          if (!isNaN(thisPrice) && thisPrice === minPrice) {
+            tds[2].classList.add("cell-cheapest");
+          }
         });
-      });
-
-      // 3) zbuduj tabelę zbiorczą w zakładce "Produkty"
-      const summaryBody = document.querySelector("#productsSummaryTable tbody");
-      if (!summaryBody) return;
-
-      const entries = Array.from(minByProduct.entries())
-        .sort((a, b) => a[0].localeCompare(b[0], "pl"));
-
-      summaryBody.innerHTML = "";
-      entries.forEach(([name, info]) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${name}</td>
-          <td>${info.unit || ""}</td>
-          <td class="price-cell">${formatPLN(info.price)}</td>
-          <td>${info.supplierName}</td>
-        `;
-        summaryBody.appendChild(tr);
       });
     }
 
@@ -509,7 +565,6 @@
       header.appendChild(nameEl);
       header.appendChild(headerBtns);
 
-      // formularz dodawania produktu
       const addRow = document.createElement("div");
       addRow.className = "supplier-add-product";
 
@@ -551,7 +606,6 @@
       const vatInput   = addRow.querySelector(".prod-vat");
       const unitSelect = addRow.querySelector(".prod-unit");
 
-      // po wyborze nazwy z listy ustaw cenę, VAT i jednostkę z mastera
       nameInput.addEventListener("input", () => {
         const dl = document.getElementById(datalistId);
         if (!dl) return;
@@ -689,7 +743,6 @@
           container.appendChild(card);
         }
 
-        // po zbudowaniu kart przelicz najtańsze ceny
         recomputeLowestNetPrices();
 
       } catch (e) {
@@ -828,7 +881,6 @@
         }
         tbody.appendChild(tr);
 
-        // po dodaniu produktu przelicz najtańsze
         recomputeLowestNetPrices();
 
         errorBox.textContent = "";
@@ -882,7 +934,6 @@
           tbody.appendChild(emptyTr);
         }
 
-        // po usunięciu przelicz najtańsze
         recomputeLowestNetPrices();
 
         errorBox.textContent = "";
@@ -944,7 +995,7 @@
       window.location.href = LOGIN_PAGE;
     }
 
-    // przełączanie zakładek
+    // zakładki
     document.addEventListener("click", (e) => {
       const btn = e.target.closest(".tab-btn");
       if (!btn) return;
