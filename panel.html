@@ -1,1370 +1,1387 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <title>Lista produktów, dostawców i odbiorców</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    :root {
-      --color-background: #fcfcf9;
-      --color-surface: #fffffd;
-      --color-text: #13343b;
-      --color-text-secondary: #626c71;
-      --color-primary: #21808d;
-      --color-primary-hover: #1d7480;
-      --color-border: rgba(94, 82, 64, 0.2);
-      --radius: 10px;
-      --shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.07);
-      --font: Inter, Geist, Arial, sans-serif;
-      --space: 18px;
-      --space-sm: 10px;
-      --max-width: 1100px;
-    }
+<meta charset="UTF-8" />
+<title>Lista produktów, dostawców i odbiorców</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+:root {
+  --color-background: #fcfcf9;
+  --color-surface: #fffffd;
+  --color-text: #13343b;
+  --color-text-secondary: #626c71;
+  --color-primary: #21808d;
+  --color-primary-hover: #1d7480;
+  --color-border: rgba(94, 82, 64, 0.2);
+  --radius: 10px;
+  --shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.07);
+  --font: Inter, Geist, Arial, sans-serif;
+  --space: 18px;
+  --space-sm: 10px;
+  --max-width: 1100px;
+}
 
-    html, body {
-      height: 100%;
-      margin: 0;
-      background: var(--color-background);
-      color: var(--color-text);
-      font-family: var(--font);
-      font-size: 16px;
-      min-height: 100vh;
-    }
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font);
+  font-size: 16px;
+  min-height: 100vh;
+}
 
-    .container {
-      max-width: var(--max-width);
-      margin: 0 auto;
-      padding: var(--space);
-    }
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space);
+}
 
-    h1 {
-      margin-top: 0;
-      font-size: 1.2rem;
-      border-left: 4px solid var(--color-primary);
-      padding-left: 10px;
-    }
+h1 {
+  margin-top: 0;
+  font-size: 1.2rem;
+  border-left: 4px solid var(--color-primary);
+  padding-left: 10px;
+}
 
-    h2 {
-      font-size: 1rem;
-      margin-top: var(--space);
-      margin-bottom: var(--space-sm);
-    }
+h2 {
+  font-size: 1rem;
+  margin-top: var(--space);
+  margin-bottom: var(--space-sm);
+}
 
-    .top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: var(--space-sm);
-    }
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-sm);
+}
 
-    .top-bar-buttons {
-      display: flex;
-      gap: 8px;
-    }
+.top-bar-buttons {
+  display: flex;
+  gap: 8px;
+}
 
-    input, select, button {
-      font-family: inherit;
-      font-size: 0.95rem;
-      padding: 7px 13px;
-      border-radius: var(--radius);
-      border: 1px solid var(--color-border);
-      background: var(--color-surface);
-      outline: none;
-      transition: border-color .2s, background .2s;
-    }
+input,
+select,
+button {
+  font-family: inherit;
+  font-size: 0.95rem;
+  padding: 7px 13px;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
 
-    input:focus,
-    select:focus {
-      border-color: var(--color-primary);
-    }
+input:focus,
+select:focus {
+  border-color: var(--color-primary);
+}
 
-    button.primary {
-      background: var(--color-primary);
-      color: #fff;
-      border: none;
-      cursor: pointer;
-      font-weight: 500;
-      padding-inline: 18px;
-    }
+button.primary {
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  padding-inline: 18px;
+}
 
-    button.primary:hover {
-      background: var(--color-primary-hover);
-    }
+button.primary:hover {
+  background: var(--color-primary-hover);
+}
 
-    button.danger {
-      background: #ff5555;
-      border: none;
-      color: #fff;
-      cursor: pointer;
-      font-size: 0.8rem;
-      padding: 4px 10px;
-      border-radius: 999px;
-    }
+button.danger {
+  background: #ff5555;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
 
-    button.danger:hover {
-      background: #d1002a;
-    }
+button.danger:hover {
+  background: #d1002a;
+}
 
-    button.outline {
-      background: var(--color-surface);
-      color: var(--color-primary);
-      border-color: var(--color-primary);
-      cursor: pointer;
-      font-size: 0.85rem;
-    }
+button.outline {
+  background: var(--color-surface);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
 
-    .info {
-      font-size: 0.85rem;
-      color: var(--color-text-secondary);
-      margin-bottom: var(--space-sm);
-    }
+.info {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-sm);
+}
 
-    .supplier-add {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: var(--space-sm);
-      background: var(--color-surface);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      margin-bottom: var(--space-sm);
-    }
+.supplier-add {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: var(--space-sm);
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: var(--space-sm);
+}
 
-    .supplier-add input {
-      flex: 1;
-    }
+.supplier-add input {
+  flex: 1;
+}
 
-    .supplier-card {
-      background: var(--color-surface);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      margin-bottom: var(--space);
-      padding: var(--space-sm);
-    }
+.supplier-card {
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: var(--space);
+  padding: var(--space-sm);
+}
 
-    .supplier-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: var(--space-sm);
-    }
+.supplier-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-sm);
+}
 
-    .supplier-name {
-      font-weight: 600;
-      font-size: 1rem;
-    }
+.supplier-name {
+  font-weight: 600;
+  font-size: 1rem;
+}
 
-    .supplier-header-buttons {
-      display: flex;
-      gap: 6px;
-    }
+.supplier-header-buttons {
+  display: flex;
+  gap: 6px;
+}
 
-    .supplier-add-product {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
+.supplier-add-product {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
 
-    .supplier-add-product input {
-      min-width: 140px;
-    }
+.supplier-add-product input {
+  min-width: 140px;
+}
 
-    .supplier-add-product .prod-name,
-    .supplier-add-product .cust-prod-name {
-      min-width: 260px;
-    }
+.supplier-add-product .prod-name,
+.supplier-add-product .cust-prod-name {
+  min-width: 260px;
+}
 
-    .supplier-add-product .btn-add-product,
-    .supplier-add-product .btn-add-cust-product {
-      flex: 0 0 auto;
-    }
+.supplier-add-product .prod-unit,
+.supplier-add-product .cust-prod-unit {
+  min-width: 100px;
+}
 
-    .products-table-wrapper {
-      overflow-x: auto;
-    }
+.supplier-add-product .btn-add-product,
+.supplier-add-product .btn-add-cust-product {
+  flex: 0 0 auto;
+}
 
-    .products-table {
-      width: 100%;
-      border-collapse: collapse;
-      background: var(--color-surface);
-      table-layout: auto;
-    }
+.products-table-wrapper {
+  overflow-x: auto;
+}
 
-    .products-table th,
-    .products-table td {
-      padding: 8px 10px;
-      border: 1px solid var(--color-border);
-      text-align: left;
-      font-size: 0.9rem;
-      white-space: nowrap;
-    }
+.products-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-surface);
+  table-layout: auto;
+}
 
-    .products-table th {
-      background: #f5f7f8;
-      font-weight: 500;
-      color: var(--color-text-secondary);
-    }
+.products-table th,
+.products-table td {
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  text-align: left;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
 
-    .products-table td.price-cell {
-      text-align: right;
-    }
+.products-table th {
+  background: #f5f7f8;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
 
-    .products-table tr:nth-child(even) {
-      background: #fafafa;
-    }
+.products-table td.price-cell {
+  text-align: right;
+}
 
-    .products-table .tag-supplier {
-      font-size: 0.8rem;
-      color: var(--color-primary);
-      margin-left: 4px;
-    }
+.products-table tr:nth-child(even) {
+  background: #fafafa;
+}
 
-    .cell-cheapest {
-      background: #d6f4e5;
-      font-weight: 600;
-    }
+.products-table .tag-supplier {
+  font-size: 0.8rem;
+  color: var(--color-primary);
+  margin-left: 4px;
+}
 
-    #error {
-      color: #d1002a;
-      margin-top: 6px;
-      font-size: 0.9rem;
-    }
+.cell-cheapest {
+  background: #d6f4e5;
+  font-weight: 600;
+}
 
-    .tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
+.error {
+  color: #d1002a;
+  margin-top: 6px;
+  font-size: 0.9rem;
+}
 
-    .tab-btn {
-      border-radius: 999px;
-      border: 1px solid var(--color-border);
-      background: var(--color-surface);
-      padding: 6px 14px;
-      cursor: pointer;
-      font-size: 0.9rem;
-    }
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
 
-    .tab-btn.active {
-      background: var(--color-primary);
-      color: #fff;
-      border-color: var(--color-primary);
-    }
+.tab-btn {
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  padding: 6px 14px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
 
-    .tab-panel {
-      display: none;
-    }
+.tab-btn.active {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
 
-    .tab-panel.active {
-      display: block;
-    }
+.tab-panel {
+  display: none;
+}
 
-    .products-search {
-      margin-bottom: 8px;
-    }
+.tab-panel.active {
+  display: block;
+}
 
-    .products-search input {
-      width: 100%;
-    }
+.products-search {
+  margin-bottom: 8px;
+}
 
-    @media (max-width: 700px) {
-      .top-bar {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+.products-search input {
+  width: 100%;
+}
 
-      .supplier-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 6px;
-      }
-    }
-  </style>
+@media (max-width: 700px) {
+  .top-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .supplier-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}
+</style>
 </head>
 <body>
-  <div class="container">
-    <div class="top-bar">
-      <h1>Lista produktów, dostawców i odbiorców</h1>
-      <div class="top-bar-buttons">
-        <button id="logoutBtn" class="outline">Wyloguj</button>
-        <button id="reloadBtn" class="outline">Odśwież</button>
-      </div>
-    </div>
-
-    <div class="tabs">
-      <button class="tab-btn active" data-tab="tab-products">Produkty</button>
-      <button class="tab-btn" data-tab="tab-suppliers">Dostawcy</button>
-      <button class="tab-btn" data-tab="tab-customers">Odbiorcy</button>
-    </div>
-
-    <!-- Produkty -->
-    <div id="tab-products" class="tab-panel active">
-      <h2>Lista produktów i porównanie cen</h2>
-      <div class="products-search">
-        <input type="text" id="productsSearch" placeholder="Wpisz nazwę produktu...">
-      </div>
-      <p class="info">
-        Porównaj ceny wszystkich produktów we wszystkich firmach. Najtańsza oferta jest podświetlona.
-      </p>
-      <div class="products-table-wrapper">
-        <table id="productsTable" class="products-table">
-          <thead>
-            <tr id="productsHeaderRow">
-              <th>Produkt</th>
-              <!-- kolumny dostawców dodawane w JS -->
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Dostawcy -->
-    <div id="tab-suppliers" class="tab-panel">
-      <div class="supplier-add">
-        <input type="text" id="newSupplierName" placeholder="Wpisz nazwę dostawcy...">
-        <button id="addSupplierBtn" class="primary">Dodaj dostawcę</button>
-      </div>
-
-      <p class="info">
-        W cenniku dostawcy możesz skorygować VAT dla produktu, zmiana zaktualizuje stawkę tego produktu wszędzie.
-      </p>
-
-      <div id="suppliersContainer"></div>
-      <div id="error"></div>
-    </div>
-
-    <!-- Odbiorcy -->
-    <div id="tab-customers" class="tab-panel">
-      <div class="supplier-add">
-        <input type="text" id="newCustomerName" placeholder="Wpisz nazwę odbiorcy...">
-        <button id="addCustomerBtn" class="primary">Dodaj odbiorcę</button>
-      </div>
-
-      <p class="info">
-        Cenniki odbiorców korzystają zawsze z najniższych dostępnych cen netto dla produktu.
-      </p>
-
-      <div id="customersContainer"></div>
+<div class="container">
+  <div class="top-bar">
+    <h1>Lista produktów, dostawców i odbiorców</h1>
+    <div class="top-bar-buttons">
+      <button id="logoutBtn" class="outline">Wyloguj</button>
+      <button id="reloadBtn" class="outline">Odśwież</button>
     </div>
   </div>
 
-  <script>
-    /* API endpoints – dopasuj ścieżki do swoich skryptów Perl */
-    const API_SUPPLIERS_URL        = "https://a1.justmike.space/app/list_suppliers.pl";
-    const API_ADD_SUPPLIER         = "https://a1.justmike.space/app/add_supplier.pl";
-    const API_DELETE_SUPPLIER      = "https://a1.justmike.space/app/delete_supplier.pl";
-    const API_ADD_PRODUCT          = "https://a1.justmike.space/app/add_supplier_product.pl";
-    const API_DELETE_SUPPLIER_PROD = "https://a1.justmike.space/app/delete_supplier_product.pl";
-    const API_PRODUCTS_URL         = "https://a1.justmike.space/app/list_products.pl";
-    const API_LOGOUT_URL           = "https://a1.justmike.space/app/logout.pl";
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="tab-products">Produkty</button>
+    <button class="tab-btn" data-tab="tab-suppliers">Dostawcy</button>
+    <button class="tab-btn" data-tab="tab-customers">Odbiorcy</button>
+  </div>
 
-    const API_CUSTOMERS_URL        = "https://a1.justmike.space/app/list_customers.pl";
-    const API_ADD_CUSTOMER         = "https://a1.justmike.space/app/add_customer.pl";
-    const API_ADD_CUSTOMER_PRODUCT = "https://a1.justmike.space/app/add_customer_product.pl";
-    const API_DEL_CUSTOMER_PRODUCT = "https://a1.justmike.space/app/delete_customer_product.pl";
-
-    const LOGIN_PAGE               = "/login.html";
-
-    /* global caches */
-    let MASTER_PRODUCTS = [];          // z list_products.pl
-    let LOWEST_PRICES   = new Map();   // produkt -> {unit, price}
-
-    function getCsrfToken() {
-      return sessionStorage.getItem("csrfToken") || "";
-    }
-
-    function formatPLN(value) {
-      if (value === null || value === undefined || value === "") return "";
-      const num = Number(value);
-      if (Number.isNaN(num)) return value;
-      return num.toLocaleString("pl-PL", { style: "currency", currency: "PLN" });
-    }
-
-    async function loadMasterProducts() {
-      const csrf = getCsrfToken();
-      try {
-        const resp = await fetch(API_PRODUCTS_URL, {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Accept": "application/json",
-            "X-CSRF-Token": csrf
-          }
-        });
-        if (!resp.ok) {
-          MASTER_PRODUCTS = [];
-          return;
-        }
-        const data = await resp.json();
-        MASTER_PRODUCTS = Array.isArray(data) ? data : [];
-      } catch (e) {
-        MASTER_PRODUCTS = [];
-      }
-    }
-
-    function refreshAllDatalists() {
-      /* datalisty u dostawców */
-      document.querySelectorAll(".supplier-card[data-type='supplier']").forEach(card => {
-        const supplierId = card.dataset.supplierId;
-        const datalistId = `products-master-list-${supplierId}`;
-        const dl = document.getElementById(datalistId);
-        if (!dl) return;
-
-        let optionsHtml = "";
-        for (const prod of MASTER_PRODUCTS) {
-          const vatTxt = prod.vat != null && prod.vat !== "" ? prod.vat + " %" : "";
-          const priceTxt = prod.price_net != null && prod.price_net !== ""
-            ? formatPLN(prod.price_net)
-            : "";
-          let label = prod.name;
-          if (vatTxt)   label += " – " + vatTxt;
-          if (priceTxt) label += " – " + priceTxt;
-
-          optionsHtml += `<option value="${prod.name}"
-                                 data-price="${prod.price_net ?? ""}"
-                                 data-vat="${prod.vat ?? ""}"
-                                 data-unit="${prod.unit ?? ""}">${label}</option>`;
-        }
-        dl.innerHTML = optionsHtml;
-      });
-
-      /* datalisty u odbiorców – bazują na LOWEST_PRICES, więc uzupełniamy je po recomputeLowestNetPrices() */
-      document.querySelectorAll(".supplier-card[data-type='customer']").forEach(card => {
-        const customerId = card.dataset.customerId;
-        const datalistId = `products-lowest-list-${customerId}`;
-        const dl = document.getElementById(datalistId);
-        if (!dl) return;
-
-        let optionsHtml = "";
-        LOWEST_PRICES.forEach((info, name) => {
-          optionsHtml += `<option value="${name}"
-                               data-unit="${info.unit}"
-                               data-price="${info.price}">${name}</option>`;
-        });
-        dl.innerHTML = optionsHtml;
-      });
-    }
-
-    /* buduje mapę najniższych cen, tabelę "Produkty" i aktualizuje cenniki */
-    function recomputeLowestNetPrices() {
-      const productsMap = new Map(); // produkt -> {unit, prices: Map<supplierName, price>}
-
-      document.querySelectorAll(".supplier-card[data-type='supplier']").forEach(card => {
-        const supplierName = card.querySelector(".supplier-name")?.textContent || "";
-        const rows = card.querySelectorAll("tbody tr");
-
-        rows.forEach(tr => {
-          const tds = tr.querySelectorAll("td");
-          if (tds.length < 3) return;
-
-          const name  = tds[0].textContent.trim();
-          const unit  = tds[1].textContent.trim();
-          const netTd = tds[2];
-
-          if (!name) return;
-
-          const netText = netTd.textContent.trim()
-            .replace(/\s/g, "")
-            .replace("zł", "")
-            .replace(",", ".");
-          const price = parseFloat(netText);
-          if (isNaN(price)) return;
-
-          let entry = productsMap.get(name);
-          if (!entry) {
-            entry = { unit, prices: new Map() };
-            productsMap.set(name, entry);
-          }
-          entry.unit = entry.unit || unit;
-          entry.prices.set(supplierName, price);
-        });
-      });
-
-      /* wylicz LOWEST_PRICES */
-      LOWEST_PRICES = new Map();
-      productsMap.forEach((entry, name) => {
-        let minPrice = Infinity;
-        entry.prices.forEach(price => {
-          if (price < minPrice) minPrice = price;
-        });
-        if (isFinite(minPrice)) {
-          LOWEST_PRICES.set(name, { unit: entry.unit, price: minPrice });
-        }
-      });
-
-      /* lista dostawców jako kolumny */
-      const suppliersSet = new Set();
-      productsMap.forEach(entry => {
-        entry.prices.forEach((_, sName) => suppliersSet.add(sName));
-      });
-      const suppliersList = Array.from(suppliersSet)
-        .sort((a, b) => a.localeCompare(b, "pl"));
-
-      /* tabela "Produkty" */
-      const headerRow = document.getElementById("productsHeaderRow");
-      const body = document.querySelector("#productsTable tbody");
-      if (!headerRow || !body) return;
-
-      headerRow.innerHTML = "<th>Produkt</th>";
-      suppliersList.forEach(sName => {
-        const th = document.createElement("th");
-        th.textContent = sName;
-        headerRow.appendChild(th);
-      });
-
-      body.innerHTML = "";
-      const sortedProducts = Array.from(productsMap.entries())
-        .sort((a, b) => a[0].localeCompare(b[0], "pl"));
-
-      sortedProducts.forEach(([name, entry]) => {
-        let minPrice = Infinity;
-        entry.prices.forEach(price => {
-          if (price < minPrice) minPrice = price;
-        });
-
-        const tr = document.createElement("tr");
-        const nameTd = document.createElement("td");
-        nameTd.innerHTML = `${name}<br><span style="color:#626c71;font-size:0.8rem;">${entry.unit || ""}</span>`;
-        tr.appendChild(nameTd);
-
-        suppliersList.forEach(sName => {
-          const td = document.createElement("td");
-          const price = entry.prices.get(sName);
-          if (price != null) {
-            td.textContent = formatPLN(price);
-            td.classList.add("price-cell");
-            if (price === minPrice) td.classList.add("cell-cheapest");
-          } else {
-            td.textContent = "-";
-          }
-          tr.appendChild(td);
-        });
-
-        body.appendChild(tr);
-      });
-
-      /* u dostawców – kolumna "Najtańsza cena netto" + podświetlenie */
-      document.querySelectorAll(".supplier-card[data-type='supplier']").forEach(card => {
-        const rows = card.querySelectorAll("tbody tr");
-
-        rows.forEach(tr => {
-          const tds = tr.querySelectorAll("td");
-          if (tds.length < 6) return;
-
-          tds[2].classList.remove("cell-cheapest");
-          const name = tds[0].textContent.trim();
-          const entry = productsMap.get(name);
-          if (!entry) {
-            tds[5].textContent = "";
-            return;
-          }
-
-          let minPrice = Infinity;
-          let minSupplier = "";
-          entry.prices.forEach((price, sName) => {
-            if (price < minPrice) {
-              minPrice = price;
-              minSupplier = sName;
-            }
-          });
-
-          tds[5].innerHTML = `
-            ${isFinite(minPrice) ? formatPLN(minPrice) : ""}
-            ${minSupplier ? `<span class="tag-supplier">(${minSupplier})</span>` : ""}
-          `;
-
-          const netText = tds[2].textContent.trim()
-            .replace(/\s/g, "")
-            .replace("zł", "")
-            .replace(",", ".");
-          const thisPrice = parseFloat(netText);
-          if (!isNaN(thisPrice) && thisPrice === minPrice) {
-            tds[2].classList.add("cell-cheapest");
-          }
-        });
-      });
-
-      /* odśwież datalisty odbiorców (LOWEST_PRICES się zmieniło) */
-      refreshAllDatalists();
-    }
-
-    /* ---------- DOSTAWCY ---------- */
-
-    function createSupplierCard(supplier) {
-      const card = document.createElement("div");
-      card.className = "supplier-card";
-      card.dataset.type = "supplier";
-      card.dataset.supplierId = supplier.id;
-
-      const header = document.createElement("div");
-      header.className = "supplier-header";
-
-      const nameEl = document.createElement("div");
-      nameEl.className = "supplier-name";
-      nameEl.textContent = supplier.name;
-
-      const headerBtns = document.createElement("div");
-      headerBtns.className = "supplier-header-buttons";
-
-      const toggleBtn = document.createElement("button");
-      toggleBtn.className = "outline";
-      toggleBtn.textContent = "Zwiń cennik";
-      toggleBtn.addEventListener("click", () => {
-        const tableWrap = card.querySelector(".products-table-wrapper");
-        const hidden = tableWrap.style.display === "none";
-        tableWrap.style.display = hidden ? "block" : "none";
-        toggleBtn.textContent = hidden ? "Zwiń cennik" : "Rozwiń cennik";
-      });
-
-      const deleteBtn = document.createElement("button");
-      deleteBtn.className = "danger";
-      deleteBtn.textContent = "Usuń dostawcę";
-      deleteBtn.addEventListener("click", () => deleteSupplier(supplier.id));
-
-      headerBtns.appendChild(toggleBtn);
-      headerBtns.appendChild(deleteBtn);
-
-      header.appendChild(nameEl);
-      header.appendChild(headerBtns);
-
-      const addRow = document.createElement("div");
-      addRow.className = "supplier-add-product";
-
-      const datalistId = `products-master-list-${supplier.id}`;
-
-      let optionsHtml = "";
-      for (const prod of MASTER_PRODUCTS) {
-        const vatTxt = prod.vat != null && prod.vat !== "" ? prod.vat + " %" : "";
-        const priceTxt = prod.price_net != null && prod.price_net !== ""
-          ? formatPLN(prod.price_net)
-          : "";
-        let label = prod.name;
-        if (vatTxt)   label += " – " + vatTxt;
-        if (priceTxt) label += " – " + priceTxt;
-
-        optionsHtml += `<option value="${prod.name}"
-                               data-price="${prod.price_net ?? ""}"
-                               data-vat="${prod.vat ?? ""}"
-                               data-unit="${prod.unit ?? ""}">${label}</option>`;
-      }
-
-      addRow.innerHTML = `
-        <input list="${datalistId}" class="prod-name" placeholder="Nazwa produktu (możesz wpisać nowy)">
-        <datalist id="${datalistId}">
-          ${optionsHtml}
-        </datalist>
-        <select class="prod-unit">
-          <option value="szt">szt</option>
-          <option value="kg">kg</option>
-          <option value="l">l</option>
-        </select>
-        <input type="number" step="0.01" min="0" class="prod-price-net" placeholder="Cena netto">
-        <input type="number" step="1" min="0" class="prod-vat" placeholder="VAT %" value="23">
-        <button type="button" class="primary btn-add-product">+ Dodaj produkt</button>
-      `;
-
-      const nameInput  = addRow.querySelector(".prod-name");
-      const netInput   = addRow.querySelector(".prod-price-net");
-      const vatInput   = addRow.querySelector(".prod-vat");
-      const unitSelect = addRow.querySelector(".prod-unit");
-
-      nameInput.addEventListener("input", () => {
-        const dl = document.getElementById(datalistId);
-        if (!dl) return;
-        const val = nameInput.value;
-        const opts = dl.options;
-        for (let i = 0; i < opts.length; i++) {
-          if (opts[i].value === val) {
-            const p    = opts[i].getAttribute("data-price");
-            const vat  = opts[i].getAttribute("data-vat");
-            const unit = opts[i].getAttribute("data-unit");
-            if (p !== null && p !== "")   netInput.value = p;
-            if (vat !== null && vat !== "") vatInput.value = vat;
-            if (unit !== null && unit !== "") unitSelect.value = unit;
-            break;
-          }
-        }
-      });
-
-      const addBtn = addRow.querySelector(".btn-add-product");
-      addBtn.addEventListener("click", () => addProductForSupplier(card, supplier.id));
-
-      const tableWrap = document.createElement("div");
-      tableWrap.className = "products-table-wrapper";
-
-      const table = document.createElement("table");
-      table.className = "products-table";
-      table.innerHTML = `
+  <!-- Produkty -->
+  <div id="tab-products" class="tab-panel active">
+    <h2>Lista produktów i porównanie cen</h2>
+    <div class="products-search">
+      <input type="text" id="productsSearch" placeholder="Wpisz nazwę produktu..." />
+    </div>
+    <p class="info">
+      Porównaj ceny wszystkich produktów we wszystkich firmach. Najtańsza oferta jest podświetlona.
+    </p>
+    <div class="products-table-wrapper">
+      <table id="productsTable" class="products-table">
         <thead>
-          <tr>
+          <tr id="productsHeaderRow">
             <th>Produkt</th>
-            <th>Jednostka</th>
-            <th>Cena netto</th>
-            <th>VAT %</th>
-            <th>Cena brutto</th>
-            <th>Najtańsza cena netto</th>
-            <th></th>
+            <!-- kolumny dostawców dodawane w JS -->
           </tr>
         </thead>
         <tbody></tbody>
-      `;
+      </table>
+    </div>
+  </div>
 
-      const tbody = table.querySelector("tbody");
-      if (Array.isArray(supplier.products) && supplier.products.length > 0) {
-        for (const p of supplier.products) {
-          const tr = document.createElement("tr");
-          tr.dataset.supplierProductId = p.id;
-          tr.dataset.productId = p.product_id;
-          tr.innerHTML = `
-            <td>${p.name}</td>
-            <td>${p.unit || ""}</td>
-            <td class="price-cell price-cell-net">${formatPLN(p.price_net)}</td>
-            <td>${p.vat != null ? p.vat + " %" : ""}</td>
-            <td class="price-cell">${formatPLN(p.price_gross)}</td>
-            <td class="price-cell"></td>
-            <td><button type="button" class="danger btn-del-product">Usuń</button></td>
-          `;
-          tr.querySelector(".btn-del-product")
-            .addEventListener("click", () => deleteProductRow(tr));
-          tbody.appendChild(tr);
-        }
-      } else {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td colspan="7">Brak produktów w cenniku.</td>`;
-        tbody.appendChild(tr);
+  <!-- Dostawcy -->
+  <div id="tab-suppliers" class="tab-panel">
+    <div class="supplier-add">
+      <input type="text" id="newSupplierName" placeholder="Wpisz nazwę dostawcy..." />
+      <button id="addSupplierBtn" class="primary">Dodaj dostawcę</button>
+    </div>
+    <p class="info">
+      W cenniku dostawcy możesz skorygować VAT dla produktu, zmiana zaktualizuje stawkę tego produktu wszędzie.
+    </p>
+    <div id="suppliersContainer"></div>
+    <div id="error" class="error"></div>
+  </div>
+
+  <!-- Odbiorcy -->
+  <div id="tab-customers" class="tab-panel">
+    <div class="supplier-add">
+      <input type="text" id="newCustomerName" placeholder="Wpisz nazwę odbiorcy..." />
+      <button id="addCustomerBtn" class="primary">Dodaj odbiorcę</button>
+    </div>
+    <p class="info">
+      Cenniki odbiorców korzystają zawsze z najniższych dostępnych cen netto dla produktu.
+    </p>
+    <div id="customersContainer"></div>
+  </div>
+</div>
+
+<script>
+// API endpoints – dopasuj ścieżki do swoich skryptów Perl
+const APISUPPLIERSURL      = 'https://a1.justmike.space/app/list/suppliers.pl';
+const APIADDSUPPLIER       = 'https://a1.justmike.space/app/add/supplier.pl';
+const APIDELETESUPPLIER    = 'https://a1.justmike.space/app/delete/supplier.pl';
+const APIADDPRODUCT        = 'https://a1.justmike.space/app/add/supplierproduct.pl';
+const APIDELETESUPPLIERPROD= 'https://a1.justmike.space/app/delete/supplierproduct.pl';
+const APIPRODUCTSURL       = 'https://a1.justmike.space/app/list/products.pl';
+const APILOGOUTURL         = 'https://a1.justmike.space/app/logout.pl';
+const APICUSTOMERSURL      = 'https://a1.justmike.space/app/list/customers.pl';
+const APIADDCUSTOMER       = 'https://a1.justmike.space/app/add/customer.pl';
+const APIADDCUSTOMERPRODUCT= 'https://a1.justmike.space/app/add/customerproduct.pl';
+const APIDELCUSTOMERPRODUCT= 'https://a1.justmike.space/app/delete/customerproduct.pl';
+const LOGINPAGE            = 'login.html';
+
+// global caches
+let MASTERPRODUCTS = []; // z listproducts.pl
+let LOWESTPRICES   = new Map(); // produkt -> { unit, price }
+
+// CSRF
+function getCsrfToken() {
+  return sessionStorage.getItem('csrfToken');
+}
+
+// pomocnicze
+function formatPLN(value) {
+  if (value === null || value === undefined || value === '') return '';
+  const num = Number(value);
+  if (Number.isNaN(num)) return value;
+  return num.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' });
+}
+
+// --- MASTER PRODUCTS ---
+
+async function loadMasterProducts() {
+  const csrf = getCsrfToken();
+  try {
+    const resp = await fetch(APIPRODUCTSURL, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'X-CSRF-Token': csrf
       }
-
-      tableWrap.appendChild(table);
-      card.appendChild(header);
-      card.appendChild(addRow);
-      card.appendChild(tableWrap);
-
-      return card;
+    });
+    if (!resp.ok) {
+      MASTERPRODUCTS = [];
+      return;
     }
+    const data = await resp.json();
+    MASTERPRODUCTS = Array.isArray(data) ? data : [];
+  } catch (e) {
+    MASTERPRODUCTS = [];
+  }
+}
 
-    async function loadSuppliers() {
-      const errorBox  = document.getElementById("error");
-      const container = document.getElementById("suppliersContainer");
-      errorBox.textContent = "";
-      container.innerHTML = "<p class='info'>Ładowanie cenników...</p>";
+// aktualizacja datalistów (dostawcy + odbiorcy)
+function refreshAllDatalists() {
+  // datalisty u dostawców – master products
+  document.querySelectorAll('.supplier-card[data-type="supplier"]').forEach(card => {
+    const supplierId = card.dataset.supplierId;
+    const datalistId = `products-master-list-${supplierId}`;
+    const dl = document.getElementById(datalistId);
+    if (!dl) return;
 
-      const csrf = getCsrfToken();
-
-      try {
-        const resp = await fetch(API_SUPPLIERS_URL, {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Accept": "application/json",
-            "X-CSRF-Token": csrf
-          }
-        });
-
-        if (!resp.ok) {
-          container.innerHTML = "<p class='info'>Błąd ładowania dostawców.</p>";
-          return;
-        }
-
-        const data = await resp.json();
-        container.innerHTML = "";
-
-        if (!Array.isArray(data) || data.length === 0) {
-          container.innerHTML = "<p class='info'>Brak dostawców.</p>";
-          return;
-        }
-
-        for (const s of data) {
-          const card = createSupplierCard(s);
-          container.appendChild(card);
-        }
-
-        recomputeLowestNetPrices();
-      } catch (e) {
-        container.innerHTML = "<p class='info'>Błąd połączenia.</p>";
-      }
+    let optionsHtml = '';
+    for (const prod of MASTERPRODUCTS) {
+      const vatTxt   = prod.vat != null && prod.vat !== '' ? ` VAT: ${prod.vat}%` : '';
+      const priceTxt = prod.pricenet != null && prod.pricenet !== '' ? ` (${formatPLN(prod.pricenet)})` : '';
+      let label = prod.name;
+      if (vatTxt)   label += vatTxt;
+      if (priceTxt) label += priceTxt;
+      optionsHtml += `<option value="${prod.name}"
+                            data-price="${prod.pricenet ?? ''}"
+                            data-vat="${prod.vat ?? ''}"
+                            data-unit="${prod.unit ?? ''}">${label}</option>`;
     }
+    dl.innerHTML = optionsHtml;
+  });
 
-    async function addSupplier() {
-      const nameInput = document.getElementById("newSupplierName");
-      const name      = nameInput.value.trim();
-      const errorBox  = document.getElementById("error");
+  // datalisty u odbiorców – bazują na LOWESTPRICES
+  document.querySelectorAll('.supplier-card[data-type="customer"]').forEach(card => {
+    const customerId = card.dataset.customerId;
+    const datalistId = `products-lowest-list-${customerId}`;
+    const dl = document.getElementById(datalistId);
+    if (!dl) return;
 
-      if (!name) {
-        errorBox.textContent = "Podaj nazwę dostawcy.";
-        return;
-      }
+    let optionsHtml = '';
+    LOWESTPRICES.forEach((info, name) => {
+      optionsHtml += `<option value="${name}"
+                            data-unit="${info.unit}"
+                            data-price="${info.price}">${name}</option>`;
+    });
+    dl.innerHTML = optionsHtml;
+  });
+}
 
-      const csrf = getCsrfToken();
+// --- LICZENIE NAJTAŃSZYCH CEN ---
 
-      try {
-        const resp = await fetch(API_ADD_SUPPLIER, {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-            "X-CSRF-Token": csrf
-          },
-          body: JSON.stringify({ name })
-        });
+function recomputeLowestNetPrices() {
+  const productsMap = new Map(); // name -> { unit, prices: Map(supplierName -> price) }
 
-        if (!resp.ok) {
-          errorBox.textContent = "Błąd dodawania dostawcy.";
-          return;
-        }
+  // z cenników dostawców
+  document.querySelectorAll('.supplier-card[data-type="supplier"]').forEach(card => {
+    const supplierName = card.querySelector('.supplier-name')?.textContent || '';
+    const rows = card.querySelectorAll('tbody tr');
 
-        const data = await resp.json();
-        if (!data.ok) {
-          errorBox.textContent = "Błąd dodawania dostawcy.";
-          return;
-        }
+    rows.forEach(tr => {
+      const tds = tr.querySelectorAll('td');
+      if (tds.length < 3) return;
 
-        nameInput.value = "";
-        errorBox.textContent = "";
-        await loadSuppliers();
-        await loadCustomers(); // odbiorcy też korzystają z cen
-      } catch (e) {
-        errorBox.textContent = "Błąd połączenia.";
-      }
-    }
+      const name = tds[0].textContent.trim();
+      const unit = tds[1].textContent.trim();
+      const netTd = tds[2];
 
-    async function addProductForSupplier(cardEl, supplierId) {
-      const errorBox  = document.getElementById("error");
-      const nameInput = cardEl.querySelector(".prod-name");
-      const unitSel   = cardEl.querySelector(".prod-unit");
-      const netInput  = cardEl.querySelector(".prod-price-net");
-      const vatInput  = cardEl.querySelector(".prod-vat");
-
-      const new_name  = (nameInput.value || "").trim();
-      const unit      = unitSel.value;
-      const price_net = (netInput.value || "").trim();
-      const vat       = (vatInput.value || "").trim();
-
-      if (!new_name) {
-        errorBox.textContent = "Podaj nazwę produktu.";
-        return;
-      }
-      if (!price_net) {
-        errorBox.textContent = "Podaj cenę netto.";
-        return;
-      }
-
-      const csrf = getCsrfToken();
-
-      try {
-        const resp = await fetch(API_ADD_PRODUCT, {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-            "X-CSRF-Token": csrf
-          },
-          body: JSON.stringify({
-            supplier_id: supplierId,
-            product_id: null,
-            new_name,
-            unit,
-            price_net,
-            vat
-          })
-        });
-
-        if (!resp.ok) {
-          errorBox.textContent = "Błąd dodawania produktu.";
-          return;
-        }
-
-        const data = await resp.json();
-        if (!data.ok) {
-          errorBox.textContent = "Błąd dodawania produktu.";
-          return;
-        }
-
-        if (data.master_product) {
-          MASTER_PRODUCTS.push(data.master_product);
-        }
-
-        const tbody = cardEl.querySelector(".products-table tbody");
-        const p = data.product;
-        const tr = document.createElement("tr");
-        tr.dataset.supplierProductId = p.id;
-        tr.dataset.productId = p.product_id;
-        tr.innerHTML = `
-          <td>${p.name}</td>
-          <td>${p.unit || ""}</td>
-          <td class="price-cell price-cell-net">${formatPLN(p.price_net)}</td>
-          <td>${p.vat != null ? p.vat + " %" : ""}</td>
-          <td class="price-cell">${formatPLN(p.price_gross)}</td>
-          <td class="price-cell"></td>
-          <td><button type="button" class="danger btn-del-product">Usuń</button></td>
-        `;
-        tr.querySelector(".btn-del-product")
-          .addEventListener("click", () => deleteProductRow(tr));
-
-        if (tbody.children.length === 1 &&
-            tbody.children[0].querySelector("td[colspan]")) {
-          tbody.innerHTML = "";
-        }
-        tbody.appendChild(tr);
-
-        nameInput.value  = "";
-        netInput.value   = "";
-        vatInput.value   = "23";
-        unitSel.value    = "szt";
-
-        recomputeLowestNetPrices();
-        await loadCustomers(); // ceny u odbiorców też się zmieniły
-        errorBox.textContent = "";
-      } catch (e) {
-        errorBox.textContent = "Błąd połączenia.";
-      }
-    }
-
-    async function deleteProductRow(tr) {
-      const errorBox = document.getElementById("error");
-      const supplierProductId = tr.dataset.supplierProductId;
-
-      if (!supplierProductId) {
-        errorBox.textContent = "Brak ID produktu do usunięcia.";
-        return;
-      }
-      if (!confirm("Na pewno usunąć ten produkt z cennika?")) return;
-
-      const csrf = getCsrfToken();
-
-      try {
-        const resp = await fetch(API_DELETE_SUPPLIER_PROD, {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-            "X-CSRF-Token": csrf
-          },
-          body: JSON.stringify({ supplier_product_id: supplierProductId })
-        });
-
-        if (!resp.ok) {
-          errorBox.textContent = "Błąd usuwania produktu.";
-          return;
-        }
-
-        const data = await resp.json();
-        if (!data.ok) {
-          errorBox.textContent = "Błąd usuwania produktu.";
-          return;
-        }
-
-        const tbody = tr.parentElement;
-        tr.remove();
-
-        if (tbody.children.length === 0) {
-          const emptyTr = document.createElement("tr");
-          emptyTr.innerHTML = `<td colspan="7">Brak produktów w cenniku.</td>`;
-          tbody.appendChild(emptyTr);
-        }
-
-        recomputeLowestNetPrices();
-        await loadCustomers();
-        errorBox.textContent = "";
-      } catch (e) {
-        errorBox.textContent = "Błąd połączenia.";
-      }
-    }
-
-    async function deleteSupplier(id) {
-      const errorBox = document.getElementById("error");
-      const csrf = getCsrfToken();
-
-      if (!confirm("Na pewno usunąć tego dostawcę wraz z cennikiem?")) return;
-
-      try {
-        const resp = await fetch(API_DELETE_SUPPLIER, {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-            "X-CSRF-Token": csrf
-          },
-          body: JSON.stringify({ supplier_id: id })
-        });
-
-        if (!resp.ok) {
-          errorBox.textContent = "Błąd usuwania dostawcy.";
-          return;
-        }
-
-        const data = await resp.json();
-        if (!data.ok) {
-          errorBox.textContent = "Błąd usuwania dostawcy.";
-          return;
-        }
-
-        errorBox.textContent = "";
-        await loadSuppliers();
-        await loadCustomers();
-      } catch (e) {
-        errorBox.textContent = "Błąd połączenia.";
-      }
-    }
-
-    /* ---------- ODBIORCY ---------- */
-
-    function createCustomerCard(customer) {
-      const card = document.createElement("div");
-      card.className = "supplier-card";
-      card.dataset.type = "customer";
-      card.dataset.customerId = customer.id;
-
-      const header = document.createElement("div");
-      header.className = "supplier-header";
-
-      const nameEl = document.createElement("div");
-      nameEl.className = "supplier-name";
-      nameEl.textContent = customer.name;
-
-      const headerBtns = document.createElement("div");
-      headerBtns.className = "supplier-header-buttons";
-
-      const deleteBtn = document.createElement("button");
-      deleteBtn.className = "danger";
-      deleteBtn.textContent = "Usuń odbiorcę";
-      deleteBtn.addEventListener("click", () => deleteCustomer(customer.id));
-
-      headerBtns.appendChild(deleteBtn);
-      header.appendChild(nameEl);
-      header.appendChild(headerBtns);
-
-      const addRow = document.createElement("div");
-      addRow.className = "supplier-add-product";
-
-      const datalistId = `products-lowest-list-${customer.id}`;
-
-      let optionsHtml = "";
-      LOWEST_PRICES.forEach((info, name) => {
-        optionsHtml += `<option value="${name}"
-                             data-unit="${info.unit}"
-                             data-price="${info.price}">${name}</option>`;
-      });
-
-      addRow.innerHTML = `
-        <input list="${datalistId}" class="cust-prod-name" placeholder="Wybierz produkt">
-        <datalist id="${datalistId}">
-          ${optionsHtml}
-        </datalist>
-        <select class="cust-prod-unit">
-          <option value="szt">szt</option>
-          <option value="kg">kg</option>
-          <option value="l">l</option>
-        </select>
-        <input type="number" step="0.01" min="0" class="cust-price-net" placeholder="Cena netto" readonly>
-        <button type="button" class="primary btn-add-cust-product">+ Dodaj produkt</button>
-      `;
-
-      const nameInput = addRow.querySelector(".cust-prod-name");
-      const unitSelect = addRow.querySelector(".cust-prod-unit");
-      const priceInput = addRow.querySelector(".cust-price-net");
-
-      nameInput.addEventListener("input", () => {
-        const val = nameInput.value.trim();
-        const entry = LOWEST_PRICES.get(val);
-        if (!entry) return;
-        unitSelect.value = entry.unit || "szt";
-        priceInput.value = entry.price;
-      });
-
-      const addBtn = addRow.querySelector(".btn-add-cust-product");
-      addBtn.addEventListener("click", () => addProductForCustomer(card, customer.id));
-
-      const tableWrap = document.createElement("div");
-      tableWrap.className = "products-table-wrapper";
-
-      const table = document.createElement("table");
-      table.className = "products-table";
-      table.innerHTML = `
-        <thead>
-          <tr>
-            <th>Produkt</th>
-            <th>Jednostka</th>
-            <th>Cena netto (najniższa)</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      `;
-
-      const tbody = table.querySelector("tbody");
-      if (Array.isArray(customer.products) && customer.products.length > 0) {
-        for (const p of customer.products) {
-          const entry = LOWEST_PRICES.get(p.name) || { unit: p.unit, price: null };
-          const tr = document.createElement("tr");
-          tr.dataset.customerId = customer.id;
-          tr.dataset.productId = p.product_id;
-          tr.innerHTML = `
-            <td>${p.name}</td>
-            <td>${entry.unit || p.unit || ""}</td>
-            <td class="price-cell">${entry.price != null ? formatPLN(entry.price) : "-"}</td>
-            <td><button type="button" class="danger btn-del-cust-product">Usuń</button></td>
-          `;
-          tr.querySelector(".btn-del-cust-product")
-            .addEventListener("click", () => deleteCustomerProductRow(tr));
-          tbody.appendChild(tr);
-        }
-      } else {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td colspan="4">Brak produktów w cenniku odbiorcy.</td>`;
-        tbody.appendChild(tr);
-      }
-
-      tableWrap.appendChild(table);
-      card.appendChild(header);
-      card.appendChild(addRow);
-      card.appendChild(tableWrap);
-      return card;
-    }
-
-    async function loadCustomers() {
-      const container = document.getElementById("customersContainer");
-      container.innerHTML = "<p class='info'>Ładowanie odbiorców...</p>";
-
-      const csrf = getCsrfToken();
-
-      try {
-        const resp = await fetch(API_CUSTOMERS_URL, {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Accept": "application/json",
-            "X-CSRF-Token": csrf
-          }
-        });
-
-        if (!resp.ok) {
-          container.innerHTML = "<p class='info'>Błąd ładowania odbiorców.</p>";
-          return;
-        }
-
-        const data = await resp.json();
-        container.innerHTML = "";
-
-        if (!Array.isArray(data) || data.length === 0) {
-          container.innerHTML = "<p class='info'>Brak odbiorców.</p>";
-          return;
-        }
-
-        for (const c of data) {
-          const card = createCustomerCard(c);
-          container.appendChild(card);
-        }
-
-        refreshAllDatalists();
-      } catch (e) {
-        container.innerHTML = "<p class='info'>Błąd połączenia.</p>";
-      }
-    }
-
-    async function addCustomer() {
-      const input = document.getElementById("newCustomerName");
-      const name  = input.value.trim();
       if (!name) return;
 
-      const csrf = getCsrfToken();
+      const netText = netTd.textContent.trim()
+        .replace(/\s/g, '')
+        .replace('zł', '')
+        .replace(',', '.');
 
-      try {
-        const resp = await fetch(API_ADD_CUSTOMER, {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-            "X-CSRF-Token": csrf
-          },
-          body: JSON.stringify({ name })
-        });
+      const price = parseFloat(netText);
+      if (isNaN(price)) return;
 
-        if (!resp.ok) return;
+      let entry = productsMap.get(name);
+      if (!entry) {
+        entry = { unit, prices: new Map() };
+        productsMap.set(name, entry);
+      }
+      if (!entry.unit) entry.unit = unit;
+      entry.prices.set(supplierName, price);
+    });
+  });
 
-        const data = await resp.json();
-        if (!data.ok) return;
-
-        input.value = "";
-        await loadCustomers();
-      } catch (e) {}
+  // wylicz LOWESTPRICES
+  LOWESTPRICES = new Map();
+  productsMap.forEach((entry, name) => {
+    let minPrice = Infinity;
+    entry.prices.forEach(price => {
+      if (price < minPrice) minPrice = price;
+    });
+    if (isFinite(minPrice)) {
+      LOWESTPRICES.set(name, { unit: entry.unit, price: minPrice });
     }
+  });
 
-    async function addProductForCustomer(cardEl, customerId) {
-      const nameInput = cardEl.querySelector(".cust-prod-name");
-      const name = (nameInput.value || "").trim();
-      if (!name) return;
+  // lista dostawców jako kolumny
+  const suppliersSet = new Set();
+  productsMap.forEach(entry => {
+    entry.prices.forEach((_, sName) => suppliersSet.add(sName));
+  });
+  const suppliersList = Array.from(suppliersSet).sort((a, b) => a.localeCompare(b, 'pl'));
 
-      const csrf = getCsrfToken();
+  // tabela Produkty
+  const headerRow = document.getElementById('productsHeaderRow');
+  const body = document.querySelector('#productsTable tbody');
+  if (!headerRow || !body) return;
 
-      try {
-        const resp = await fetch(API_ADD_CUSTOMER_PRODUCT, {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-            "X-CSRF-Token": csrf
-          },
-          body: JSON.stringify({
-            customer_id: customerId,
-            product_name: name
-          })
-        });
+  headerRow.innerHTML = '<th>Produkt</th>';
+  suppliersList.forEach(sName => {
+    const th = document.createElement('th');
+    th.textContent = sName;
+    headerRow.appendChild(th);
+  });
 
-        if (!resp.ok) return;
-        const data = await resp.json();
-        if (!data.ok) return;
+  body.innerHTML = '';
 
-        const p = data.product;
-        const tbody = cardEl.querySelector(".products-table tbody");
-        const tr = document.createElement("tr");
-        tr.dataset.customerId = customerId;
-        tr.dataset.productId = p.product_id || "";
-        tr.innerHTML = `
-          <td>${p.name}</td>
-          <td>${p.unit || ""}</td>
-          <td class="price-cell">${formatPLN(p.price_net)}</td>
-          <td><button type="button" class="danger btn-del-cust-product">Usuń</button></td>
-        `;
-        tr.querySelector(".btn-del-cust-product")
-          .addEventListener("click", () => deleteCustomerProductRow(tr));
+  const sortedProducts = Array.from(productsMap.entries())
+    .sort((a, b) => a[0].localeCompare(b[0], 'pl'));
 
-        if (tbody.children.length === 1 &&
-            tbody.children[0].querySelector("td[colspan]")) {
-          tbody.innerHTML = "";
-        }
-        tbody.appendChild(tr);
+  sortedProducts.forEach(([name, entry]) => {
+    let minPrice = Infinity;
+    entry.prices.forEach(price => {
+      if (price < minPrice) minPrice = price;
+    });
 
-        nameInput.value = "";
-      } catch (e) {}
-    }
+    const tr = document.createElement('tr');
+    const nameTd = document.createElement('td');
+    nameTd.innerHTML = `${name}<br><span style="color:#626c71;font-size:0.8rem">${entry.unit}</span>`;
+    tr.appendChild(nameTd);
 
-    async function deleteCustomerProductRow(tr) {
-      const customerId = tr.dataset.customerId;
-      const productId  = tr.dataset.productId;
-      if (!customerId || !productId) {
-        tr.remove();
+    suppliersList.forEach(sName => {
+      const td = document.createElement('td');
+      const price = entry.prices.get(sName);
+      if (price != null) {
+        td.textContent = formatPLN(price);
+        td.classList.add('price-cell');
+        if (price === minPrice) td.classList.add('cell-cheapest');
+      } else {
+        td.textContent = '-';
+      }
+      tr.appendChild(td);
+    });
+
+    body.appendChild(tr);
+  });
+
+  // w cennikach dostawców – kolumna "Najtańsza cena netto" + podświetlenie
+  document.querySelectorAll('.supplier-card[data-type="supplier"]').forEach(card => {
+    const rows = card.querySelectorAll('tbody tr');
+    rows.forEach(tr => {
+      const tds = tr.querySelectorAll('td');
+      if (tds.length < 6) return;
+
+      tds[2].classList.remove('cell-cheapest');
+
+      const name = tds[0].textContent.trim();
+      const entry = productsMap.get(name);
+      if (!entry) {
+        tds[5].textContent = '';
         return;
       }
-      if (!confirm("Usunąć produkt z cennika odbiorcy?")) return;
 
-      const csrf = getCsrfToken();
-
-      try {
-        const resp = await fetch(API_DEL_CUSTOMER_PRODUCT, {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-            "X-CSRF-Token": csrf
-          },
-          body: JSON.stringify({
-            customer_id: customerId,
-            product_id: productId
-          })
-        });
-
-        if (!resp.ok) return;
-        const data = await resp.json();
-        if (!data.ok) return;
-
-        const tbody = tr.parentElement;
-        tr.remove();
-        if (tbody.children.length === 0) {
-          const emptyTr = document.createElement("tr");
-          emptyTr.innerHTML = `<td colspan="4">Brak produktów w cenniku odbiorcy.</td>`;
-          tbody.appendChild(emptyTr);
+      let minPrice = Infinity;
+      let minSupplier = '';
+      entry.prices.forEach((price, sName) => {
+        if (price < minPrice) {
+          minPrice = price;
+          minSupplier = sName;
         }
-      } catch (e) {}
-    }
-
-    async function deleteCustomer(id) {
-      if (!confirm("Usunąć odbiorcę wraz z jego cennikiem?")) return;
-      const csrf = getCsrfToken();
-
-      try {
-        const resp = await fetch("/app/delete_customer.pl", {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-            "X-CSRF-Token": csrf
-          },
-          body: JSON.stringify({ customer_id: id })
-        });
-
-        if (!resp.ok) return;
-        const data = await resp.json();
-        if (!data.ok) return;
-
-        await loadCustomers();
-      } catch (e) {}
-    }
-
-    async function doLogout() {
-      const csrf = getCsrfToken();
-      try {
-        await fetch(API_LOGOUT_URL, {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Accept": "application/json",
-            "X-CSRF-Token": csrf
-          }
-        });
-      } catch (_) {}
-      sessionStorage.removeItem("csrfToken");
-      window.location.href = LOGIN_PAGE;
-    }
-
-    /* zakładki */
-    document.addEventListener("click", (e) => {
-      const btn = e.target.closest(".tab-btn");
-      if (!btn) return;
-      const tabId = btn.dataset.tab;
-      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      document.querySelectorAll(".tab-panel").forEach(p => {
-        p.classList.toggle("active", p.id === tabId);
       });
-    });
 
-    /* filtrowanie tabeli produktów */
-    document.getElementById("productsSearch").addEventListener("input", (e) => {
-      const q = e.target.value.trim().toLowerCase();
-      const rows = document.querySelectorAll("#productsTable tbody tr");
-      rows.forEach(row => {
-        const nameCell = row.querySelector("td");
-        if (!nameCell) return;
-        const text = nameCell.textContent.toLowerCase();
-        row.style.display = text.includes(q) ? "" : "none";
-      });
-    });
+      if (isFinite(minPrice)) {
+        tds[5].innerHTML =
+          `${formatPLN(minPrice)}${minSupplier ? ` <span class="tag-supplier">${minSupplier}</span>` : ''}`;
+      } else {
+        tds[5].textContent = '';
+      }
 
-    document.getElementById("reloadBtn").addEventListener("click", async () => {
-      await loadMasterProducts();
-      await loadSuppliers();
-      await loadCustomers();
+      const netText = tds[2].textContent.trim()
+        .replace(/\s/g, '')
+        .replace('zł', '')
+        .replace(',', '.');
+      const thisPrice = parseFloat(netText);
+      if (!isNaN(thisPrice) && thisPrice === minPrice) {
+        tds[2].classList.add('cell-cheapest');
+      }
     });
-    document.getElementById("addSupplierBtn").addEventListener("click", addSupplier);
-    document.getElementById("addCustomerBtn").addEventListener("click", addCustomer);
-    document.getElementById("logoutBtn").addEventListener("click", doLogout);
+  });
 
-    window.addEventListener("load", async () => {
-      await loadMasterProducts();
-      await loadSuppliers();
-      recomputeLowestNetPrices();
-      await loadCustomers();
+  // odśwież datalisty odbiorców, bo LOWESTPRICES się zmieniło
+  refreshAllDatalists();
+}
+
+// ---------- DOSTAWCY ----------
+
+function createSupplierCard(supplier) {
+  const card = document.createElement('div');
+  card.className = 'supplier-card';
+  card.dataset.type = 'supplier';
+  card.dataset.supplierId = supplier.id;
+
+  const header = document.createElement('div');
+  header.className = 'supplier-header';
+
+  const nameEl = document.createElement('div');
+  nameEl.className = 'supplier-name';
+  nameEl.textContent = supplier.name;
+
+  const headerBtns = document.createElement('div');
+  headerBtns.className = 'supplier-header-buttons';
+
+  const toggleBtn = document.createElement('button');
+  toggleBtn.className = 'outline';
+  toggleBtn.textContent = 'Zwiń cennik';
+  toggleBtn.addEventListener('click', () => {
+    const tableWrap = card.querySelector('.products-table-wrapper');
+    const hidden = tableWrap.style.display === 'none';
+    tableWrap.style.display = hidden ? 'block' : 'none';
+    toggleBtn.textContent = hidden ? 'Zwiń cennik' : 'Rozwiń cennik';
+  });
+
+  const deleteBtn = document.createElement('button');
+  deleteBtn.className = 'danger';
+  deleteBtn.textContent = 'Usuń dostawcę';
+  deleteBtn.addEventListener('click', () => deleteSupplier(supplier.id));
+
+  headerBtns.appendChild(toggleBtn);
+  headerBtns.appendChild(deleteBtn);
+  header.appendChild(nameEl);
+  header.appendChild(headerBtns);
+
+  const addRow = document.createElement('div');
+  addRow.className = 'supplier-add-product';
+
+  const datalistId = `products-master-list-${supplier.id}`;
+  let optionsHtml = '';
+  for (const prod of MASTERPRODUCTS) {
+    const vatTxt   = prod.vat != null && prod.vat !== '' ? ` VAT: ${prod.vat}%` : '';
+    const priceTxt = prod.pricenet != null && prod.pricenet !== '' ? ` (${formatPLN(prod.pricenet)})` : '';
+    let label = prod.name;
+    if (vatTxt)   label += vatTxt;
+    if (priceTxt) label += priceTxt;
+
+    optionsHtml += `<option value="${prod.name}"
+                          data-price="${prod.pricenet ?? ''}"
+                          data-vat="${prod.vat ?? ''}"
+                          data-unit="${prod.unit ?? ''}">${label}</option>`;
+  }
+
+  addRow.innerHTML = `
+    <input list="${datalistId}" class="prod-name" placeholder="Nazwa produktu (możesz wpisać nowy)" />
+    <datalist id="${datalistId}">${optionsHtml}</datalist>
+    <select class="prod-unit">
+      <option value="szt">szt</option>
+      <option value="kg">kg</option>
+      <option value="l">l</option>
+    </select>
+    <input type="number" step="0.01" min="0" class="prod-price-net" placeholder="Cena netto" />
+    <input type="number" step="1"   min="0" class="prod-vat" placeholder="VAT" value="23" />
+    <button type="button" class="primary btn-add-product">Dodaj produkt</button>
+  `;
+
+  const nameInput = addRow.querySelector('.prod-name');
+  const netInput  = addRow.querySelector('.prod-price-net');
+  const vatInput  = addRow.querySelector('.prod-vat');
+  const unitSelect= addRow.querySelector('.prod-unit');
+
+  nameInput.addEventListener('input', () => {
+    const dl = document.getElementById(datalistId);
+    if (!dl) return;
+    const val = nameInput.value;
+    const opts = dl.options;
+    for (let i = 0; i < opts.length; i++) {
+      const opt = opts[i];
+      if (opt.value === val) {
+        const p   = opt.getAttribute('data-price');
+        const vat = opt.getAttribute('data-vat');
+        const unit= opt.getAttribute('data-unit');
+        if (p != null && p !== '')   netInput.value = p;
+        if (vat != null && vat !== '') vatInput.value = vat;
+        if (unit != null && unit !== '') unitSelect.value = unit;
+        break;
+      }
+    }
+  });
+
+  const addBtn = addRow.querySelector('.btn-add-product');
+  addBtn.addEventListener('click', () => addProductForSupplier(card, supplier.id));
+
+  const tableWrap = document.createElement('div');
+  tableWrap.className = 'products-table-wrapper';
+
+  const table = document.createElement('table');
+  table.className = 'products-table';
+  table.innerHTML = `
+    <thead>
+      <tr>
+        <th>Produkt</th>
+        <th>Jednostka</th>
+        <th>Cena netto</th>
+        <th>VAT</th>
+        <th>Cena brutto</th>
+        <th>Najtańsza cena netto</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  `;
+
+  const tbody = table.querySelector('tbody');
+  if (Array.isArray(supplier.products) && supplier.products.length > 0) {
+    for (const p of supplier.products) {
+      const tr = document.createElement('tr');
+      tr.dataset.supplierProductId = p.id;
+      tr.dataset.productId = p.productid;
+      tr.innerHTML = `
+        <td>${p.name}</td>
+        <td>${p.unit}</td>
+        <td class="price-cell price-cell-net">${formatPLN(p.pricenet)}</td>
+        <td>${p.vat != null ? p.vat : ''}</td>
+        <td class="price-cell">${formatPLN(p.pricegross)}</td>
+        <td class="price-cell"></td>
+        <td>
+          <button type="button" class="danger btn-del-product">Usuń</button>
+        </td>
+      `;
+      tr.querySelector('.btn-del-product')
+        .addEventListener('click', () => deleteProductRow(tr));
+      tbody.appendChild(tr);
+    }
+  } else {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td colspan="7">Brak produktów w cenniku.</td>`;
+    tbody.appendChild(tr);
+  }
+
+  tableWrap.appendChild(table);
+
+  card.appendChild(header);
+  card.appendChild(addRow);
+  card.appendChild(tableWrap);
+
+  return card;
+}
+
+async function loadSuppliers() {
+  const errorBox = document.getElementById('error');
+  const container = document.getElementById('suppliersContainer');
+  if (errorBox) errorBox.textContent = '';
+  container.innerHTML = '<p class="info">Ładowanie cenników...</p>';
+
+  const csrf = getCsrfToken();
+  try {
+    const resp = await fetch(APISUPPLIERSURL, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'X-CSRF-Token': csrf
+      }
     });
-  </script>
+    if (!resp.ok) {
+      container.innerHTML = '<p class="info">Błąd ładowania dostawców.</p>';
+      return;
+    }
+    const data = await resp.json();
+    container.innerHTML = '';
+    if (!Array.isArray(data) || data.length === 0) {
+      container.innerHTML = '<p class="info">Brak dostawców.</p>';
+      return;
+    }
+    for (const s of data) {
+      const card = createSupplierCard(s);
+      container.appendChild(card);
+    }
+    recomputeLowestNetPrices();
+  } catch (e) {
+    container.innerHTML = '<p class="info">Błąd połączenia.</p>';
+  }
+}
+
+async function addSupplier() {
+  const nameInput = document.getElementById('newSupplierName');
+  const name = nameInput.value.trim();
+  const errorBox = document.getElementById('error');
+
+  if (errorBox) errorBox.textContent = '';
+  if (!name) {
+    if (errorBox) errorBox.textContent = 'Podaj nazwę dostawcy.';
+    return;
+  }
+
+  const csrf = getCsrfToken();
+  try {
+    const resp = await fetch(APIADDSUPPLIER, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': csrf
+      },
+      body: JSON.stringify({ name })
+    });
+    if (!resp.ok) {
+      if (errorBox) errorBox.textContent = 'Błąd dodawania dostawcy.';
+      return;
+    }
+    const data = await resp.json();
+    if (!data.ok) {
+      if (errorBox) errorBox.textContent = 'Błąd dodawania dostawcy.';
+      return;
+    }
+
+    nameInput.value = '';
+    if (errorBox) errorBox.textContent = '';
+    await loadSuppliers();
+    await loadCustomers(); // odbiorcy korzystają z cen
+  } catch (e) {
+    if (errorBox) errorBox.textContent = 'Błąd połączenia.';
+  }
+}
+
+async function addProductForSupplier(cardEl, supplierId) {
+  const errorBox = document.getElementById('error');
+  const nameInput = cardEl.querySelector('.prod-name');
+  const unitSel   = cardEl.querySelector('.prod-unit');
+  const netInput  = cardEl.querySelector('.prod-price-net');
+  const vatInput  = cardEl.querySelector('.prod-vat');
+
+  const newname  = nameInput.value.trim();
+  const unit     = unitSel.value;
+  const pricenet = netInput.value.trim();
+  const vat      = vatInput.value.trim();
+
+  if (errorBox) errorBox.textContent = '';
+
+  if (!newname) {
+    if (errorBox) errorBox.textContent = 'Podaj nazwę produktu.';
+    return;
+  }
+  if (!pricenet) {
+    if (errorBox) errorBox.textContent = 'Podaj cenę netto.';
+    return;
+  }
+
+  const csrf = getCsrfToken();
+  try {
+    const resp = await fetch(APIADDPRODUCT, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': csrf
+      },
+      body: JSON.stringify({
+        supplierid: supplierId,
+        productid: null,
+        newname,
+        unit,
+        pricenet,
+        vat
+      })
+    });
+    if (!resp.ok) {
+      if (errorBox) errorBox.textContent = 'Błąd dodawania produktu.';
+      return;
+    }
+    const data = await resp.json();
+    if (!data.ok) {
+      if (errorBox) errorBox.textContent = 'Błąd dodawania produktu.';
+      return;
+    }
+
+    if (data.masterproduct) {
+      MASTERPRODUCTS.push(data.masterproduct);
+    }
+
+    const tbody = cardEl.querySelector('.products-table tbody');
+    const p = data.product;
+    const tr = document.createElement('tr');
+    tr.dataset.supplierProductId = p.id;
+    tr.dataset.productId = p.productid;
+    tr.innerHTML = `
+      <td>${p.name}</td>
+      <td>${p.unit}</td>
+      <td class="price-cell price-cell-net">${formatPLN(p.pricenet)}</td>
+      <td>${p.vat != null ? p.vat : ''}</td>
+      <td class="price-cell">${formatPLN(p.pricegross)}</td>
+      <td class="price-cell"></td>
+      <td><button type="button" class="danger btn-del-product">Usuń</button></td>
+    `;
+    tr.querySelector('.btn-del-product')
+      .addEventListener('click', () => deleteProductRow(tr));
+
+    if (tbody.children.length === 1 &&
+        tbody.children[0].querySelector('td[colspan]')) {
+      tbody.innerHTML = '';
+    }
+    tbody.appendChild(tr);
+
+    nameInput.value = '';
+    netInput.value  = '';
+    vatInput.value  = '23';
+    unitSel.value   = 'szt';
+
+    recomputeLowestNetPrices();
+    await loadCustomers(); // ceny u odbiorców też się zmieniły
+    if (errorBox) errorBox.textContent = '';
+  } catch (e) {
+    if (errorBox) errorBox.textContent = 'Błąd połączenia.';
+  }
+}
+
+async function deleteProductRow(tr) {
+  const errorBox = document.getElementById('error');
+  const supplierProductId = tr.dataset.supplierProductId;
+  if (!supplierProductId) {
+    if (errorBox) errorBox.textContent = 'Brak ID produktu do usunięcia.';
+    return;
+  }
+  if (!confirm('Na pewno usunąć ten produkt z cennika?')) return;
+
+  const csrf = getCsrfToken();
+  try {
+    const resp = await fetch(APIDELETESUPPLIERPROD, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': csrf
+      },
+      body: JSON.stringify({ supplierproductid: supplierProductId })
+    });
+    if (!resp.ok) {
+      if (errorBox) errorBox.textContent = 'Błąd usuwania produktu.';
+      return;
+    }
+    const data = await resp.json();
+    if (!data.ok) {
+      if (errorBox) errorBox.textContent = 'Błąd usuwania produktu.';
+      return;
+    }
+
+    const tbody = tr.parentElement;
+    tr.remove();
+    if (tbody.children.length === 0) {
+      const emptyTr = document.createElement('tr');
+      emptyTr.innerHTML = '<td colspan="7">Brak produktów w cenniku.</td>';
+      tbody.appendChild(emptyTr);
+    }
+
+    recomputeLowestNetPrices();
+    await loadCustomers();
+    if (errorBox) errorBox.textContent = '';
+  } catch (e) {
+    if (errorBox) errorBox.textContent = 'Błąd połączenia.';
+  }
+}
+
+async function deleteSupplier(id) {
+  const errorBox = document.getElementById('error');
+  const csrf = getCsrfToken();
+  if (!confirm('Na pewno usunąć tego dostawcę wraz z cennikiem?')) return;
+
+  try {
+    const resp = await fetch(APIDELETESUPPLIER, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': csrf
+      },
+      body: JSON.stringify({ supplierid: id })
+    });
+    if (!resp.ok) {
+      if (errorBox) errorBox.textContent = 'Błąd usuwania dostawcy.';
+      return;
+    }
+    const data = await resp.json();
+    if (!data.ok) {
+      if (errorBox) errorBox.textContent = 'Błąd usuwania dostawcy.';
+      return;
+    }
+
+    if (errorBox) errorBox.textContent = '';
+    await loadSuppliers();
+    await loadCustomers();
+  } catch (e) {
+    if (errorBox) errorBox.textContent = 'Błąd połączenia.';
+  }
+}
+
+// ---------- ODBIORCY ----------
+
+function createCustomerCard(customer) {
+  const card = document.createElement('div');
+  card.className = 'supplier-card';
+  card.dataset.type = 'customer';
+  card.dataset.customerId = customer.id;
+
+  const header = document.createElement('div');
+  header.className = 'supplier-header';
+
+  const nameEl = document.createElement('div');
+  nameEl.className = 'supplier-name';
+  nameEl.textContent = customer.name;
+
+  const headerBtns = document.createElement('div');
+  headerBtns.className = 'supplier-header-buttons';
+
+  const deleteBtn = document.createElement('button');
+  deleteBtn.className = 'danger';
+  deleteBtn.textContent = 'Usuń odbiorcę';
+  deleteBtn.addEventListener('click', () => deleteCustomer(customer.id));
+
+  headerBtns.appendChild(deleteBtn);
+  header.appendChild(nameEl);
+  header.appendChild(headerBtns);
+
+  const addRow = document.createElement('div');
+  addRow.className = 'supplier-add-product';
+
+  const datalistId = `products-lowest-list-${customer.id}`;
+  let optionsHtml = '';
+  LOWESTPRICES.forEach((info, name) => {
+    optionsHtml += `<option value="${name}"
+                          data-unit="${info.unit}"
+                          data-price="${info.price}">${name}</option>`;
+  });
+
+  addRow.innerHTML = `
+    <input list="${datalistId}" class="cust-prod-name" placeholder="Wybierz produkt" />
+    <datalist id="${datalistId}">${optionsHtml}</datalist>
+    <select class="cust-prod-unit">
+      <option value="szt">szt</option>
+      <option value="kg">kg</option>
+      <option value="l">l</option>
+    </select>
+    <input type="number" step="0.01" min="0" class="cust-price-net" placeholder="Cena netto" readonly />
+    <button type="button" class="primary btn-add-cust-product">Dodaj produkt</button>
+  `;
+
+  const nameInput  = addRow.querySelector('.cust-prod-name');
+  const unitSelect = addRow.querySelector('.cust-prod-unit');
+  const priceInput = addRow.querySelector('.cust-price-net');
+
+  nameInput.addEventListener('input', () => {
+    const val = nameInput.value.trim();
+    const entry = LOWESTPRICES.get(val);
+    if (!entry) return;
+    unitSelect.value = entry.unit || 'szt';
+    priceInput.value = entry.price;
+  });
+
+  const addBtn = addRow.querySelector('.btn-add-cust-product');
+  addBtn.addEventListener('click', () => addProductForCustomer(card, customer.id));
+
+  const tableWrap = document.createElement('div');
+  tableWrap.className = 'products-table-wrapper';
+
+  const table = document.createElement('table');
+  table.className = 'products-table';
+  table.innerHTML = `
+    <thead>
+      <tr>
+        <th>Produkt</th>
+        <th>Jednostka</th>
+        <th>Cena netto najniższa</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  `;
+
+  const tbody = table.querySelector('tbody');
+  if (Array.isArray(customer.products) && customer.products.length > 0) {
+    for (const p of customer.products) {
+      const entry = LOWESTPRICES.get(p.name) || { unit: p.unit, price: null };
+      const tr = document.createElement('tr');
+      tr.dataset.customerId = customer.id;
+      tr.dataset.productId = p.productid;
+      tr.innerHTML = `
+        <td>${p.name}</td>
+        <td>${entry.unit || p.unit}</td>
+        <td class="price-cell">${entry.price != null ? formatPLN(entry.price) : '-'}</td>
+        <td><button type="button" class="danger btn-del-cust-product">Usuń</button></td>
+      `;
+      tr.querySelector('.btn-del-cust-product')
+        .addEventListener('click', () => deleteCustomerProductRow(tr));
+      tbody.appendChild(tr);
+    }
+  } else {
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td colspan="4">Brak produktów w cenniku odbiorcy.</td>';
+    tbody.appendChild(tr);
+  }
+
+  tableWrap.appendChild(table);
+  card.appendChild(header);
+  card.appendChild(addRow);
+  card.appendChild(tableWrap);
+
+  return card;
+}
+
+async function loadCustomers() {
+  const container = document.getElementById('customersContainer');
+  container.innerHTML = '<p class="info">Ładowanie odbiorców...</p>';
+
+  const csrf = getCsrfToken();
+  try {
+    const resp = await fetch(APICUSTOMERSURL, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'X-CSRF-Token': csrf
+      }
+    });
+    if (!resp.ok) {
+      container.innerHTML = '<p class="info">Błąd ładowania odbiorców.</p>';
+      return;
+    }
+    const data = await resp.json();
+    container.innerHTML = '';
+    if (!Array.isArray(data) || data.length === 0) {
+      container.innerHTML = '<p class="info">Brak odbiorców.</p>';
+      return;
+    }
+    for (const c of data) {
+      const card = createCustomerCard(c);
+      container.appendChild(card);
+    }
+    refreshAllDatalists();
+  } catch (e) {
+    container.innerHTML = '<p class="info">Błąd połączenia.</p>';
+  }
+}
+
+// poprawiona funkcja dodawania odbiorcy
+async function addCustomer() {
+  const input = document.getElementById('newCustomerName');
+  const name = input.value.trim();
+  const errorBox = document.getElementById('error');
+
+  if (errorBox) errorBox.textContent = '';
+  if (!name) {
+    if (errorBox) errorBox.textContent = 'Podaj nazwę odbiorcy.';
+    return;
+  }
+
+  const csrf = getCsrfToken();
+  try {
+    const resp = await fetch(APIADDCUSTOMER, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': csrf
+      },
+      body: JSON.stringify({ name })
+    });
+    if (!resp.ok) {
+      if (errorBox) errorBox.textContent = 'Błąd dodawania odbiorcy.';
+      return;
+    }
+    const data = await resp.json();
+    if (!data.ok) {
+      if (errorBox) errorBox.textContent = 'Błąd dodawania odbiorcy.';
+      return;
+    }
+
+    input.value = '';
+    if (errorBox) errorBox.textContent = '';
+    await loadCustomers();
+  } catch (e) {
+    if (errorBox) errorBox.textContent = 'Błąd połączenia.';
+  }
+}
+
+async function addProductForCustomer(cardEl, customerId) {
+  const nameInput = cardEl.querySelector('.cust-prod-name');
+  const unitSelect = cardEl.querySelector('.cust-prod-unit');
+  const priceInput = cardEl.querySelector('.cust-price-net');
+
+  const name = nameInput.value.trim();
+  if (!name) return;
+
+  const csrf = getCsrfToken();
+  try {
+    const resp = await fetch(APIADDCUSTOMERPRODUCT, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': csrf
+      },
+      body: JSON.stringify({
+        customerid: customerId,
+        productname: name
+      })
+    });
+    if (!resp.ok) return;
+    const data = await resp.json();
+    if (!data.ok) return;
+
+    const p = data.product;
+    const tbody = cardEl.querySelector('.products-table tbody');
+
+    const entry = LOWESTPRICES.get(p.name) || { unit: p.unit, price: null };
+
+    const tr = document.createElement('tr');
+    tr.dataset.customerId = customerId;
+    tr.dataset.productId = p.productid;
+    tr.innerHTML = `
+      <td>${p.name}</td>
+      <td>${entry.unit || p.unit}</td>
+      <td class="price-cell">${entry.price != null ? formatPLN(entry.price) : '-'}</td>
+      <td><button type="button" class="danger btn-del-cust-product">Usuń</button></td>
+    `;
+    tr.querySelector('.btn-del-cust-product')
+      .addEventListener('click', () => deleteCustomerProductRow(tr));
+
+    if (tbody.children.length === 1 &&
+        tbody.children[0].querySelector('td[colspan]')) {
+      tbody.innerHTML = '';
+    }
+    tbody.appendChild(tr);
+
+    nameInput.value = '';
+    unitSelect.value = 'szt';
+    priceInput.value = '';
+  } catch (e) {
+    // opcjonalnie: obsługa błędu
+  }
+}
+
+async function deleteCustomerProductRow(tr) {
+  const customerId = tr.dataset.customerId;
+  const productId = tr.dataset.productId;
+  if (!customerId || !productId) {
+    tr.remove();
+    return;
+  }
+  if (!confirm('Usunąć produkt z cennika odbiorcy?')) return;
+
+  const csrf = getCsrfToken();
+  try {
+    const resp = await fetch(APIDELCUSTOMERPRODUCT, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': csrf
+      },
+      body: JSON.stringify({
+        customerid: customerId,
+        productid: productId
+      })
+    });
+    if (!resp.ok) return;
+    const data = await resp.json();
+    if (!data.ok) return;
+
+    const tbody = tr.parentElement;
+    tr.remove();
+    if (tbody.children.length === 0) {
+      const emptyTr = document.createElement('tr');
+      emptyTr.innerHTML = '<td colspan="4">Brak produktów w cenniku odbiorcy.</td>';
+      tbody.appendChild(emptyTr);
+    }
+  } catch (e) {
+  }
+}
+
+async function deleteCustomer(id) {
+  if (!confirm('Usunąć odbiorcę wraz z jego cennikiem?')) return;
+
+  const csrf = getCsrfToken();
+  try {
+    const resp = await fetch('appdeletecustomer.pl', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': csrf
+      },
+      body: JSON.stringify({ customerid: id })
+    });
+    if (!resp.ok) return;
+    const data = await resp.json();
+    if (!data.ok) return;
+
+    await loadCustomers();
+  } catch (e) {
+  }
+}
+
+// ---------- LOGOUT ----------
+
+async function doLogout() {
+  const csrf = getCsrfToken();
+  try {
+    await fetch(APILOGOUTURL, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'X-CSRF-Token': csrf
+      }
+    });
+  } catch (e) {
+  }
+  sessionStorage.removeItem('csrfToken');
+  window.location.href = LOGINPAGE;
+}
+
+// zakładki
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.tab-btn');
+  if (!btn) return;
+  const tabId = btn.dataset.tab;
+
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  document.querySelectorAll('.tab-panel').forEach(p => {
+    p.classList.toggle('active', p.id === tabId);
+  });
+});
+
+// filtrowanie tabeli produktów
+document.getElementById('productsSearch')
+  .addEventListener('input', e => {
+    const q = e.target.value.trim().toLowerCase();
+    const rows = document.querySelectorAll('#productsTable tbody tr');
+    rows.forEach(row => {
+      const nameCell = row.querySelector('td');
+      if (!nameCell) return;
+      const text = nameCell.textContent.toLowerCase();
+      row.style.display = text.includes(q) ? '' : 'none';
+    });
+  });
+
+// zdarzenia przycisków
+document.getElementById('reloadBtn')
+  .addEventListener('click', async () => {
+    await loadMasterProducts();
+    await loadSuppliers();
+    await loadCustomers();
+  });
+
+document.getElementById('addSupplierBtn')
+  .addEventListener('click', addSupplier);
+
+document.getElementById('addCustomerBtn')
+  .addEventListener('click', addCustomer);
+
+document.getElementById('logoutBtn')
+  .addEventListener('click', doLogout);
+
+// init
+window.addEventListener('load', async () => {
+  await loadMasterProducts();
+  await loadSuppliers();
+  recomputeLowestNetPrices();
+  await loadCustomers();
+});
+</script>
 </body>
 </html>
