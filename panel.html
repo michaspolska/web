@@ -331,36 +331,42 @@
     });
   }
 
-  // NOWE: globalna funkcja licząca najtańszą cenę netto
+  // globalna funkcja licząca najtańszą cenę netto
   function recomputeLowestNetPrices() {
     // mapa: nazwa produktu -> { price: number, supplierName: string }
     const minByProduct = new Map();
 
-    document.querySelectorAll(".supplier-card").forEach(card => {
-  const supplierName = card.querySelector(".supplier-name")?.textContent || "";
-  const rows = card.querySelectorAll("tbody tr");
-  rows.forEach(tr => {
-    const tds = tr.querySelectorAll("td");
-    if (tds.length < 6) return;
-
-    const name = tds[0].textContent.trim();
-    const lowestCell = tds[5]; // kolumna "Najtańsza cena netto"
-    const entry = minByProduct.get(name);
-    if (!entry) {
-      lowestCell.textContent = "";
-      return;
-    }
-
-    lowestCell.innerHTML = `
-      ${formatPLN(entry.price)}
-      <span class="tag-supplier">(${entry.supplierName})</span>
-    `;
-  });
-});
-
-    // wstawienie najtańszej ceny do kolumny "Najtańsza cena netto"
+    // 1) zbierz minimalną cenę dla każdego produktu
     document.querySelectorAll(".supplier-card").forEach(card => {
       const supplierName = card.querySelector(".supplier-name")?.textContent || "";
+      const rows = card.querySelectorAll("tbody tr");
+
+      rows.forEach(tr => {
+        const tds = tr.querySelectorAll("td");
+        if (tds.length < 3) return;
+
+        const nameCell = tds[0];
+        const netCell  = tds[2]; // "Cena netto"
+
+        const name = nameCell.textContent.trim();
+        if (!name) return;
+
+        const netText = netCell.textContent.trim()
+          .replace(/\s/g, "")
+          .replace("zł", "")
+          .replace(",", ".");
+        const price = parseFloat(netText);
+        if (isNaN(price)) return;
+
+        const current = minByProduct.get(name);
+        if (!current || price < current.price) {
+          minByProduct.set(name, { price, supplierName });
+        }
+      });
+    });
+
+    // 2) wstaw najtańszą cenę + nazwę firmy do kolumny "Najtańsza cena netto"
+    document.querySelectorAll(".supplier-card").forEach(card => {
       const rows = card.querySelectorAll("tbody tr");
       rows.forEach(tr => {
         const tds = tr.querySelectorAll("td");
@@ -374,12 +380,9 @@
           return;
         }
 
-        const isThisSupplier = supplierName === entry.supplierName;
         lowestCell.innerHTML = `
           ${formatPLN(entry.price)}
-          ${isThisSupplier
-            ? '<span class="tag-supplier">(tu)</span>'
-            : `<span class="tag-supplier">(${entry.supplierName})</span>`}
+          <span class="tag-supplier">(${entry.supplierName})</span>
         `;
       });
     });
@@ -602,7 +605,7 @@
         container.appendChild(card);
       }
 
-      // NOWE: po zbudowaniu kart przelicz najtańsze ceny
+      // po zbudowaniu kart przelicz najtańsze ceny
       recomputeLowestNetPrices();
 
     } catch (e) {
@@ -741,7 +744,7 @@
       }
       tbody.appendChild(tr);
 
-      // NOWE: po dodaniu produktu przelicz najtańsze
+      // po dodaniu produktu przelicz najtańsze
       recomputeLowestNetPrices();
 
       errorBox.textContent = "";
@@ -795,7 +798,7 @@
         tbody.appendChild(emptyTr);
       }
 
-      // NOWE: po usunięciu przelicz najtańsze
+      // po usunięciu przelicz najtańsze
       recomputeLowestNetPrices();
 
       errorBox.textContent = "";
