@@ -337,31 +337,26 @@
     const minByProduct = new Map();
 
     document.querySelectorAll(".supplier-card").forEach(card => {
-      const supplierName = card.querySelector(".supplier-name")?.textContent || "";
-      const rows = card.querySelectorAll("tbody tr");
+  const supplierName = card.querySelector(".supplier-name")?.textContent || "";
+  const rows = card.querySelectorAll("tbody tr");
+  rows.forEach(tr => {
+    const tds = tr.querySelectorAll("td");
+    if (tds.length < 6) return;
 
-      rows.forEach(tr => {
-        const tds = tr.querySelectorAll("td");
-        if (!tds.length) return;
-        // kolumny: 0: nazwa, 2: cena netto
-        const nameCell = tds[0];
-        const netCell  = tds[2];
+    const name = tds[0].textContent.trim();
+    const lowestCell = tds[5]; // kolumna "Najtańsza cena netto"
+    const entry = minByProduct.get(name);
+    if (!entry) {
+      lowestCell.textContent = "";
+      return;
+    }
 
-        const name = nameCell.textContent.trim();
-        const netText = netCell.textContent.trim()
-          .replace(/\s/g, "")
-          .replace("zł", "")
-          .replace(",", ".");
-
-        const price = parseFloat(netText);
-        if (!name || isNaN(price)) return;
-
-        const current = minByProduct.get(name);
-        if (!current || price < current.price) {
-          minByProduct.set(name, { price, supplierName });
-        }
-      });
-    });
+    lowestCell.innerHTML = `
+      ${formatPLN(entry.price)}
+      <span class="tag-supplier">(${entry.supplierName})</span>
+    `;
+  });
+});
 
     // wstawienie najtańszej ceny do kolumny "Najtańsza cena netto"
     document.querySelectorAll(".supplier-card").forEach(card => {
