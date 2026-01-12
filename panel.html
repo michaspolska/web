@@ -1168,33 +1168,55 @@
     }
 
     async function addCustomer() {
-      const input = document.getElementById("newCustomerName");
-      const name  = input.value.trim();
-      if (!name) return;
+  console.log('addCustomer start');
+  const input = document.getElementById('newCustomerName');
+  console.log('input =', input);
+  const name = input.value.trim();
+  const errorBox = document.getElementById('error');
+  console.log('name =', name);
 
-      const csrf = getCsrfToken();
+  if (errorBox) errorBox.textContent = '';
+  if (!name) {
+    if (errorBox) errorBox.textContent = 'Podaj nazwę odbiorcy.';
+    alert('Brak nazwy odbiorcy'); // tymczasowo
+    return;
+  }
 
-      try {
-        const resp = await fetch(API_ADD_CUSTOMER, {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-            "X-CSRF-Token": csrf
-          },
-          body: JSON.stringify({ name })
-        });
+  const csrf = getCsrfToken();
+  console.log('csrf =', csrf);
 
-        if (!resp.ok) return;
-
-        const data = await resp.json();
-        if (!data.ok) return;
-
-        input.value = "";
-        await loadCustomers();
-      } catch (e) {}
+  try {
+    const resp = await fetch(APIADDCUSTOMER, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': csrf
+      },
+      body: JSON.stringify({ name })
+    });
+    console.log('resp status', resp.status);
+    if (!resp.ok) {
+      if (errorBox) errorBox.textContent = 'Błąd dodawania odbiorcy.';
+      return;
     }
+    const data = await resp.json();
+    console.log('data =', data);
+    if (!data.ok) {
+      if (errorBox) errorBox.textContent = 'Błąd dodawania odbiorcy.';
+      return;
+    }
+
+    input.value = '';
+    if (errorBox) errorBox.textContent = '';
+    await loadCustomers();
+  } catch (e) {
+    console.error('addCustomer error', e);
+    if (errorBox) errorBox.textContent = 'Błąd połączenia.';
+  }
+}
+
 
     async function addProductForCustomer(cardEl, customerId) {
       const nameInput = cardEl.querySelector(".cust-prod-name");
