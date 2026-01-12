@@ -151,6 +151,7 @@ async function loadCustomers() {
   }
 }
 
+
 async function addCustomer() {
   const input = document.getElementById('newCustomerName');
   const name = input.value.trim();
