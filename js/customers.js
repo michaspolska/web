@@ -290,7 +290,7 @@ async function deleteCustomerProductRow(tr) {
     tr.remove();
     if (tbody.children.length === 0) {
       const emptyTr = document.createElement("tr");
-      emptyTr.innerHTML = `<td colspan="4">Brak produktów w cenniku odbiorcy.</td>`;
+      emptyTr.innerHTML = `<td colspan="3">Brak produktów w cenniku odbiorcy.</td>`;
       tbody.appendChild(emptyTr);
     }
   } catch (e) {
