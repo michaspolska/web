@@ -40,8 +40,7 @@ function createCustomerCard(customer) {
     <datalist id="${datalistId}">
       ${optionsHtml}
     </datalist>
-    <input type="number" step="0.01" min="0" class="cust-price-net" placeholder="Cena netto" readonly>
-    <button type="button" class="primary btn-add-cust-product">+ Dodaj produkt</button>
+        <button type="button" class="primary btn-add-cust-product">+ Dodaj produkt</button>
   `;
 
   const nameInput = addRow.querySelector(".cust-prod-name");
