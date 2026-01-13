@@ -45,14 +45,16 @@ function createCustomerCard(customer) {
   `;
 
   const nameInput = addRow.querySelector(".cust-prod-name");
-  const unitSelect = addRow.querySelector(".cust-prod-unit");
   const priceInput = addRow.querySelector(".cust-price-net");
 
+  // podpowiadanie najniższej ceny netto przy wyborze produktu
   nameInput.addEventListener("input", () => {
     const val = nameInput.value.trim();
     const entry = LOWEST_PRICES.get(val);
-    if (!entry) return;
-    unitSelect.value = entry.unit || "szt";
+    if (!entry) {
+      priceInput.value = "";
+      return;
+    }
     priceInput.value = entry.price;
   });
 
@@ -83,12 +85,20 @@ function createCustomerCard(customer) {
       const tr = document.createElement("tr");
       tr.dataset.customerId = customer.id;
       tr.dataset.productId = p.product_id;
+
+      const gross =
+        p.price_gross != null
+          ? p.price_gross
+          : (p.price_net != null && p.vat != null
+              ? p.price_net * (1 + p.vat / 100)
+              : null);
+
       tr.innerHTML = `
         <td>${p.name}</td>
         <td class="price-cell">${entry.price != null ? formatPLN(entry.price) : "-"}</td>
-        <td class="price-gross-cell">${p.price_gross != null ? formatPLN(p.price_gross) : "-"}</td>
+        <td class="price-gross-cell">${gross != null ? formatPLN(gross) : "-"}</td>
         <td><button type="button" class="danger btn-del-cust-product">Usuń</button></td>
-        `;
+      `;
       tr.querySelector(".btn-del-cust-product")
         .addEventListener("click", () => deleteCustomerProductRow(tr));
       tbody.appendChild(tr);
@@ -189,17 +199,17 @@ async function addCustomer() {
   }
 }
 
-async function addProductForCustomer(cardEl, customerId) {  // przerób na async
+async function addProductForCustomer(cardEl, customerId) {
   const nameInput = cardEl.querySelector(".cust-prod-name");
   const name = (nameInput.value || "").trim();
   if (!name) return alert('Wybierz produkt');
 
   const csrf = getCsrfToken();
-  const payload = {  // debug
+  const payload = {
     customer_id: customerId.toString(),
     product_name: name
   };
-  console.log('Sending to add_customer_product.pl:', payload);  // <<-- DEBUG
+  console.log('Sending to add_customer_product.pl:', payload);
 
   try {
     const resp = await fetch(API_ADD_CUSTOMER_PRODUCT, {
@@ -213,9 +223,9 @@ async function addProductForCustomer(cardEl, customerId) {  // przerób na async
       body: JSON.stringify(payload)
     });
 
-    console.log('Response status:', resp.status, 'ok:', resp.ok);  // <<-- DEBUG
+    console.log('Response status:', resp.status, 'ok:', resp.ok);
     const data = await resp.json();
-    console.log('Full response:', data);  // <<-- DEBUG
+    console.log('Full response:', data);
 
     if (!resp.ok || !data.ok) {
       alert(`Błąd: ${data.error || 'HTTP ' + resp.status} ${data.msg || ''}`);
@@ -226,7 +236,7 @@ async function addProductForCustomer(cardEl, customerId) {  // przerób na async
     const tbody = cardEl.querySelector(".products-table tbody");
     const tr = document.createElement("tr");
     tr.dataset.customerId = customerId;
-    tr.dataset.productName = p.name;  // <<-- do delete po nazwie (jak add)
+    tr.dataset.productName = p.name;
     tr.innerHTML = `
       <td>${p.name}</td>
       <td class="price-cell">${formatPLN(p.price_net)}</td>
@@ -242,7 +252,6 @@ async function addProductForCustomer(cardEl, customerId) {  // przerób na async
     tbody.appendChild(tr);
 
     nameInput.value = "";
-    alert(`Dodano: ${p.name} ${formatPLN(p.price_gross)}`);
   } catch (e) {
     console.error('Fetch error:', e);
     alert('Błąd połączenia');
@@ -251,7 +260,7 @@ async function addProductForCustomer(cardEl, customerId) {  // przerób na async
 
 async function deleteCustomerProductRow(tr) {
   const customerId = tr.dataset.customerId;
-  const productName = tr.dataset.productName || tr.querySelector('td:first-child').textContent.trim();  // fallback
+  const productName = tr.dataset.productName || tr.querySelector('td:first-child').textContent.trim();
   if (!customerId || !productName) {
     tr.remove();
     return alert('Brak danych do usunięcia');
@@ -259,7 +268,7 @@ async function deleteCustomerProductRow(tr) {
   if (!confirm(`Usunąć "${productName}" z odbiorcy?`)) return;
 
   const csrf = getCsrfToken();
-  console.log('Deleting:', {customer_id: customerId, product_name: productName});  // debug
+  console.log('Deleting:', {customer_id: customerId, product_name: productName});
 
   try {
     const resp = await fetch(API_DEL_CUSTOMER_PRODUCT, {
@@ -272,7 +281,7 @@ async function deleteCustomerProductRow(tr) {
       },
       body: JSON.stringify({
         customer_id: customerId,
-        product_name: productName  // po nazwie (jak add)
+        product_name: productName
       })
     });
 
@@ -296,7 +305,6 @@ async function deleteCustomerProductRow(tr) {
     alert('Błąd połączenia');
   }
 }
-
 
 async function deleteCustomer(id) {
   if (!confirm("Usunąć odbiorcę wraz z jego cennikiem?")) return;
