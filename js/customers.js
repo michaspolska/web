@@ -223,10 +223,10 @@ async function addProductForCustomer(cardEl, customerId) {  // przerób na async
     const tbody = cardEl.querySelector(".products-table tbody");
     const tr = document.createElement("tr");
     tr.dataset.customerId = customerId;
-    tr.dataset.productName = p.name;  // <<-- do delete po nazwie (jak add)
+    tr.dataset.productName = p.name;  
     tr.innerHTML = `
       <td>${p.name}</td>
-      <td class="price-cell">${formatPLN(p.price_gross)}</td>
+      <td class="price-cell">${formatPLN(p.price_net)}</td>
       <td><button type="button" class="danger btn-del-cust-product">Usuń</button></td>
     `;
     tr.querySelector(".btn-del-cust-product")
@@ -238,7 +238,7 @@ async function addProductForCustomer(cardEl, customerId) {  // przerób na async
     tbody.appendChild(tr);
 
     nameInput.value = "";
-    alert(`Dodano: ${p.name} ${formatPLN(p.price_gross)}`);
+    // alert(`Dodano: ${p.name} ${formatPLN(p.price_gross)}`);
   } catch (e) {
     console.error('Fetch error:', e);
     alert('Błąd połączenia');
