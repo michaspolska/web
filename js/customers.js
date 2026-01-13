@@ -88,7 +88,7 @@ function createCustomerCard(customer) {
         <td class="price-cell">${entry.price != null ? formatPLN(entry.price) : "-"}</td>
         <td class="price-gross-cell">${p.price_gross != null ? formatPLN(p.price_gross) : "-"}</td>
         <td><button type="button" class="danger btn-del-cust-product">Usuń</button></td>
-      `;
+        `;
       tr.querySelector(".btn-del-cust-product")
         .addEventListener("click", () => deleteCustomerProductRow(tr));
       tbody.appendChild(tr);
