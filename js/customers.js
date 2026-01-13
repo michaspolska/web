@@ -73,7 +73,6 @@ function createCustomerCard(customer) {
     <thead>
       <tr>
         <th>Produkt</th>
-        <th>Jednostka</th>
         <th>Cena netto (najniższa)</th>
         <th></th>
       </tr>
@@ -90,7 +89,6 @@ function createCustomerCard(customer) {
       tr.dataset.productId = p.product_id;
       tr.innerHTML = `
         <td>${p.name}</td>
-        <td>${entry.unit || p.unit || ""}</td>
         <td class="price-cell">${entry.price != null ? formatPLN(entry.price) : "-"}</td>
         <td><button type="button" class="danger btn-del-cust-product">Usuń</button></td>
       `;
@@ -234,7 +232,6 @@ async function addProductForCustomer(cardEl, customerId) {  // przerób na async
     tr.dataset.productName = p.name;  // <<-- do delete po nazwie (jak add)
     tr.innerHTML = `
       <td>${p.name}</td>
-      <td>${p.unit}</td>
       <td class="price-cell">${formatPLN(p.price_gross)}</td>
       <td><button type="button" class="danger btn-del-cust-product">Usuń</button></td>
     `;
