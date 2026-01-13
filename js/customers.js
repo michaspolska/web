@@ -40,11 +40,6 @@ function createCustomerCard(customer) {
     <datalist id="${datalistId}">
       ${optionsHtml}
     </datalist>
-    <select class="cust-prod-unit">
-      <option value="szt">szt</option>
-      <option value="kg">kg</option>
-      <option value="l">l</option>
-    </select>
     <input type="number" step="0.01" min="0" class="cust-price-net" placeholder="Cena netto" readonly>
     <button type="button" class="primary btn-add-cust-product">+ Dodaj produkt</button>
   `;
@@ -74,6 +69,7 @@ function createCustomerCard(customer) {
       <tr>
         <th>Produkt</th>
         <th>Cena netto (najniższa)</th>
+        <th>Cena brutto</th>
         <th></th>
       </tr>
     </thead>
@@ -90,6 +86,7 @@ function createCustomerCard(customer) {
       tr.innerHTML = `
         <td>${p.name}</td>
         <td class="price-cell">${entry.price != null ? formatPLN(entry.price) : "-"}</td>
+        <td class="price-gross-cell">${p.price_gross != null ? formatPLN(p.price_gross) : "-"}</td>
         <td><button type="button" class="danger btn-del-cust-product">Usuń</button></td>
       `;
       tr.querySelector(".btn-del-cust-product")
@@ -232,7 +229,8 @@ async function addProductForCustomer(cardEl, customerId) {  // przerób na async
     tr.dataset.productName = p.name;  // <<-- do delete po nazwie (jak add)
     tr.innerHTML = `
       <td>${p.name}</td>
-      <td class="price-cell">${formatPLN(p.price_gross)}</td>
+      <td class="price-cell">${formatPLN(p.price_net)}</td>
+      <td class="price-gross-cell">${formatPLN(p.price_gross)}</td>
       <td><button type="button" class="danger btn-del-cust-product">Usuń</button></td>
     `;
     tr.querySelector(".btn-del-cust-product")
