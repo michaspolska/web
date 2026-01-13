@@ -40,13 +40,16 @@ function createCustomerCard(customer) {
     <datalist id="${datalistId}">
       ${optionsHtml}
     </datalist>
+    <select class="cust-prod-unit">
+      <option value="szt">szt</option>
+      <option value="kg">kg</option>
+      <option value="l">l</option>
+    </select>
+    <input type="number" step="0.01" min="0" class="cust-price-net" placeholder="Cena netto" readonly>
     <button type="button" class="primary btn-add-cust-product">+ Dodaj produkt</button>
   `;
 
   const nameInput = addRow.querySelector(".cust-prod-name");
-
-  // nie ma już unit/cena w wierszu dodawania – usuwamy ich obsługę
-  /*
   const unitSelect = addRow.querySelector(".cust-prod-unit");
   const priceInput = addRow.querySelector(".cust-price-net");
 
@@ -57,7 +60,6 @@ function createCustomerCard(customer) {
     unitSelect.value = entry.unit || "szt";
     priceInput.value = entry.price;
   });
-  */
 
   const addBtn = addRow.querySelector(".btn-add-cust-product");
   addBtn.addEventListener("click", () => addProductForCustomer(card, customer.id));
@@ -72,7 +74,6 @@ function createCustomerCard(customer) {
       <tr>
         <th>Produkt</th>
         <th>Cena netto (najniższa)</th>
-        <th>Cena brutto</th>
         <th></th>
       </tr>
     </thead>
@@ -89,7 +90,6 @@ function createCustomerCard(customer) {
       tr.innerHTML = `
         <td>${p.name}</td>
         <td class="price-cell">${entry.price != null ? formatPLN(entry.price) : "-"}</td>
-        <td class="price-gross-cell">${p.price_gross != null ? formatPLN(p.price_gross) : "-"}</td>
         <td><button type="button" class="danger btn-del-cust-product">Usuń</button></td>
       `;
       tr.querySelector(".btn-del-cust-product")
@@ -109,17 +109,100 @@ function createCustomerCard(customer) {
   return card;
 }
 
-async function addProductForCustomer(cardEl, customerId) {
+async function loadCustomers() {
+  const container = document.getElementById("customersContainer");
+  container.innerHTML = "<p class='info'>Ładowanie odbiorców...</p>";
+
+  const csrf = getCsrfToken();
+
+  try {
+    const resp = await fetch(API_CUSTOMERS_URL, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Accept": "application/json",
+        "X-CSRF-Token": csrf
+      }
+    });
+
+    if (!resp.ok) {
+      container.innerHTML = "<p class='info'>Błąd ładowania odbiorców.</p>";
+      return;
+    }
+
+    const data = await resp.json();
+    container.innerHTML = "";
+
+    if (!Array.isArray(data) || data.length === 0) {
+      container.innerHTML = "<p class='info'>Brak odbiorców.</p>";
+      return;
+    }
+
+    for (const c of data) {
+      const card = createCustomerCard(c);
+      container.appendChild(card);
+    }
+
+    refreshAllDatalists();
+  } catch (e) {
+    container.innerHTML = "<p class='info'>Błąd połączenia.</p>";
+  }
+}
+
+async function addCustomer() {
+  const input = document.getElementById('newCustomerName');
+  const name = input.value.trim();
+  const errorBox = document.getElementById('error');
+
+  if (errorBox) errorBox.textContent = '';
+  if (!name) {
+    if (errorBox) errorBox.textContent = 'Podaj nazwę odbiorcy.';
+    return;
+  }
+
+  const csrf = getCsrfToken();
+
+  try {
+    const resp = await fetch(API_ADD_CUSTOMER, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': csrf
+      },
+      body: JSON.stringify({ name })
+    });
+
+    if (!resp.ok) {
+      if (errorBox) errorBox.textContent = 'Błąd dodawania odbiorcy.';
+      return;
+    }
+    const data = await resp.json();
+    if (!data.ok) {
+      if (errorBox) errorBox.textContent = 'Błąd dodawania odbiorcy.';
+      return;
+    }
+
+    input.value = '';
+    if (errorBox) errorBox.textContent = '';
+    await loadCustomers();
+  } catch (e) {
+    if (errorBox) errorBox.textContent = 'Błąd połączenia.';
+  }
+}
+
+async function addProductForCustomer(cardEl, customerId) {  // przerób na async
   const nameInput = cardEl.querySelector(".cust-prod-name");
   const name = (nameInput.value || "").trim();
   if (!name) return alert('Wybierz produkt');
 
   const csrf = getCsrfToken();
-  const payload = {
+  const payload = {  // debug
     customer_id: customerId.toString(),
     product_name: name
   };
-  console.log('Sending to add_customer_product.pl:', payload);
+  console.log('Sending to add_customer_product.pl:', payload);  // <<-- DEBUG
 
   try {
     const resp = await fetch(API_ADD_CUSTOMER_PRODUCT, {
@@ -133,9 +216,9 @@ async function addProductForCustomer(cardEl, customerId) {
       body: JSON.stringify(payload)
     });
 
-    console.log('Response status:', resp.status, 'ok:', resp.ok);
+    console.log('Response status:', resp.status, 'ok:', resp.ok);  // <<-- DEBUG
     const data = await resp.json();
-    console.log('Full response:', data);
+    console.log('Full response:', data);  // <<-- DEBUG
 
     if (!resp.ok || !data.ok) {
       alert(`Błąd: ${data.error || 'HTTP ' + resp.status} ${data.msg || ''}`);
@@ -146,11 +229,10 @@ async function addProductForCustomer(cardEl, customerId) {
     const tbody = cardEl.querySelector(".products-table tbody");
     const tr = document.createElement("tr");
     tr.dataset.customerId = customerId;
-    tr.dataset.productName = p.name;
+    tr.dataset.productName = p.name;  // <<-- do delete po nazwie (jak add)
     tr.innerHTML = `
       <td>${p.name}</td>
-      <td class="price-cell">${formatPLN(p.price_net)}</td>
-      <td class="price-gross-cell">${formatPLN(p.price_gross)}</td>
+      <td class="price-cell">${formatPLN(p.price_gross)}</td>
       <td><button type="button" class="danger btn-del-cust-product">Usuń</button></td>
     `;
     tr.querySelector(".btn-del-cust-product")
@@ -162,8 +244,82 @@ async function addProductForCustomer(cardEl, customerId) {
     tbody.appendChild(tr);
 
     nameInput.value = "";
+    alert(`Dodano: ${p.name} ${formatPLN(p.price_gross)}`);
   } catch (e) {
     console.error('Fetch error:', e);
     alert('Błąd połączenia');
   }
+}
+
+async function deleteCustomerProductRow(tr) {
+  const customerId = tr.dataset.customerId;
+  const productName = tr.dataset.productName || tr.querySelector('td:first-child').textContent.trim();  // fallback
+  if (!customerId || !productName) {
+    tr.remove();
+    return alert('Brak danych do usunięcia');
+  }
+  if (!confirm(`Usunąć "${productName}" z odbiorcy?`)) return;
+
+  const csrf = getCsrfToken();
+  console.log('Deleting:', {customer_id: customerId, product_name: productName});  // debug
+
+  try {
+    const resp = await fetch(API_DEL_CUSTOMER_PRODUCT, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "X-CSRF-Token": csrf
+      },
+      body: JSON.stringify({
+        customer_id: customerId,
+        product_name: productName  // po nazwie (jak add)
+      })
+    });
+
+    const data = await resp.json();
+    console.log('Delete response:', data);
+
+    if (!resp.ok || !data.ok) {
+      alert(`Błąd usuwania: ${data.error || resp.status}`);
+      return;
+    }
+
+    const tbody = tr.parentElement;
+    tr.remove();
+    if (tbody.children.length === 0) {
+      const emptyTr = document.createElement("tr");
+      emptyTr.innerHTML = `<td colspan="4">Brak produktów w cenniku odbiorcy.</td>`;
+      tbody.appendChild(emptyTr);
+    }
+  } catch (e) {
+    console.error(e);
+    alert('Błąd połączenia');
+  }
+}
+
+
+async function deleteCustomer(id) {
+  if (!confirm("Usunąć odbiorcę wraz z jego cennikiem?")) return;
+  const csrf = getCsrfToken();
+
+  try {
+    const resp = await fetch(API_DELETE_CUSTOMER, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "X-CSRF-Token": csrf
+      },
+      body: JSON.stringify({ customer_id: id })
+    });
+
+    if (!resp.ok) return;
+    const data = await resp.json();
+    if (!data.ok) return;
+
+    await loadCustomers();
+  } catch (e) {}
 }
