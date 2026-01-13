@@ -235,7 +235,7 @@ async function addProductForCustomer(cardEl, customerId) {  // przerób na async
     tr.innerHTML = `
       <td>${p.name}</td>
       <td>${p.unit}</td>
-      <td class="price-cell">${formatPLN(p.price_gross)}</td>  // gross!
+      <td class="price-cell">${formatPLN(p.price_gross)}</td>
       <td><button type="button" class="danger btn-del-cust-product">Usuń</button></td>
     `;
     tr.querySelector(".btn-del-cust-product")
