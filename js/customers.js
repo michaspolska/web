@@ -86,12 +86,13 @@ function createCustomerCard(customer) {
       tr.dataset.customerId = customer.id;
       tr.dataset.productId = p.product_id;
 
-      const gross =
-        p.price_gross != null
-          ? p.price_gross
-          : (p.price_net != null && p.vat != null
-              ? p.price_net * (1 + p.vat / 100)
-              : null);
+     const gross = p.price_gross != null
+  ? p.price_gross
+  : (p.price_net != null && p.vat != null
+      ? p.price_net * (1 + p.vat / 100)
+      : null);
+
+console.log(`Produkt ${p.name}: net=${p.price_net}, vat=${p.vat}, gross=${gross}`);
 
       tr.innerHTML = `
         <td>${p.name}</td>
