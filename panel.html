@@ -20,6 +20,7 @@
       <button class="tab-btn active" data-tab="tab-products">Produkty</button>
       <button class="tab-btn" data-tab="tab-suppliers">Dostawcy</button>
       <button class="tab-btn" data-tab="tab-customers">Odbiorcy</button>
+      <button class="tab-btn" data-tab="tab-pricelists">Cenniki</button>
     </div>
 
     <!-- Produkty -->
@@ -72,10 +73,52 @@
 
       <div id="customersContainer"></div>
     </div>
+
+    <!-- Cenniki -->
+<div id="tab-pricelists" class="tab-panel">
+  <div class="supplier-add">
+    <input type="text" id="newPriceListName" placeholder="Nazwa cennika...">
+    <button id="createPriceListBtn" class="primary">Nowy cennik</button>
+  </div>
+
+  <p class="info">
+    Twórz własne cenniki i udostępniaj je prostym linkiem.
+  </p>
+
+  <div id="pricelistsTable"></div>
+
+  <div id="pricelistEditor" class="card hidden">
+    <h3 id="plEditorTitle"></h3>
+
+    <table id="plItemsTable" class="products-table">
+      <thead>
+        <tr>
+          <th>Nazwa pozycji</th>
+          <th>Cena</th>
+          <th>Waluta</th>
+          <th>Opis</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <button id="addItemRowBtn" class="outline">Dodaj pozycję</button>
+    <button id="saveItemsBtn" class="primary">Zapisz pozycje</button>
+    <button id="generateLinkBtn" class="outline">Generuj link</button>
+  </div>
+
+  <div id="pricelistShare" class="card hidden">
+    <h3>Udostępnianie cennika</h3>
+    <input type="text" id="shareLinkInput" readonly>
+    <button id="copyShareLinkBtn" class="primary">Kopiuj</button>
+  </div>
+</div>
+
   </div>
 
   <script src="js/config.js"></script>
-  <script src="js/pricelists.js"></script>  <!-- tylko raz -->
+  <script src="js/pricelists.js"></script>  
   <script src="js/suppliers.js"></script>
   <script src="js/customers.js"></script>
   <script src="js/main.js"></script>
