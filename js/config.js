@@ -13,9 +13,6 @@ const API_ADD_CUSTOMER_PRODUCT = "https://a1.justmike.space/app/add_customer_pro
 const API_DEL_CUSTOMER_PRODUCT = "https://a1.justmike.space/app/delete_customer_product.pl";
 const API_DELETE_CUSTOMER      = "https://a1.justmike.space/app/delete_customer.pl";
 
-const API_SAVE_PRICELIST = "https://a1.justmike.space/app/save_pricelist.pl";
-
-
 const LOGIN_PAGE               = "/login.html";
 
 /* global caches */
@@ -235,4 +232,4 @@ function recomputeLowestNetPrices() {
   });
 
   refreshAllDatalists();
-}
+} 
