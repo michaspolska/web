@@ -1,26 +1,4 @@
 function createCustomerCard(customer) {
-  const headerBtns = document.createElement("div");
-headerBtns.className = "supplier-header-buttons";
-
-// NOWY przycisk Zapisz cennik
-const saveBtn = document.createElement("button");
-saveBtn.className = "outline";
-saveBtn.textContent = "Zapisz cennik";
-saveBtn.addEventListener("click", () => saveCustomerPricelist(card, customer));
-
-// Stary „Usuń odbiorcę”
-const deleteBtn = document.createElement("button");
-deleteBtn.className = "danger";
-deleteBtn.textContent = "Usuń odbiorcę";
-deleteBtn.addEventListener("click", () => deleteCustomer(customer.id));
-
-headerBtns.appendChild(saveBtn);
-headerBtns.appendChild(deleteBtn);
-
-header.appendChild(nameEl);
-header.appendChild(headerBtns);
-  
-  
   const card = document.createElement("div");
   card.className = "supplier-card";
   card.dataset.type = "customer";
