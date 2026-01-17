@@ -1,6 +1,3 @@
-// config.js - DODAJ:
-const API_PRICE_LISTS = BASE_URL + "/odb_price_lists.pl";  // ← nazwa pliku!
-
 // saveItems() - DODAJ CSRF:
 async function saveItems() {
   const table = document.getElementById('plItemsTable');
