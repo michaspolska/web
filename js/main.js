@@ -53,4 +53,4 @@ window.addEventListener("load", async () => {
   await loadSuppliers();
   recomputeLowestNetPrices();
   await loadCustomers();
-});
+}); 
