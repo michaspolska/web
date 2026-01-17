@@ -416,4 +416,4 @@ async function deleteSupplier(id) {
   } catch (e) {
     errorBox.textContent = "Błąd połączenia.";
   }
-}
+} 
