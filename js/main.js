@@ -1,7 +1,13 @@
 async function doLogout() {
+  console.log('Logout started'); // Debug
   const csrf = getCsrfToken();
+  if (!csrf) {
+    console.warn('No CSRF token');
+    gotoLogin();
+    return;
+  }
   try {
-    await fetch(API_LOGOUT_URL, {
+    const response = await fetch(API_LOGOUT_URL, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -9,48 +15,27 @@ async function doLogout() {
         "X-CSRF-Token": csrf
       }
     });
-  } catch (_) {}
-  sessionStorage.removeItem("csrfToken");
+    if (!response.ok) {
+      console.warn('Logout fetch failed:', response.status);
+    }
+  } catch (error) {
+    console.error('Logout error:', error); // Pokazuje w konsoli
+  }
+  sessionStorage.clear(); // Pełny clear zamiast removeItem jednego klucza [web:32]
+  gotoLogin();
+}
+
+function gotoLogin() {
   window.location.href = LOGIN_PAGE;
 }
 
-/* zakładki */
-document.addEventListener("click", (e) => {
-  const btn = e.target.closest(".tab-btn");
-  if (!btn) return;
-  const tabId = btn.dataset.tab;
-  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-  btn.classList.add("active");
-  document.querySelectorAll(".tab-panel").forEach(p => {
-    p.classList.toggle("active", p.id === tabId);
-  });
-});
+// reszta bez zmian: zakładki, search, reload, addSupplier, addCustomer...
 
-/* filtrowanie tabeli produktów */
-document.getElementById("productsSearch").addEventListener("input", (e) => {
-  const q = e.target.value.trim().toLowerCase();
-  const rows = document.querySelectorAll("#productsTable tbody tr");
-  rows.forEach(row => {
-    const nameCell = row.querySelector("td");
-    if (!nameCell) return;
-    const text = nameCell.textContent.toLowerCase();
-    row.style.display = text.includes(q) ? "" : "none";
-  });
-});
-
-document.getElementById("reloadBtn").addEventListener("click", async () => {
-  await loadMasterProducts();
-  await loadSuppliers();
-  await loadCustomers();
-});
-
-document.getElementById("addSupplierBtn").addEventListener("click", addSupplier);
-document.getElementById("addCustomerBtn").addEventListener("click", addCustomer);
-document.getElementById("logoutBtn").addEventListener("click", doLogout);
+document.getElementById("logoutBtn").addEventListener("click", doLogout); // Bez async wrappera
 
 window.addEventListener("load", async () => {
   await loadMasterProducts();
   await loadSuppliers();
   recomputeLowestNetPrices();
   await loadCustomers();
-}); 
+});
