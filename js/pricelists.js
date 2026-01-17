@@ -15,6 +15,44 @@ async function initPricelistsTab() {
 
   await loadPriceLists();
 }
+async function loadPublicPricelistByUrl(publicUrl) {
+  if (!publicUrl) return;
+  try {
+    const res  = await fetch(publicUrl, { headers: { 'Accept': 'application/json' } });
+    const data = await res.json();
+
+    console.log('public pricelist data', data);
+
+    const box = document.getElementById('pricelistPublicPreview');
+    if (!box) return;
+
+    if (!res.ok || data.ok === false) {
+      box.textContent = 'Błąd: ' + (data.error || ('HTTP ' + res.status));
+      return;
+    }
+
+    box.innerHTML = `
+      <h3>${data.name}</h3>
+      <table class="table">
+        <thead>
+          <tr><th>Nazwa pozycji</th><th>Cena</th><th>Waluta</th><th>Opis</th></tr>
+        </thead>
+        <tbody>
+          ${data.items.map(it => `
+            <tr>
+              <td>${it.item_name}</td>
+              <td>${it.price_value}</td>
+              <td>${it.currency}</td>
+              <td>${it.description || ''}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  } catch (e) {
+    console.error('loadPublicPricelistByUrl error', e);
+  }
+}
 
 
 async function saveItems() {
