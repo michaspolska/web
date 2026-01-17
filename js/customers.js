@@ -1,21 +1,4 @@
 function createCustomerCard(customer) {
-const headerBtns = document.createElement("div");
-headerBtns.className = "supplier-header-buttons";
-
-const saveBtn = document.createElement("button");
-saveBtn.className = "outline";
-saveBtn.textContent = "Zapisz cennik";
-saveBtn.addEventListener("click", () => saveCustomerPricelist(card, customer));
-
-const deleteBtn = document.createElement("button");
-deleteBtn.className = "danger";
-deleteBtn.textContent = "Usuń odbiorcę";
-deleteBtn.addEventListener("click", () => deleteCustomer(customer.id));
-
-headerBtns.appendChild(saveBtn);
-headerBtns.appendChild(deleteBtn);
-
-  
   const card = document.createElement("div");
   card.className = "supplier-card";
   card.dataset.type = "customer";
@@ -346,4 +329,4 @@ async function deleteCustomer(id) {
 
     await loadCustomers();
   } catch (e) {}
-}
+} 
