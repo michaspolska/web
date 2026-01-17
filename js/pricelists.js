@@ -1,3 +1,22 @@
+async function initPricelistsTab() {
+  const btn = document.getElementById('createPriceListBtn');
+  console.log('initPricelistsTab: btn =', btn);
+  if (!btn) return; // jeśli nie ma przycisku, jesteśmy na innym ekranie
+
+  btn.addEventListener('click', () => {
+    console.log('createPriceListBtn clicked');
+    createPriceList();
+  });
+
+  document.getElementById('addItemRowBtn').addEventListener('click', addItemRow);
+  document.getElementById('saveItemsBtn').addEventListener('click', saveItems);
+  document.getElementById('generateLinkBtn').addEventListener('click', generateShareLink);
+  document.getElementById('copyShareLinkBtn').addEventListener('click', copyShareLink);
+
+  await loadPriceLists();
+}
+
+
 async function saveItems() {
   const table = document.getElementById('plItemsTable');
   const plId = table.dataset.plId;
