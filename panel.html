@@ -60,37 +60,25 @@
       <div id="error"></div>
     </div>
 
-  <!-- Odbiorcy -->
-<div id="tab-customers" class="tab-panel">
-  <div class="supplier-add">
-    <input type="text" id="newCustomerName" placeholder="Wpisz nazwę odbiorcy...">
-    <button id="addCustomerBtn" class="primary">Dodaj odbiorcę</button>
-  </div>
+    <!-- Odbiorcy -->
+    <div id="tab-customers" class="tab-panel">
+      <div class="supplier-add">
+        <input type="text" id="newCustomerName" placeholder="Wpisz nazwę odbiorcy...">
+        <button id="addCustomerBtn" class="primary">Dodaj odbiorcę</button>
+      </div>
 
-  <p class="info">
-    Cenniki odbiorców korzystają zawsze z najniższych dostępnych cen netto dla produktu.
-  </p>
+      <p class="info">
+        Cenniki odbiorców korzystają zawsze z najniższych dostępnych cen netto dla produktu.
+      </p>
 
-  <!-- Pasek zapisu cennika dla WYBRANEGO odbiorcy -->
-  <div class="pricelist-header">
-    <!-- tu lista odbiorców / nazwa cennika, zostawiasz jak masz,
-         ważne żeby pole miało id -->
-    <input type="text" id="pricelistName" placeholder="Nazwa cennika">
-    <input type="date" id="pricelistDate">
-    <button type="button" id="btnSaveCustomersPricelist" class="primary">
-      Zapisz cennik
-    </button>
-  </div>
-
-  <div id="customersContainer"></div>
-</div>
-
+      <div id="customersContainer"></div>
+    </div>
   </div>
 <script src="js/config.js"></script>
 <script src="js/suppliers.js"></script>
 <script src="js/customers.js"></script>
 <script src="js/main.js"></script>
-
+<script src="pricelists.js"></script>
   
 </body>
 </html>
