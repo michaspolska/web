@@ -1,4 +1,3 @@
-// saveItems() - DODAJ CSRF:
 async function saveItems() {
   const table = document.getElementById('plItemsTable');
   const plId = table.dataset.plId;
@@ -9,82 +8,113 @@ async function saveItems() {
     const name = tr.querySelector('.pl-item-name').value.trim();
     if (!name) return;
     items.push({
-      item_name: name,
+      item_name:   name,
       price_value: parseFloat(tr.querySelector('.pl-item-price').value) || 0,
-      currency: tr.querySelector('.pl-item-currency').value || 'PLN',
+      currency:    tr.querySelector('.pl-item-currency').value || 'PLN',
       description: tr.querySelector('.pl-item-desc').value || ''
     });
   });
 
-  if (items.length === 0) { alert("Dodaj przynajmniej jedną pozycję"); return; }
-
-  const csrf = getCsrfToken();  // ← CSRF!
-  
-  const resp = await fetch(`${API_PRICE_LISTS}/${plId}/items`, {
-    method: 'POST',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRF-Token': csrf  // ← CSRF header
-    },
-    body: JSON.stringify({ items })
-  });
-
-  const data = await resp.json();
-  if (!resp.ok || !data.ok) {
-    alert("Błąd: " + (data.error || resp.status));
+  if (items.length === 0) {
+    alert("Dodaj przynajmniej jedną pozycję");
     return;
   }
-  alert(`Zapisano ${data.inserted} pozycji`);
+
+  const csrf = getCsrfToken();
+
+  try {
+    const resp = await fetch(`${API_PRICE_LISTS}/${plId}/items`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': csrf
+      },
+      body: JSON.stringify({ items })
+    });
+
+    let data;
+    try { data = await resp.json(); } catch { data = {}; }
+
+    if (!resp.ok || data.ok === false) {
+      console.error('saveItems error', resp.status, data);
+      alert("Błąd zapisu pozycji: " + (data.error || ("HTTP " + resp.status)));
+      return;
+    }
+
+    alert(`Zapisano ${data.inserted || items.length} pozycji`);
+  } catch (e) {
+    console.error('saveItems fetch error', e);
+    alert("Błąd połączenia przy zapisie pozycji.");
+  }
 }
 
-// generateShareLink() - DODAJ CSRF:
 async function generateShareLink() {
   const table = document.getElementById('plItemsTable');
   const plId = table.dataset.plId;
-  if (!plId) return;
+  if (!plId) { alert("Brak id cennika"); return; }
 
   const csrf = getCsrfToken();
-  
-  const resp = await fetch(`${API_PRICE_LISTS}/${plId}/generate-link`, {
-    method: 'POST',
-    credentials: 'include',
-    headers: { 'X-CSRF-Token': csrf }
-  });
 
-  const data = await resp.json();
-  if (!resp.ok || !data.ok) {
-    alert("Błąd: " + (data.error || resp.status));
-    return;
+  try {
+    const resp = await fetch(`${API_PRICE_LISTS}/${plId}/generate-link`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'X-CSRF-Token': csrf
+      }
+    });
+
+    let data;
+    try { data = await resp.json(); } catch { data = {}; }
+
+    if (!resp.ok || data.ok === false) {
+      console.error('generateShareLink error', resp.status, data);
+      alert("Błąd generowania linku: " + (data.error || ("HTTP " + resp.status)));
+      return;
+    }
+
+    document.getElementById('shareLinkInput').value = data.public_url;
+    document.getElementById('pricelistShare').classList.remove('hidden');
+  } catch (e) {
+    console.error('generateShareLink fetch error', e);
+    alert("Błąd połączenia przy generowaniu linku.");
   }
-  
-  document.getElementById('shareLinkInput').value = data.public_url;
-  document.getElementById('pricelistShare').classList.remove('hidden');
 }
 
-// createPriceList() - DODAJ CSRF:
 async function createPriceList() {
   const name = document.getElementById('newPriceListName').value.trim() || "Nowy cennik";
   if (!name) return;
 
   const csrf = getCsrfToken();
-  
-  const resp = await fetch(API_PRICE_LISTS, {
-    method: 'POST',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRF-Token': csrf
-    },
-    body: JSON.stringify({ name })
-  });
 
-  const data = await resp.json();
-  if (!resp.ok || !data.ok) {
-    alert("Błąd: " + (data.error || resp.status));
-    return;
+  try {
+    const resp = await fetch(API_PRICE_LISTS, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': csrf
+      },
+      body: JSON.stringify({ name })
+    });
+
+    let data;
+    try { data = await resp.json(); } catch { data = {}; }
+
+    if (!resp.ok || data.ok === false) {
+      console.error('createPriceList error', resp.status, data);
+      alert("Błąd tworzenia cennika: " + (data.error || ("HTTP " + resp.status)));
+      return;
+    }
+
+    await loadPriceLists();
+    openPriceListEditor(data.id, data.name);
+  } catch (e) {
+    console.error('createPriceList fetch error', e);
+    alert("Błąd połączenia przy tworzeniu cennika.");
   }
-  
-  await loadPriceLists();
-  openPriceListEditor(data.id, data.name);
 }
