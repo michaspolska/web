@@ -17,7 +17,6 @@ const API_SAVE_PRICELIST       = "https://a1.justmike.space/app/save_pricelist.p
 
 const API_BASE          = "https://a1.justmike.space/app";
 const API_PRICE_LISTS   = API_BASE + "/odb_price_lists.pl";
-const API_PRICE_ITEMS   = API_BASE + "/odb_price_items.pl";
 const API_PUBLIC_PL     = API_BASE + "/odb_public_pricelists.pl";
 
 
