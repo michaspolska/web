@@ -60,7 +60,7 @@
       <div id="error"></div>
     </div>
 
-   <!-- Odbiorcy -->
+  <!-- Odbiorcy -->
 <div id="tab-customers" class="tab-panel">
   <div class="supplier-add">
     <input type="text" id="newCustomerName" placeholder="Wpisz nazwę odbiorcy...">
@@ -71,8 +71,10 @@
     Cenniki odbiorców korzystają zawsze z najniższych dostępnych cen netto dla produktu.
   </p>
 
-  <!-- NOWE: nagłówek cennika odbiorców -->
+  <!-- Pasek zapisu cennika dla WYBRANEGO odbiorcy -->
   <div class="pricelist-header">
+    <!-- tu lista odbiorców / nazwa cennika, zostawiasz jak masz,
+         ważne żeby pole miało id -->
     <input type="text" id="pricelistName" placeholder="Nazwa cennika">
     <input type="date" id="pricelistDate">
     <button type="button" id="btnSaveCustomersPricelist" class="primary">
@@ -82,6 +84,7 @@
 
   <div id="customersContainer"></div>
 </div>
+
   </div>
 <script src="js/config.js"></script>
 <script src="js/pricelists.js"></script>
