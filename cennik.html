@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <title>Cennik</title>
+  <style>
+    /* lekki CSS */
+  </style>
+</head>
+<body>
+  <h1 id="plTitle">Cennik</h1>
+  <input type="text" id="searchInput" placeholder="Szukaj po nazwie...">
+
+  <table id="publicTable">
+    <thead>
+      <tr><th>Nazwa</th><th>Cena</th><th>Waluta</th><th>Opis</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const API_PUBLIC_PL = "https://a1.justmike.space/app/public_pricelists.pl";
+
+    async function loadPublicPriceList() {
+      const slug = window.location.pathname.split('/').pop();
+      const resp = await fetch(API_PUBLIC_PL + "/" + slug);
+      if (!resp.ok) { document.body.innerHTML = "<p>Cennik niedostępny.</p>"; return; }
+      const data = await resp.json();
+      document.getElementById('plTitle').textContent = data.name;
+      renderItems(data.items);
+      trackView(slug);
+    }
+
+    function renderItems(items) {
+      const tbody = document.getElementById('publicTable').querySelector('tbody');
+      tbody.innerHTML = '';
+      items.forEach(it => {
+        const tr = document.createElement('tr');
+        tr.dataset.name = it.item_name.toLowerCase();
+        tr.innerHTML = `
+          <td>${it.item_name}</td>
+          <td>${it.price_value}</td>
+          <td>${it.currency}</td>
+          <td>${it.description || ""}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      const input = document.getElementById('searchInput');
+      input.addEventListener('input', () => {
+        const q = input.value.toLowerCase();
+        tbody.querySelectorAll('tr').forEach(tr => {
+          const name = tr.dataset.name || "";
+          tr.style.display = name.includes(q) ? "" : "none";
+        });
+      });
+    }
+
+    async function trackView(slug) {
+      fetch(API_PUBLIC_PL + "/" + slug + "/view", { method: 'POST' });
+    }
+
+    loadPublicPriceList();
+  </script>
+</body>
+</html>
