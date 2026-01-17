@@ -1,27 +1,15 @@
-// zbieranie cennika odbiorców + zapis
-async function saveCustomersPricelist() {
-  const nameInput = document.getElementById("pricelistName");
-  const dateInput = document.getElementById("pricelistDate");
-  const errorBox  = document.getElementById("error");
+async function saveCustomerPricelist(cardEl, customer) {
+  const customerId = customer.id;
+  const customerName = customer.name;
 
-  if (errorBox) errorBox.textContent = "";
+  // nazwa + data, można później zastąpić własnym okienkiem
+  const name = prompt("Nazwa cennika dla " + customerName + ":", "Cennik " + customerName);
+  if (!name) return;
 
-  const name = (nameInput?.value || "").trim();
-  const validFrom = (dateInput?.value || "").trim(); // YYYY-MM-DD
+  const validFrom = prompt("Data obowiązywania (YYYY-MM-DD):", new Date().toISOString().slice(0, 10));
+  if (!validFrom) return;
 
-  if (!name) {
-    if (errorBox) errorBox.textContent = "Podaj nazwę cennika.";
-    else alert("Podaj nazwę cennika.");
-    return;
-  }
-  if (!validFrom) {
-    if (errorBox) errorBox.textContent = "Podaj datę obowiązywania cennika.";
-    else alert("Podaj datę obowiązywania cennika.");
-    return;
-  }
-
-  // wszystkie karty odbiorców
-  const cards = document.querySelectorAll(".supplier-card[data-type='customer']");
+  const rows = cardEl.querySelectorAll(".products-table tbody tr");
   const items = [];
 
   const parsePLN = (txt) => {
@@ -34,46 +22,41 @@ async function saveCustomersPricelist() {
     return Number.isNaN(v) ? null : v;
   };
 
-  cards.forEach(card => {
-    const customerId = card.dataset.customerId;
-    const rows = card.querySelectorAll(".products-table tbody tr");
+  rows.forEach(tr => {
+    if (tr.querySelector("td[colspan]")) return; // "Brak produktów..."
 
-    rows.forEach(tr => {
-      // pomiń wiersz "Brak produktów..."
-      if (tr.querySelector("td[colspan]")) return;
+    const nameTd  = tr.querySelector("td:first-child");
+    const netTd   = tr.querySelector(".price-cell");
+    const grossTd = tr.querySelector(".price-gross-cell");
+    if (!nameTd) return;
 
-      const nameTd  = tr.querySelector("td:first-child");
-      const netTd   = tr.querySelector(".price-cell");
-      const grossTd = tr.querySelector(".price-gross-cell");
-      if (!nameTd) return;
+    const prodName = nameTd.textContent.trim();
+    const netText   = netTd   ? netTd.textContent.trim()   : "";
+    const grossText = grossTd ? grossTd.textContent.trim() : "";
 
-      const productName = nameTd.textContent.trim();
-      const netText   = netTd   ? netTd.textContent.trim()   : "";
-      const grossText = grossTd ? grossTd.textContent.trim() : "";
+    const priceNet   = netText   && netText !== "-"   ? parsePLN(netText)   : null;
+    const priceGross = grossText && grossText !== "-" ? parsePLN(grossText) : null;
 
-      const priceNet   = netText   && netText !== "-"   ? parsePLN(netText)   : null;
-      const priceGross = grossText && grossText !== "-" ? parsePLN(grossText) : null;
-
-      items.push({
-        customer_id: customerId,
-        product_name: productName,
-        price_net: priceNet,
-        price_gross: priceGross
-      });
+    items.push({
+      product_name: prodName,
+      price_net: priceNet,
+      price_gross: priceGross
     });
   });
 
   if (items.length === 0) {
-    if (!confirm("Brak pozycji w cenniku. Zapisać pusty cennik?")) return;
+    alert("Ten odbiorca nie ma żadnych pozycji w cenniku.");
+    return;
   }
 
   const payload = {
+    customer_id: customerId,
     name,
     valid_from: validFrom,
     items
   };
 
-  console.log("Saving customers pricelist:", payload);
+  console.log("Saving pricelist for customer:", payload);
 
   const csrf = getCsrfToken();
 
@@ -90,22 +73,14 @@ async function saveCustomersPricelist() {
     });
 
     const data = await resp.json();
-
     if (!resp.ok || !data.ok) {
-      const msg = data.error || `HTTP ${resp.status}`;
-      if (errorBox) errorBox.textContent = `Błąd zapisu cennika: ${msg}`;
-      else alert(`Błąd zapisu cennika: ${msg}`);
+      alert("Błąd zapisu cennika: " + (data.error || ("HTTP " + resp.status)));
       return;
     }
 
-    if (errorBox) errorBox.textContent = "";
-    alert("Cennik odbiorców zapisany.");
-    // opcjonalnie: czyścić pola
-    // nameInput.value = "";
-    // dateInput.value = "";
+    alert("Cennik dla " + customerName + " zapisany.");
   } catch (e) {
     console.error(e);
-    if (errorBox) errorBox.textContent = "Błąd połączenia przy zapisie cennika.";
-    else alert("Błąd połączenia przy zapisie cennika.");
+    alert("Błąd połączenia przy zapisie cennika.");
   }
 }
