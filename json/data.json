@@ -1,5 +1,10 @@
 {
-  "currentProgress": 12,
+  "currentProgress": 82,
   "editionName": "EDYCJA MARZEC 2026",
-  "statusText": "Ostatnie wolne miejsca w tej edycji!"
+  "statusText": "Ostatnie wolne miejsca w tej edycji!",
+  "prices": {
+    "Pakiet Start": "997 PLN",
+    "Pakiet Zawodowy": "1997 PLN",
+    "Pakiet Mentor": "4997 PLN"
+  }
 }
