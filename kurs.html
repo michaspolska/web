@@ -12,11 +12,14 @@
 
   <style>
     :root {
-      --bg: #0f172a;
-      --bg-light: #111827;
-      --accent: #38bdf8;
-      --text: #e5e7eb;
-      --muted: #9ca3af;
+      --bg-page: #f3f4f6;
+      --bg-card: #ffffff;
+      --border: #e5e7eb;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --accent: #f97316;       /* pomarańcz */
+      --accent-dark: #ea580c;
+      --accent-soft: #ffedd5;
     }
 
     body {
@@ -24,21 +27,21 @@
       max-width: 1000px;
       margin: 0 auto;
       padding: 0 1rem 2rem;
-      background: #0b1120;
-      color: #e5e7eb;
+      background: var(--bg-page);
+      color: var(--text-main);
     }
 
     /* Górny pasek */
     #main-bar {
-      background: var(--bg);
+      background: #ffffff;
       margin: 1rem -1rem 1.5rem;
       padding: 0.75rem 1rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 0.75rem;
-      border-bottom: 1px solid #1f2937;
-      box-shadow: 0 1px 0 rgba(15,23,42,0.7);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 4px rgba(15, 23, 42, 0.06);
       position: sticky;
       top: 0;
       z-index: 10;
@@ -47,11 +50,12 @@
     #app-title {
       font-weight: 600;
       font-size: 1rem;
+      color: var(--text-main);
     }
 
     #app-subtitle {
       font-size: 0.75rem;
-      color: var(--muted);
+      color: var(--text-muted);
     }
 
     #main-bar-left {
@@ -71,16 +75,16 @@
     #search-input {
       padding: 0.4rem 0.6rem;
       border-radius: 999px;
-      border: 1px solid #1f2937;
+      border: 1px solid var(--border);
       min-width: 180px;
       max-width: 260px;
-      background: var(--bg-light);
-      color: var(--text);
+      background: #f9fafb;
+      color: var(--text-main);
       font-size: 0.85rem;
     }
 
     #search-input::placeholder {
-      color: #6b7280;
+      color: #9ca3af;
     }
 
     #top-auth-info {
@@ -88,7 +92,7 @@
       align-items: center;
       gap: 0.5rem;
       font-size: 0.78rem;
-      color: var(--muted);
+      color: var(--text-muted);
       white-space: nowrap;
     }
 
@@ -96,26 +100,27 @@
       padding: 0.35rem 0.8rem;
       border-radius: 999px;
       background: var(--accent);
-      color: #020617;
+      color: #ffffff;
       border: none;
       cursor: pointer;
       font-size: 0.8rem;
       font-weight: 500;
+      box-shadow: 0 1px 2px rgba(248, 113, 22, 0.4);
     }
 
     #top-auth-button:hover {
-      filter: brightness(1.05);
+      background: var(--accent-dark);
     }
 
-    /* Layout główny */
+    /* Logowanie */
     .login-box {
-      border: 1px solid #1f2937;
+      border: 1px solid var(--border);
       padding: 1.5rem;
       border-radius: 12px;
       max-width: 420px;
       margin: 0 auto;
-      background: var(--bg);
-      box-shadow: 0 10px 30px rgba(15,23,42,0.45);
+      background: var(--bg-card);
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
     }
 
     .login-box h3 {
@@ -128,7 +133,7 @@
       margin-top: 0;
       margin-bottom: 1rem;
       font-size: 0.8rem;
-      color: var(--muted);
+      color: var(--text-muted);
     }
 
     input[type="email"],
@@ -138,20 +143,20 @@
       padding: 0.6rem 0.7rem;
       box-sizing: border-box;
       border-radius: 8px;
-      border: 1px solid #1f2937;
-      background: #020617;
-      color: var(--text);
+      border: 1px solid var(--border);
+      background: #f9fafb;
+      color: var(--text-main);
       font-size: 0.9rem;
     }
 
     input::placeholder {
-      color: #6b7280;
+      color: #9ca3af;
     }
 
     button {
       padding: 0.6rem 1rem;
       background: var(--accent);
-      color: #020617;
+      color: #ffffff;
       cursor: pointer;
       border: none;
       border-radius: 999px;
@@ -173,16 +178,16 @@
     }
 
     #notes-list {
-      border: 1px solid #1f2937;
+      border: 1px solid var(--border);
       border-radius: 12px;
-      background: var(--bg);
+      background: var(--bg-card);
       padding: 0.75rem 0.5rem 0.5rem;
     }
 
     #notes-list p {
       margin: 0 0 0.5rem;
       font-size: 0.75rem;
-      color: var(--muted);
+      color: var(--text-muted);
       padding: 0 0.5rem;
     }
 
@@ -202,35 +207,37 @@
     }
 
     #notes-list li:hover {
-      background: #111827;
+      background: var(--accent-soft);
     }
 
     .note-title {
       font-weight: 500;
       font-size: 0.9rem;
+      color: var(--text-main);
     }
 
     .note-meta {
       font-size: 0.72rem;
-      color: var(--muted);
+      color: var(--text-muted);
     }
 
     #content {
-      border: 1px solid #1f2937;
+      border: 1px solid var(--border);
       border-radius: 12px;
-      background: var(--bg);
+      background: var(--bg-card);
       padding: 1rem 1.2rem;
       min-height: 200px;
       max-height: calc(100vh - 220px);
       overflow: auto;
       font-size: 0.9rem;
+      color: var(--text-main);
     }
 
     #content em {
-      color: var(--muted);
+      color: var(--text-muted);
     }
 
-    /* Markdown w treści */
+    /* Markdown */
     #content h1, #content h2, #content h3 {
       margin-top: 1rem;
       margin-bottom: 0.4rem;
@@ -242,13 +249,14 @@
       padding-left: 1.1rem;
     }
     #content code {
-      background: #020617;
+      background: #f3f4f6;
       padding: 0.1rem 0.2rem;
       border-radius: 4px;
       font-size: 0.85rem;
     }
     #content pre {
-      background: #020617;
+      background: #111827;
+      color: #e5e7eb;
       padding: 0.5rem 0.7rem;
       border-radius: 8px;
       overflow: auto;
@@ -295,7 +303,6 @@
 </head>
 <body>
 
-  <!-- Górny pasek (menu + search + login/logout) -->
   <div id="main-bar">
     <div id="main-bar-left">
       <div id="app-title">Szyfrowany Notatnik</div>
@@ -310,7 +317,6 @@
     </div>
   </div>
 
-  <!-- Panel logowania -->
   <div id="login-container" class="login-box">
     <h3>Logowanie do bazy danych</h3>
     <p><small>Podaj dane logowania i klucz deszyfrowania pliku.</small></p>
@@ -320,7 +326,6 @@
     <button id="login-btn">Zaloguj</button>
   </div>
 
-  <!-- Widok po zalogowaniu -->
   <div id="app">
     <div id="notes-list">
       <p><small>Kliknij notatkę, aby ją odszyfrować wybranym kluczem.</small></p>
@@ -426,7 +431,6 @@
       }
     }
 
-    // Tytuł z linii "# Tytul"
     function extractTitle(encryptedString) {
       try {
         const bytes = CryptoJS.AES.decrypt(encryptedString, CURRENT_DECRYPT_KEY);
