@@ -12,8 +12,10 @@
     body { font-family: system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 1rem; }
     .login-box { border: 1px solid #ccc; padding: 1.5rem; border-radius: 8px; max-width: 400px; }
     input { width: 100%; margin-bottom: 1rem; padding: 0.5rem; box-sizing: border-box; }
-    button { width: 100%; padding: 0.7rem; background: #2c3e50; color: white; cursor: pointer; border: none;}
+    button { padding: 0.6rem 1rem; background: #2c3e50; color: white; cursor: pointer; border: none;}
+    #login-btn { width: 100%; margin-top: 0.5rem; }
     #app { display: none; margin-top: 2rem; }
+    #top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
     #notes-list { margin-bottom: 1.5rem; }
     #notes-list ul { list-style: none; padding: 0; }
     #notes-list li { padding: 0.4rem 0.6rem; border-bottom: 1px solid #eee; cursor: pointer; }
@@ -35,8 +37,15 @@
 
   <!-- Widok po zalogowaniu -->
   <div id="app">
+    <div id="top-bar">
+      <div>
+        <strong>Twoje notatki</strong><br>
+        <span id="user-email" class="note-meta"></span>
+      </div>
+      <button id="logout-btn">Wyloguj</button>
+    </div>
+
     <div id="notes-list">
-      <h3>Twoje notatki</h3>
       <p class="note-meta"><small>Kliknij notatkę, aby ją odszyfrować wybranym kluczem.</small></p>
       <ul id="notes-ul"></ul>
     </div>
@@ -53,9 +62,10 @@
     const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let CURRENT_DECRYPT_KEY = '';
-    let NOTES_CACHE = []; // trzymamy zaszyfrowane notatki w pamięci po stronie klienta
+    let NOTES_CACHE = [];
 
     document.getElementById('login-btn').addEventListener('click', loginAndLoadNotes);
+    document.getElementById('logout-btn').addEventListener('click', logoutUser);
 
     async function loginAndLoadNotes() {
       const email = document.getElementById('email').value;
@@ -69,7 +79,7 @@
 
       CURRENT_DECRYPT_KEY = decryptionKey;
 
-      // 1. Logowanie
+      // Logowanie
       const { data: authData, error: authError } = await sb.auth.signInWithPassword({
         email,
         password
@@ -81,7 +91,22 @@
         return;
       }
 
-      // 2. Pobranie listy notatek (tylko tego użytkownika)
+      // Pobranie danych zalogowanego użytkownika
+      const {
+        data: { user },
+        error: userError
+      } = await sb.auth.getUser();
+
+      if (userError || !user) {
+        console.error(userError);
+        alert("Nie udało się odczytać danych użytkownika.");
+        return;
+      }
+
+      document.getElementById('user-email').textContent =
+        `Zalogowany jako: ${user.email}`;
+
+      // Pobranie notatek tylko tego usera (RLS w bazie)
       const { data: notes, error: notesError } = await sb
         .from('notes')
         .select('id, encrypted_content, created_at')
@@ -93,16 +118,8 @@
         return;
       }
 
-      if (!notes || notes.length === 0) {
-        document.getElementById('login-container').style.display = 'none';
-        document.getElementById('app').style.display = 'block';
-        document.getElementById('notes-ul').innerHTML = '<li>Brak notatek w bazie.</li>';
-        return;
-      }
+      NOTES_CACHE = notes || [];
 
-      NOTES_CACHE = notes;
-
-      // 3. Przełącz widok: chowamy login, pokazujemy aplikację
       document.getElementById('login-container').style.display = 'none';
       document.getElementById('app').style.display = 'block';
 
@@ -112,6 +129,12 @@
     function renderNotesList() {
       const ul = document.getElementById('notes-ul');
       ul.innerHTML = '';
+
+      if (!NOTES_CACHE.length) {
+        ul.innerHTML = '<li>Brak notatek w bazie.</li>';
+        document.getElementById('content').innerHTML = '<em>Brak danych do wyświetlenia.</em>';
+        return;
+      }
 
       NOTES_CACHE.forEach((note, index) => {
         const li = document.createElement('li');
@@ -146,6 +169,26 @@
         console.error(err);
         alert("Błąd deszyfrowania: " + err.message);
       }
+    }
+
+    async function logoutUser() {
+      try {
+        await sb.auth.signOut();
+      } catch (err) {
+        console.error(err);
+      }
+
+      CURRENT_DECRYPT_KEY = '';
+      NOTES_CACHE = [];
+      document.getElementById('notes-ul').innerHTML = '';
+      document.getElementById('content').innerHTML = '<em>Wybierz notatkę z listy powyżej.</em>';
+      document.getElementById('email').value = '';
+      document.getElementById('password').value = '';
+      document.getElementById('decrypt-key').value = '';
+      document.getElementById('user-email').textContent = '';
+
+      document.getElementById('app').style.display = 'none';
+      document.getElementById('login-container').style.display = 'block';
     }
   </script>
 </body>
