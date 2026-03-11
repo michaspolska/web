@@ -11,326 +11,326 @@
   <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
 
   <style>
-  :root {
-    --bg-page: #f3f4f6;
-    --bg-card: #ffffff;
-    --border: #e5e7eb;
-    --text-main: #111827;
-    --text-muted: #6b7280;
-    --accent: #f97316;
-    --accent-dark: #ea580c;
-    --accent-soft: #ffedd5;
-  }
+    :root {
+      --bg-page: #f3f4f6;
+      --bg-card: #ffffff;
+      --border: #e5e7eb;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --accent: #f97316;
+      --accent-dark: #ea580c;
+      --accent-soft: #ffedd5;
+    }
 
-  body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 0 1rem 2rem;
-    background: var(--bg-page);
-    color: var(--text-main);
-  }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 1rem 2rem;
+      background: var(--bg-page);
+      color: var(--text-main);
+    }
 
-  /* Górny pasek */
-  #main-bar {
-    background: #ffffff;
-    margin: 1rem -1rem 1.5rem;
-    padding: 0.75rem 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.75rem;
-    border-bottom: 1px solid var(--border);
-    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.06);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
-
-  #app-title {
-    font-weight: 600;
-    font-size: 1rem;
-    color: var(--text-main);
-  }
-
-  #app-subtitle {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-  }
-
-  #main-bar-left {
-    display: flex;
-    flex-direction: column;
-    gap: 0.1rem;
-  }
-
-  #main-bar-right {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-  }
-
-  #search-input {
-    padding: 0.4rem 0.6rem;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    min-width: 180px;
-    max-width: 260px;
-    background: #f9fafb;
-    color: var(--text-main);
-    font-size: 0.85rem;
-  }
-
-  #search-input::placeholder {
-    color: #9ca3af;
-  }
-
-  #top-auth-info {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.78rem;
-    color: var(--text-muted);
-    white-space: nowrap;
-  }
-
-  #top-user-email {
-    max-width: 180px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  #top-auth-button {
-    padding: 0.35rem 0.8rem;
-    border-radius: 999px;
-    background: var(--accent);
-    color: #ffffff;
-    border: none;
-    cursor: pointer;
-    font-size: 0.8rem;
-    font-weight: 500;
-    box-shadow: 0 1px 2px rgba(248, 113, 22, 0.4);
-  }
-
-  #top-auth-button:hover {
-    background: var(--accent-dark);
-  }
-
-  /* Logowanie */
-  .login-box {
-    border: 1px solid var(--border);
-    padding: 1.5rem;
-    border-radius: 12px;
-    max-width: 420px;
-    margin: 0 auto;
-    background: var(--bg-card);
-    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
-  }
-
-  .login-box h3 {
-    margin-top: 0;
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
-  }
-
-  .login-box p {
-    margin-top: 0;
-    margin-bottom: 1rem;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-  }
-
-  input[type="email"],
-  input[type="password"] {
-    width: 100%;
-    margin-bottom: 0.75rem;
-    padding: 0.6rem 0.7rem;
-    box-sizing: border-box;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: #f9fafb;
-    color: var(--text-main);
-    font-size: 0.9rem;
-  }
-
-  input::placeholder {
-    color: #9ca3af;
-  }
-
-  button {
-    padding: 0.6rem 1rem;
-    background: var(--accent);
-    color: #ffffff;
-    cursor: pointer;
-    border: none;
-    border-radius: 999px;
-    font-size: 0.9rem;
-    font-weight: 500;
-  }
-
-  #login-btn {
-    width: 100%;
-    margin-top: 0.5rem;
-  }
-
-  /* Widok po zalogowaniu – domyślnie ukryty */
-  #app {
-    display: none;
-    margin-top: 1.5rem;
-    grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
-    gap: 1rem;
-  }
-
-  #notes-list {
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    background: var(--bg-card);
-    padding: 0.75rem 0.5rem 0.5rem;
-  }
-
-  #notes-list p {
-    margin: 0 0 0.5rem;
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    padding: 0 0.5rem;
-  }
-
-  #notes-list ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  #notes-list li {
-    padding: 0.45rem 0.6rem;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-  }
-
-  #notes-list li:hover {
-    background: var(--accent-soft);
-  }
-
-  .note-title {
-    font-weight: 500;
-    font-size: 0.9rem;
-    color: var(--text-main);
-  }
-
-  .note-meta {
-    font-size: 0.72rem;
-    color: var(--text-muted);
-  }
-
-  #content {
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    background: var(--bg-card);
-    padding: 1rem 1.2rem;
-    min-height: 200px;
-    max-height: calc(100vh - 220px);
-    overflow: auto;
-    font-size: 0.9rem;
-    color: var(--text-main);
-  }
-
-  #content em {
-    color: var(--text-muted);
-  }
-
-  /* Markdown / kod */
-  #content h1, #content h2, #content h3 {
-    margin-top: 1rem;
-    margin-bottom: 0.4rem;
-  }
-  #content p {
-    margin: 0.3rem 0;
-  }
-  #content ul {
-    padding-left: 1.1rem;
-  }
-
-  #content code {
-    background: #fee2e2;
-    color: #7c2d12;
-    padding: 0.15rem 0.25rem;
-    border-radius: 4px;
-    font-size: 0.85rem;
-  }
-
-  #content pre {
-    background: #111827;
-    color: #f9fafb;
-    padding: 0.75rem 0.9rem;
-    border-radius: 8px;
-    overflow: auto;
-    font-size: 0.85rem;
-    line-height: 1.4;
-  }
-
-  #content pre code {
-    background: transparent;
-    color: inherit;
-    padding: 0;
-  }
-
-  /* Tablet */
-  @media (max-width: 768px) {
+    /* Górny pasek */
     #main-bar {
-      flex-direction: column;
-      align-items: stretch;
-    }
-    #main-bar-left {
-      margin-bottom: 0.3rem;
-    }
-    #main-bar-right {
+      background: #ffffff;
+      margin: 1rem -1rem 1.5rem;
+      padding: 0.75rem 1rem;
+      display: flex;
       justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 4px rgba(15, 23, 42, 0.06);
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
-    #search-input {
-      flex: 1;
-      max-width: none;
-    }
-    #app {
-      grid-template-columns: minmax(0, 1fr);
-    }
-    #content {
-      max-height: none;
-    }
-  }
 
-  /* Telefon */
-  @media (max-width: 480px) {
-    #main-bar-right {
+    #app-title {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--text-main);
+    }
+
+    #app-subtitle {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    #main-bar-left {
+      display: flex;
       flex-direction: column;
-      align-items: stretch;
-      gap: 0.5rem;
+      gap: 0.1rem;
+    }
+
+    #main-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    #search-input {
+      padding: 0.4rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      min-width: 180px;
+      max-width: 260px;
+      background: #f9fafb;
+      color: var(--text-main);
+      font-size: 0.85rem;
+      display: none; /* domyślnie ukryte – tylko po zalogowaniu */
+    }
+
+    #search-input::placeholder {
+      color: #9ca3af;
     }
 
     #top-auth-info {
-      flex-direction: column;   /* login nad przyciskiem */
-      align-items: stretch;
-      gap: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      white-space: nowrap;
     }
 
     #top-user-email {
-      max-width: none;          /* nie obcinaj loginu */
-      white-space: normal;      /* pozwól zawijać tekst */
-      overflow: visible;
-      text-overflow: clip;
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     #top-auth-button {
-      width: 100%;
-      text-align: center;
+      padding: 0.35rem 0.8rem;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #ffffff;
+      border: none;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 500;
+      box-shadow: 0 1px 2px rgba(248, 113, 22, 0.4);
     }
-  }
-</style>
 
+    #top-auth-button:hover {
+      background: var(--accent-dark);
+    }
+
+    /* Logowanie */
+    .login-box {
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      border-radius: 12px;
+      max-width: 420px;
+      margin: 0 auto;
+      background: var(--bg-card);
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+    }
+
+    .login-box h3 {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .login-box p {
+      margin-top: 0;
+      margin-bottom: 1rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      margin-bottom: 0.75rem;
+      padding: 0.6rem 0.7rem;
+      box-sizing: border-box;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #f9fafb;
+      color: var(--text-main);
+      font-size: 0.9rem;
+    }
+
+    input::placeholder {
+      color: #9ca3af;
+    }
+
+    button {
+      padding: 0.6rem 1rem;
+      background: var(--accent);
+      color: #ffffff;
+      cursor: pointer;
+      border: none;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    #login-btn {
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+
+    /* Widok po zalogowaniu – domyślnie ukryty */
+    #app {
+      display: none;
+      margin-top: 1.5rem;
+      grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+      gap: 1rem;
+    }
+
+    #notes-list {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg-card);
+      padding: 0.75rem 0.5rem 0.5rem;
+    }
+
+    #notes-list p {
+      margin: 0 0 0.5rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      padding: 0 0.5rem;
+    }
+
+    #notes-list ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    #notes-list li {
+      padding: 0.45rem 0.6rem;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    #notes-list li:hover {
+      background: var(--accent-soft);
+    }
+
+    .note-title {
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: var(--text-main);
+    }
+
+    .note-meta {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    #content {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg-card);
+      padding: 1rem 1.2rem;
+      min-height: 200px;
+      max-height: calc(100vh - 220px);
+      overflow: auto;
+      font-size: 0.9rem;
+      color: var(--text-main);
+    }
+
+    #content em {
+      color: var(--text-muted);
+    }
+
+    /* Markdown / kod */
+    #content h1, #content h2, #content h3 {
+      margin-top: 1rem;
+      margin-bottom: 0.4rem;
+    }
+    #content p {
+      margin: 0.3rem 0;
+    }
+    #content ul {
+      padding-left: 1.1rem;
+    }
+
+    #content code {
+      background: #fee2e2;
+      color: #7c2d12;
+      padding: 0.15rem 0.25rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    #content pre {
+      background: #111827;
+      color: #f9fafb;
+      padding: 0.75rem 0.9rem;
+      border-radius: 8px;
+      overflow: auto;
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+
+    #content pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+    }
+
+    /* Tablet */
+    @media (max-width: 768px) {
+      #main-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      #main-bar-left {
+        margin-bottom: 0.3rem;
+      }
+      #main-bar-right {
+        justify-content: space-between;
+      }
+      #search-input {
+        flex: 1;
+        max-width: none;
+      }
+      #app {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      #content {
+        max-height: none;
+      }
+    }
+
+    /* Telefon */
+    @media (max-width: 480px) {
+      #main-bar-right {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+      }
+
+      #top-auth-info {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.25rem;
+      }
+
+      #top-user-email {
+        max-width: none;
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+      }
+
+      #top-auth-button {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -348,7 +348,6 @@
     </div>
   </div>
 
-  <!-- PRZED zalogowaniem: tylko ten box -->
   <div id="login-container" class="login-box">
     <h3>Logowanie do bazy danych</h3>
     <p><small>Podaj dane logowania i klucz deszyfrowania pliku.</small></p>
@@ -358,7 +357,6 @@
     <button id="login-btn">Zaloguj</button>
   </div>
 
-  <!-- PO zalogowaniu: pokazujemy dopiero wtedy -->
   <div id="app">
     <div id="notes-list">
       <p><small>Kliknij notatkę, aby ją odszyfrować wybranym kluczem.</small></p>
@@ -381,9 +379,20 @@
     let FILTERED_NOTES = [];
     let CURRENT_USER = null;
 
+    const searchInput = document.getElementById('search-input');
+
     document.getElementById('login-btn').addEventListener('click', loginAndLoadNotes);
     document.getElementById('top-auth-button').addEventListener('click', topAuthButtonClick);
-    document.getElementById('search-input').addEventListener('input', onSearchChange);
+    searchInput.addEventListener('input', onSearchChange);
+
+    function showSearch() {
+      searchInput.style.display = 'block';
+    }
+
+    function hideSearch() {
+      searchInput.style.display = 'none';
+      searchInput.value = '';
+    }
 
     async function loginAndLoadNotes() {
       const email = document.getElementById('email').value;
@@ -421,6 +430,7 @@
 
       CURRENT_USER = user;
       updateTopBarAuthState();
+      showSearch();
 
       const { data: notes, error: notesError } = await sb
         .from('notes')
@@ -543,7 +553,7 @@
     }
 
     function onSearchChange() {
-      const q = document.getElementById('search-input').value.toLowerCase().trim();
+      const q = searchInput.value.toLowerCase().trim();
 
       if (!q) {
         FILTERED_NOTES = NOTES_CACHE;
@@ -571,13 +581,13 @@
       NOTES_CACHE = [];
       FILTERED_NOTES = [];
       updateTopBarAuthState();
+      hideSearch();
 
       document.getElementById('notes-ul').innerHTML = '';
       document.getElementById('content').innerHTML = '<em>Wybierz notatkę z listy po lewej.</em>';
       document.getElementById('email').value = '';
       document.getElementById('password').value = '';
       document.getElementById('decrypt-key').value = '';
-      document.getElementById('search-input').value = '';
 
       document.getElementById('app').style.display = 'none';
       document.getElementById('login-container').style.display = 'block';
