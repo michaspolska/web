@@ -17,7 +17,7 @@
       --border: #e5e7eb;
       --text-main: #111827;
       --text-muted: #6b7280;
-      --accent: #f97316;       /* pomarańcz */
+      --accent: #f97316;
       --accent-dark: #ea580c;
       --accent-soft: #ffedd5;
     }
@@ -96,6 +96,12 @@
       white-space: nowrap;
     }
 
+    #top-user-email {
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     #top-auth-button {
       padding: 0.35rem 0.8rem;
       border-radius: 999px;
@@ -169,10 +175,10 @@
       margin-top: 0.5rem;
     }
 
+    /* Widok po zalogowaniu – domyślnie ukryty */
     #app {
       display: none;
       margin-top: 1.5rem;
-      display: grid;
       grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
       gap: 1rem;
     }
@@ -237,7 +243,7 @@
       color: var(--text-muted);
     }
 
-    /* Markdown */
+    /* Markdown / kod */
     #content h1, #content h2, #content h3 {
       margin-top: 1rem;
       margin-bottom: 0.4rem;
@@ -248,18 +254,29 @@
     #content ul {
       padding-left: 1.1rem;
     }
+
     #content code {
-      background: #f3f4f6;
-      padding: 0.1rem 0.2rem;
+      background: #fee2e2;
+      color: #7c2d12;
+      padding: 0.15rem 0.25rem;
       border-radius: 4px;
       font-size: 0.85rem;
     }
+
     #content pre {
       background: #111827;
-      color: #e5e7eb;
-      padding: 0.5rem 0.7rem;
+      color: #f9fafb;
+      padding: 0.75rem 0.9rem;
       border-radius: 8px;
       overflow: auto;
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+
+    #content pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
     }
 
     /* Mobile */
@@ -317,6 +334,7 @@
     </div>
   </div>
 
+  <!-- PRZED zalogowaniem: tylko ten box -->
   <div id="login-container" class="login-box">
     <h3>Logowanie do bazy danych</h3>
     <p><small>Podaj dane logowania i klucz deszyfrowania pliku.</small></p>
@@ -326,6 +344,7 @@
     <button id="login-btn">Zaloguj</button>
   </div>
 
+  <!-- PO zalogowaniu: pokazujemy dopiero wtedy -->
   <div id="app">
     <div id="notes-list">
       <p><small>Kliknij notatkę, aby ją odszyfrować wybranym kluczem.</small></p>
