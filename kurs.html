@@ -4,13 +4,8 @@
   <meta charset="UTF-8">
   <title>Szyfrowany Notatnik</title>
 
-  <!-- Supabase JS v2 przez CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <!-- CryptoJS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-
-  <!-- Marked (UMD) -->
   <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
 
   <style>
@@ -25,32 +20,31 @@
 
   <div id="login-container" class="login-box">
     <h3>Logowanie do bazy danych</h3>
-    <p><small>Aby pobrać zaszyfrowany plik, musisz się uwierzytelnić.</small></p>
+    <p><small>Podaj dane logowania i klucz deszyfrowania pliku.</small></p>
     <input type="email" id="email" placeholder="E-mail w Supabase">
     <input type="password" id="password" placeholder="Hasło do Supabase">
-    <!-- USUWAMY onclick -->
+    <input type="password" id="decrypt-key" placeholder="Klucz deszyfrowania (ten sam co w skrypcie)">
     <button id="login-btn">Zaloguj i Odszyfruj</button>
   </div>
 
   <div id="content"></div>
 
   <script>
-    // 1. Inicjalizacja Supabase z CDN (nie nadpisujemy globalnej nazwy `supabase`)
     const { createClient } = supabase;
     const SUPABASE_URL = 'https://yszpfcfbipplzjkicssw.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_eGRsjEs5pGvrTD_wucr1Hw_oIf8_0DO';
 
     const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // 2. Podpinamy przycisk przez JS
     document.getElementById('login-btn').addEventListener('click', loginAndFetch);
 
     async function loginAndFetch() {
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
+      const decryptionKey = document.getElementById('decrypt-key').value;
 
-      if (!email || !password) {
-        alert("Podaj email i hasło.");
+      if (!email || !password || !decryptionKey) {
+        alert("Podaj email, hasło i klucz deszyfrowania.");
         return;
       }
 
@@ -84,28 +78,18 @@
         return;
       }
 
-      // 3. Klucz z URL (#key=...)
-      const urlParams = new URLSearchParams(window.location.hash.substring(1));
-      const decryptionKey = urlParams.get('key');
-      
-      if (!decryptionKey) {
-        alert("Brak klucza deszyfrowania (hash URL)! Dodaj #key=TWORJ_KLUCZ do adresu.");
-        return;
-      }
-
-      // 4. Deszyfracja i renderowanie
       try {
         const encryptedString = notes[0].encrypted_content;
         const decryptedBytes = CryptoJS.AES.decrypt(encryptedString, decryptionKey);
         const decryptedMarkdown = decryptedBytes.toString(CryptoJS.enc.Utf8);
-        
-        if (!decryptedMarkdown) throw new Error("Nieprawidłowy klucz deszyfrowania lub uszkodzone dane.");
+
+        if (!decryptedMarkdown) {
+          throw new Error("Nieprawidłowy klucz deszyfrowania lub uszkodzone dane.");
+        }
 
         document.getElementById('login-container').style.display = 'none';
         const contentDiv = document.getElementById('content');
         contentDiv.style.display = 'block';
-
-        // marked z UMD
         contentDiv.innerHTML = marked.parse(decryptedMarkdown);
 
       } catch (err) {
