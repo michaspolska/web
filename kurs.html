@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Szyfrowany Notatnik</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 800px; margin: 2rem auto; padding: 1rem; }
+        .login-box { border: 1px solid #ccc; padding: 1.5rem; border-radius: 8px; max-width: 400px; }
+        input { width: 100%; margin-bottom: 1rem; padding: 0.5rem; box-sizing: border-box; }
+        button { width: 100%; padding: 0.7rem; background: #2c3e50; color: white; cursor: pointer; border: none;}
+        #content { display: none; margin-top: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; }
+    </style>
+</head>
+<body>
+
+    <div id="login-container" class="login-box">
+        <h3>Logowanie do bazy danych</h3>
+        <p><small>Aby pobrać zaszyfrowany plik, musisz się uwierzytelnić.</small></p>
+        <input type="email" id="email" placeholder="E-mail w Supabase">
+        <input type="password" id="password" placeholder="Hasło do Supabase">
+        <button onclick="loginAndFetch()">Zaloguj i Odszyfruj</button>
+    </div>
+
+    <div id="content"></div>
+
+    <script>
+        // UWAGA: Uzupełnij swoimi danymi publicznymi z Supabase
+        const SUPABASE_URL = 'https://TWOJ_PROJEKT.supabase.co';
+        const SUPABASE_ANON_KEY = 'TWOJ_ANON_KEY';
+        
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function loginAndFetch() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // 1. Logowanie (uzyskanie dostępu RLS do bazy)
+            const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+            if (authError) {
+                alert("Błąd logowania: " + authError.message);
+                return;
+            }
+
+            // 2. Pobieranie ostatniej notatki z bazy (tylko tej należącej do usera)
+            const { data: notes, error: notesError } = await supabase
+                .from('notes')
+                .select('encrypted_content')
+                .order('created_at', { ascending: false })
+                .limit(1);
+
+            if (notesError || !notes || notes.length === 0) {
+                alert("Nie znaleziono notatek dla tego użytkownika.");
+                return;
+            }
+
+            // 3. Odczytanie klucza z adresu URL (#key=...)
+            const urlParams = new URLSearchParams(window.location.hash.substring(1));
+            const decryptionKey = urlParams.get('key');
+            
+            if (!decryptionKey) {
+                alert("Brak klucza deszyfrowania (hash URL)! Dodaj #key=TWORJ_KLUCZ do adresu.");
+                return;
+            }
+
+            // 4. Deszyfracja i renderowanie
+            try {
+                const encryptedString = notes[0].encrypted_content;
+                const decryptedBytes = CryptoJS.AES.decrypt(encryptedString, decryptionKey);
+                const decryptedMarkdown = decryptedBytes.toString(CryptoJS.enc.Utf8);
+                
+                if (!decryptedMarkdown) throw new Error("Nieprawidłowy klucz deszyfrowania lub uszkodzone dane.");
+
+                // Ukrywamy logowanie, pokazujemy treść
+                document.getElementById('login-container').style.display = 'none';
+                const contentDiv = document.getElementById('content');
+                contentDiv.style.display = 'block';
+                contentDiv.innerHTML = marked.parse(decryptedMarkdown);
+
+            } catch (err) {
+                alert("Błąd deszyfrowania: " + err.message);
+            }
+        }
+    </script>
+</body>
+</html>
