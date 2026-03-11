@@ -9,11 +9,17 @@
   <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
 
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 800px; margin: 2rem auto; padding: 1rem; }
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 1rem; }
     .login-box { border: 1px solid #ccc; padding: 1.5rem; border-radius: 8px; max-width: 400px; }
     input { width: 100%; margin-bottom: 1rem; padding: 0.5rem; box-sizing: border-box; }
     button { width: 100%; padding: 0.7rem; background: #2c3e50; color: white; cursor: pointer; border: none;}
-    #content { display: none; margin-top: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; }
+    #app { display: none; margin-top: 2rem; }
+    #notes-list { margin-bottom: 1.5rem; }
+    #notes-list ul { list-style: none; padding: 0; }
+    #notes-list li { padding: 0.4rem 0.6rem; border-bottom: 1px solid #eee; cursor: pointer; }
+    #notes-list li:hover { background: #f1f3f5; }
+    #content { padding: 1.5rem; background: #f8f9fa; border-radius: 8px; }
+    .note-meta { font-size: 0.8rem; color: #555; }
   </style>
 </head>
 <body>
@@ -23,11 +29,21 @@
     <p><small>Podaj dane logowania i klucz deszyfrowania pliku.</small></p>
     <input type="email" id="email" placeholder="E-mail w Supabase">
     <input type="password" id="password" placeholder="Hasło do Supabase">
-    <input type="password" id="decrypt-key" placeholder="Klucz deszyfrowania (ten sam co w skrypcie)">
-    <button id="login-btn">Zaloguj i Odszyfruj</button>
+    <input type="password" id="decrypt-key" placeholder="Klucz deszyfrowania (taki jak w skrypcie)">
+    <button id="login-btn">Zaloguj</button>
   </div>
 
-  <div id="content"></div>
+  <!-- Widok po zalogowaniu -->
+  <div id="app">
+    <div id="notes-list">
+      <h3>Twoje notatki</h3>
+      <p class="note-meta"><small>Kliknij notatkę, aby ją odszyfrować wybranym kluczem.</small></p>
+      <ul id="notes-ul"></ul>
+    </div>
+    <div id="content">
+      <em>Wybierz notatkę z listy powyżej.</em>
+    </div>
+  </div>
 
   <script>
     const { createClient } = supabase;
@@ -36,9 +52,12 @@
 
     const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    document.getElementById('login-btn').addEventListener('click', loginAndFetch);
+    let CURRENT_DECRYPT_KEY = '';
+    let NOTES_CACHE = []; // trzymamy zaszyfrowane notatki w pamięci po stronie klienta
 
-    async function loginAndFetch() {
+    document.getElementById('login-btn').addEventListener('click', loginAndLoadNotes);
+
+    async function loginAndLoadNotes() {
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
       const decryptionKey = document.getElementById('decrypt-key').value;
@@ -47,6 +66,8 @@
         alert("Podaj email, hasło i klucz deszyfrowania.");
         return;
       }
+
+      CURRENT_DECRYPT_KEY = decryptionKey;
 
       // 1. Logowanie
       const { data: authData, error: authError } = await sb.auth.signInWithPassword({
@@ -60,12 +81,11 @@
         return;
       }
 
-      // 2. Pobranie ostatniej notatki
+      // 2. Pobranie listy notatek (tylko tego użytkownika)
       const { data: notes, error: notesError } = await sb
         .from('notes')
-        .select('encrypted_content')
-        .order('created_at', { ascending: false })
-        .limit(1);
+        .select('id, encrypted_content, created_at')
+        .order('created_at', { ascending: false });
 
       if (notesError) {
         console.error(notesError);
@@ -74,24 +94,54 @@
       }
 
       if (!notes || notes.length === 0) {
-        alert("Nie znaleziono notatek dla tego użytkownika.");
+        document.getElementById('login-container').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+        document.getElementById('notes-ul').innerHTML = '<li>Brak notatek w bazie.</li>';
         return;
       }
 
+      NOTES_CACHE = notes;
+
+      // 3. Przełącz widok: chowamy login, pokazujemy aplikację
+      document.getElementById('login-container').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+
+      renderNotesList();
+    }
+
+    function renderNotesList() {
+      const ul = document.getElementById('notes-ul');
+      ul.innerHTML = '';
+
+      NOTES_CACHE.forEach((note, index) => {
+        const li = document.createElement('li');
+
+        const date = new Date(note.created_at);
+        const dateText = isNaN(date.getTime())
+          ? '(brak daty)'
+          : date.toLocaleString();
+
+        li.innerHTML = `<strong>Notatka ${index + 1}</strong> 
+                        <span class="note-meta">(${dateText}, id: ${note.id})</span>`;
+
+        li.addEventListener('click', () => decryptAndShowNote(note));
+
+        ul.appendChild(li);
+      });
+    }
+
+    function decryptAndShowNote(note) {
       try {
-        const encryptedString = notes[0].encrypted_content;
-        const decryptedBytes = CryptoJS.AES.decrypt(encryptedString, decryptionKey);
+        const encryptedString = note.encrypted_content;
+        const decryptedBytes = CryptoJS.AES.decrypt(encryptedString, CURRENT_DECRYPT_KEY);
         const decryptedMarkdown = decryptedBytes.toString(CryptoJS.enc.Utf8);
 
         if (!decryptedMarkdown) {
           throw new Error("Nieprawidłowy klucz deszyfrowania lub uszkodzone dane.");
         }
 
-        document.getElementById('login-container').style.display = 'none';
         const contentDiv = document.getElementById('content');
-        contentDiv.style.display = 'block';
         contentDiv.innerHTML = marked.parse(decryptedMarkdown);
-
       } catch (err) {
         console.error(err);
         alert("Błąd deszyfrowania: " + err.message);
