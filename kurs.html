@@ -9,22 +9,68 @@
   <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
 
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 1rem; }
+    body { font-family: system-ui, sans-serif; max-width: 1000px; margin: 2rem auto; padding: 1rem; }
+
+    /* Górne menu aplikacji */
+    #main-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid #dee2e6;
+    }
+    #app-title { font-weight: 600; font-size: 1.1rem; }
+    #app-subtitle { font-size: 0.8rem; color: #666; }
+
+    /* Pasek wyszukiwania */
+    #search-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    #search-input {
+      padding: 0.4rem 0.6rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      min-width: 220px;
+    }
+
     .login-box { border: 1px solid #ccc; padding: 1.5rem; border-radius: 8px; max-width: 400px; }
     input { width: 100%; margin-bottom: 1rem; padding: 0.5rem; box-sizing: border-box; }
     button { padding: 0.6rem 1rem; background: #2c3e50; color: white; cursor: pointer; border: none;}
     #login-btn { width: 100%; margin-top: 0.5rem; }
-    #app { display: none; margin-top: 2rem; }
-    #top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+
+    #app { display: none; margin-top: 1rem; }
+
+    #user-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0.5rem 0 1rem;
+    }
+
     #notes-list { margin-bottom: 1.5rem; }
-    #notes-list ul { list-style: none; padding: 0; }
+    #notes-list ul { list-style: none; padding: 0; margin: 0; }
     #notes-list li { padding: 0.4rem 0.6rem; border-bottom: 1px solid #eee; cursor: pointer; }
     #notes-list li:hover { background: #f1f3f5; }
     #content { padding: 1.5rem; background: #f8f9fa; border-radius: 8px; }
     .note-meta { font-size: 0.8rem; color: #555; }
+    .note-title { font-weight: 600; }
   </style>
 </head>
 <body>
+
+  <!-- Główne menu aplikacji -->
+  <div id="main-bar">
+    <div>
+      <div id="app-title">Szyfrowany Notatnik</div>
+      <div id="app-subtitle">Supabase + AES po stronie przeglądarki</div>
+    </div>
+    <div id="search-bar">
+      <input id="search-input" type="text" placeholder="Szukaj notatek po nazwie..." />
+    </div>
+  </div>
 
   <div id="login-container" class="login-box">
     <h3>Logowanie do bazy danych</h3>
@@ -37,11 +83,8 @@
 
   <!-- Widok po zalogowaniu -->
   <div id="app">
-    <div id="top-bar">
-      <div>
-        <strong>Twoje notatki</strong><br>
-        <span id="user-email" class="note-meta"></span>
-      </div>
+    <div id="user-bar">
+      <span id="user-email" class="note-meta"></span>
       <button id="logout-btn">Wyloguj</button>
     </div>
 
@@ -62,10 +105,12 @@
     const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let CURRENT_DECRYPT_KEY = '';
-    let NOTES_CACHE = [];
+    let NOTES_CACHE = [];      // wszystkie notatki z bazy
+    let FILTERED_NOTES = [];   // notatki po filtrowaniu
 
     document.getElementById('login-btn').addEventListener('click', loginAndLoadNotes);
     document.getElementById('logout-btn').addEventListener('click', logoutUser);
+    document.getElementById('search-input').addEventListener('input', onSearchChange);
 
     async function loginAndLoadNotes() {
       const email = document.getElementById('email').value;
@@ -79,7 +124,6 @@
 
       CURRENT_DECRYPT_KEY = decryptionKey;
 
-      // Logowanie
       const { data: authData, error: authError } = await sb.auth.signInWithPassword({
         email,
         password
@@ -91,7 +135,6 @@
         return;
       }
 
-      // Pobranie danych zalogowanego użytkownika
       const {
         data: { user },
         error: userError
@@ -106,7 +149,6 @@
       document.getElementById('user-email').textContent =
         `Zalogowany jako: ${user.email}`;
 
-      // Pobranie notatek tylko tego usera (RLS w bazie)
       const { data: notes, error: notesError } = await sb
         .from('notes')
         .select('id, encrypted_content, created_at')
@@ -119,6 +161,7 @@
       }
 
       NOTES_CACHE = notes || [];
+      FILTERED_NOTES = NOTES_CACHE;
 
       document.getElementById('login-container').style.display = 'none';
       document.getElementById('app').style.display = 'block';
@@ -126,17 +169,37 @@
       renderNotesList();
     }
 
+    // Wyciągnięcie nazwy notatki z zaszyfrowanej treści
+    function extractTitle(encryptedString) {
+      try {
+        const bytes = CryptoJS.AES.decrypt(encryptedString, CURRENT_DECRYPT_KEY);
+        const markdown = bytes.toString(CryptoJS.enc.Utf8);
+        if (!markdown) return null;
+
+        const lines = markdown.split(/\r?\n/);
+        const h1 = lines.find(l => l.trim().startsWith('# '));
+        if (h1) return h1.replace(/^#\s*/, '').trim();
+
+        const h2 = lines.find(l => l.trim().startsWith('## '));
+        if (h2) return h2.replace(/^##\s*/, '').trim();
+
+        return lines[0].trim().slice(0, 50) || null;
+      } catch {
+        return null;
+      }
+    }
+
     function renderNotesList() {
       const ul = document.getElementById('notes-ul');
       ul.innerHTML = '';
 
-      if (!NOTES_CACHE.length) {
-        ul.innerHTML = '<li>Brak notatek w bazie.</li>';
+      if (!FILTERED_NOTES.length) {
+        ul.innerHTML = '<li>Brak notatek spełniających kryteria wyszukiwania.</li>';
         document.getElementById('content').innerHTML = '<em>Brak danych do wyświetlenia.</em>';
         return;
       }
 
-      NOTES_CACHE.forEach((note, index) => {
+      FILTERED_NOTES.forEach((note, index) => {
         const li = document.createElement('li');
 
         const date = new Date(note.created_at);
@@ -144,8 +207,12 @@
           ? '(brak daty)'
           : date.toLocaleString();
 
-        li.innerHTML = `<strong>Notatka ${index + 1}</strong> 
-                        <span class="note-meta">(${dateText}, id: ${note.id})</span>`;
+        const title = extractTitle(note.encrypted_content) || `Notatka ${index + 1}`;
+
+        li.innerHTML = `
+          <span class="note-title">${title}</span>
+          <span class="note-meta"> (${dateText}, id: ${note.id})</span>
+        `;
 
         li.addEventListener('click', () => decryptAndShowNote(note));
 
@@ -171,6 +238,23 @@
       }
     }
 
+    function onSearchChange() {
+      const q = document.getElementById('search-input').value.toLowerCase().trim();
+
+      if (!q) {
+        FILTERED_NOTES = NOTES_CACHE;
+        renderNotesList();
+        return;
+      }
+
+      FILTERED_NOTES = NOTES_CACHE.filter(note => {
+        const title = extractTitle(note.encrypted_content);
+        return title && title.toLowerCase().includes(q);
+      });
+
+      renderNotesList();
+    }
+
     async function logoutUser() {
       try {
         await sb.auth.signOut();
@@ -180,12 +264,14 @@
 
       CURRENT_DECRYPT_KEY = '';
       NOTES_CACHE = [];
+      FILTERED_NOTES = [];
       document.getElementById('notes-ul').innerHTML = '';
       document.getElementById('content').innerHTML = '<em>Wybierz notatkę z listy powyżej.</em>';
       document.getElementById('email').value = '';
       document.getElementById('password').value = '';
       document.getElementById('decrypt-key').value = '';
       document.getElementById('user-email').textContent = '';
+      document.getElementById('search-input').value = '';
 
       document.getElementById('app').style.display = 'none';
       document.getElementById('login-container').style.display = 'block';
