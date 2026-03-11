@@ -11,7 +11,7 @@
   <style>
     body { font-family: system-ui, sans-serif; max-width: 1000px; margin: 2rem auto; padding: 1rem; }
 
-    /* Górne menu aplikacji */
+    /* Górny pasek */
     #main-bar {
       display: flex;
       justify-content: space-between;
@@ -23,17 +23,25 @@
     #app-title { font-weight: 600; font-size: 1.1rem; }
     #app-subtitle { font-size: 0.8rem; color: #666; }
 
-    /* Pasek wyszukiwania */
-    #search-bar {
+    #main-bar-right {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 1rem;
     }
+
     #search-input {
       padding: 0.4rem 0.6rem;
       border-radius: 4px;
       border: 1px solid #ccc;
       min-width: 220px;
+    }
+
+    #top-auth-info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      font-size: 0.8rem;
+      color: #555;
     }
 
     .login-box { border: 1px solid #ccc; padding: 1.5rem; border-radius: 8px; max-width: 400px; }
@@ -42,13 +50,6 @@
     #login-btn { width: 100%; margin-top: 0.5rem; }
 
     #app { display: none; margin-top: 1rem; }
-
-    #user-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 0.5rem 0 1rem;
-    }
 
     #notes-list { margin-bottom: 1.5rem; }
     #notes-list ul { list-style: none; padding: 0; margin: 0; }
@@ -61,17 +62,22 @@
 </head>
 <body>
 
-  <!-- Główne menu aplikacji -->
+  <!-- Górny pasek (menu + search + informacje o logowaniu) -->
   <div id="main-bar">
     <div>
       <div id="app-title">Szyfrowany Notatnik</div>
       <div id="app-subtitle">Supabase + AES po stronie przeglądarki</div>
     </div>
-    <div id="search-bar">
-      <input id="search-input" type="text" placeholder="Szukaj notatek po nazwie..." />
+    <div id="main-bar-right">
+      <input id="search-input" type="text" placeholder="Szukaj notatek po tytule..." />
+      <div id="top-auth-info">
+        <span id="top-user-email">Niezalogowany</span>
+        <button id="top-auth-button">Zaloguj</button>
+      </div>
     </div>
   </div>
 
+  <!-- Panel logowania -->
   <div id="login-container" class="login-box">
     <h3>Logowanie do bazy danych</h3>
     <p><small>Podaj dane logowania i klucz deszyfrowania pliku.</small></p>
@@ -83,11 +89,6 @@
 
   <!-- Widok po zalogowaniu -->
   <div id="app">
-    <div id="user-bar">
-      <span id="user-email" class="note-meta"></span>
-      <button id="logout-btn">Wyloguj</button>
-    </div>
-
     <div id="notes-list">
       <p class="note-meta"><small>Kliknij notatkę, aby ją odszyfrować wybranym kluczem.</small></p>
       <ul id="notes-ul"></ul>
@@ -105,11 +106,13 @@
     const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let CURRENT_DECRYPT_KEY = '';
-    let NOTES_CACHE = [];      // wszystkie notatki z bazy
-    let FILTERED_NOTES = [];   // notatki po filtrowaniu
+    let NOTES_CACHE = [];
+    let FILTERED_NOTES = [];
+    let CURRENT_USER = null;
 
+    // Zdarzenia
     document.getElementById('login-btn').addEventListener('click', loginAndLoadNotes);
-    document.getElementById('logout-btn').addEventListener('click', logoutUser);
+    document.getElementById('top-auth-button').addEventListener('click', topAuthButtonClick);
     document.getElementById('search-input').addEventListener('input', onSearchChange);
 
     async function loginAndLoadNotes() {
@@ -146,8 +149,8 @@
         return;
       }
 
-      document.getElementById('user-email').textContent =
-        `Zalogowany jako: ${user.email}`;
+      CURRENT_USER = user;
+      updateTopBarAuthState();
 
       const { data: notes, error: notesError } = await sb
         .from('notes')
@@ -169,7 +172,31 @@
       renderNotesList();
     }
 
-    // Wyciągnięcie nazwy notatki z zaszyfrowanej treści
+    function updateTopBarAuthState() {
+      const emailSpan = document.getElementById('top-user-email');
+      const button = document.getElementById('top-auth-button');
+
+      if (CURRENT_USER) {
+        emailSpan.textContent = `Zalogowany jako: ${CURRENT_USER.email}`;
+        button.textContent = 'Wyloguj';
+      } else {
+        emailSpan.textContent = 'Niezalogowany';
+        button.textContent = 'Zaloguj';
+      }
+    }
+
+    async function topAuthButtonClick() {
+      if (CURRENT_USER) {
+        // Wyloguj
+        await logoutUser();
+      } else {
+        // Przewiń do formularza logowania
+        document.getElementById('login-container').scrollIntoView({ behavior: 'smooth' });
+        document.getElementById('email').focus();
+      }
+    }
+
+    // Wyciąga tytuł z pierwszej linii "# Tytul"
     function extractTitle(encryptedString) {
       try {
         const bytes = CryptoJS.AES.decrypt(encryptedString, CURRENT_DECRYPT_KEY);
@@ -177,13 +204,24 @@
         if (!markdown) return null;
 
         const lines = markdown.split(/\r?\n/);
-        const h1 = lines.find(l => l.trim().startsWith('# '));
-        if (h1) return h1.replace(/^#\s*/, '').trim();
 
-        const h2 = lines.find(l => l.trim().startsWith('## '));
-        if (h2) return h2.replace(/^##\s*/, '').trim();
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (trimmed.startsWith('# ')) {
+            return trimmed.replace(/^#\s*/, '').trim();
+          }
+        }
 
-        return lines[0].trim().slice(0, 50) || null;
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (trimmed.startsWith('## ')) {
+            return trimmed.replace(/^##\s*/, '').trim();
+          }
+        }
+
+        const firstNonEmpty = lines.find(l => l.trim().length > 0);
+        return firstNonEmpty ? firstNonEmpty.trim().slice(0, 50) : null;
+
       } catch {
         return null;
       }
@@ -262,15 +300,17 @@
         console.error(err);
       }
 
+      CURRENT_USER = null;
       CURRENT_DECRYPT_KEY = '';
       NOTES_CACHE = [];
       FILTERED_NOTES = [];
+      updateTopBarAuthState();
+
       document.getElementById('notes-ul').innerHTML = '';
       document.getElementById('content').innerHTML = '<em>Wybierz notatkę z listy powyżej.</em>';
       document.getElementById('email').value = '';
       document.getElementById('password').value = '';
       document.getElementById('decrypt-key').value = '';
-      document.getElementById('user-email').textContent = '';
       document.getElementById('search-input').value = '';
 
       document.getElementById('app').style.display = 'none';
