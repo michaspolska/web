@@ -245,7 +245,7 @@
     }
 
     #back-to-list {
-      display: none; /* tylko mobile w widoku notatki */
+      display: none;
       margin-bottom: 0.75rem;
       padding: 0.4rem 0.8rem;
       border-radius: 999px;
@@ -316,7 +316,7 @@
       }
     }
 
-    /* Telefon – tryb przełączany JS-em */
+    /* Telefon */
     @media (max-width: 480px) {
       #main-bar-right {
         flex-direction: column;
@@ -483,6 +483,10 @@
 
       if (isMobile()) {
         showListOnMobile();
+      } else {
+        notesListDiv.style.display = 'block';
+        contentDiv.style.display = 'block';
+        backButton.style.display = 'none';
       }
     }
 
@@ -637,6 +641,19 @@
       document.getElementById('login-container').style.display = 'block';
       document.getElementById('login-container').scrollIntoView({ behavior: 'smooth' });
     }
+
+    // gdy ktoś obróci ekran / zmieni szerokość, popraw widok
+    window.addEventListener('resize', () => {
+      if (document.getElementById('app').style.display === 'grid') {
+        if (isMobile()) {
+          showListOnMobile();
+        } else {
+          notesListDiv.style.display = 'block';
+          contentDiv.style.display = 'block';
+          backButton.style.display = 'none';
+        }
+      }
+    });
   </script>
 </body>
 </html>
