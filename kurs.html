@@ -81,7 +81,7 @@
       background: #f9fafb;
       color: var(--text-main);
       font-size: 0.85rem;
-      display: none; /* domyślnie ukryte – tylko po zalogowaniu */
+      display: none; /* tylko po zalogowaniu */
     }
 
     #search-input::placeholder {
@@ -244,6 +244,18 @@
       color: var(--text-muted);
     }
 
+    #back-to-list {
+      display: none; /* tylko mobile w widoku notatki */
+      margin-bottom: 0.75rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      border: 1px solid var(--accent);
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+
     /* Markdown / kod */
     #content h1, #content h2, #content h3 {
       margin-top: 1rem;
@@ -304,27 +316,24 @@
       }
     }
 
-    /* Telefon */
+    /* Telefon – tryb przełączany JS-em */
     @media (max-width: 480px) {
       #main-bar-right {
         flex-direction: column;
         align-items: stretch;
         gap: 0.5rem;
       }
-
       #top-auth-info {
         flex-direction: column;
         align-items: stretch;
         gap: 0.25rem;
       }
-
       #top-user-email {
         max-width: none;
         white-space: normal;
         overflow: visible;
         text-overflow: clip;
       }
-
       #top-auth-button {
         width: 100%;
         text-align: center;
@@ -363,6 +372,7 @@
       <ul id="notes-ul"></ul>
     </div>
     <div id="content">
+      <button id="back-to-list">← Wróć do listy notatek</button>
       <em>Wybierz notatkę z listy po lewej.</em>
     </div>
   </div>
@@ -380,10 +390,18 @@
     let CURRENT_USER = null;
 
     const searchInput = document.getElementById('search-input');
+    const notesListDiv = document.getElementById('notes-list');
+    const contentDiv = document.getElementById('content');
+    const backButton = document.getElementById('back-to-list');
 
     document.getElementById('login-btn').addEventListener('click', loginAndLoadNotes);
     document.getElementById('top-auth-button').addEventListener('click', topAuthButtonClick);
     searchInput.addEventListener('input', onSearchChange);
+    backButton.addEventListener('click', showListOnMobile);
+
+    function isMobile() {
+      return window.innerWidth <= 480;
+    }
 
     function showSearch() {
       searchInput.style.display = 'block';
@@ -392,6 +410,21 @@
     function hideSearch() {
       searchInput.style.display = 'none';
       searchInput.value = '';
+    }
+
+    function showListOnMobile() {
+      if (!isMobile()) return;
+      notesListDiv.style.display = 'block';
+      contentDiv.style.display = 'none';
+      backButton.style.display = 'none';
+    }
+
+    function showContentOnMobile() {
+      if (!isMobile()) return;
+      notesListDiv.style.display = 'none';
+      contentDiv.style.display = 'block';
+      backButton.style.display = 'inline-block';
+      contentDiv.scrollTop = 0;
     }
 
     async function loginAndLoadNotes() {
@@ -417,10 +450,7 @@
         return;
       }
 
-      const {
-        data: { user },
-        error: userError
-      } = await sb.auth.getUser();
+      const { data: { user }, error: userError } = await sb.auth.getUser();
 
       if (userError || !user) {
         console.error(userError);
@@ -450,6 +480,10 @@
       document.getElementById('app').style.display = 'grid';
 
       renderNotesList();
+
+      if (isMobile()) {
+        showListOnMobile();
+      }
     }
 
     function updateTopBarAuthState() {
@@ -509,7 +543,7 @@
 
       if (!FILTERED_NOTES.length) {
         ul.innerHTML = '<li><span class="note-meta">Brak notatek spełniających kryteria wyszukiwania.</span></li>';
-        document.getElementById('content').innerHTML = '<em>Brak danych do wyświetlenia.</em>';
+        contentDiv.innerHTML = '<button id="back-to-list">← Wróć do listy notatek</button><em>Brak danych do wyświetlenia.</em>';
         return;
       }
 
@@ -544,8 +578,18 @@
           throw new Error("Nieprawidłowy klucz deszyfrowania lub uszkodzone dane.");
         }
 
-        const contentDiv = document.getElementById('content');
-        contentDiv.innerHTML = marked.parse(decryptedMarkdown);
+        contentDiv.innerHTML = '';
+        contentDiv.appendChild(backButton);
+        backButton.style.display = isMobile() ? 'inline-block' : 'none';
+
+        const rendered = document.createElement('div');
+        rendered.innerHTML = marked.parse(decryptedMarkdown);
+        contentDiv.appendChild(rendered);
+
+        if (isMobile()) {
+          showContentOnMobile();
+        }
+
       } catch (err) {
         console.error(err);
         alert("Błąd deszyfrowania: " + err.message);
@@ -584,7 +628,7 @@
       hideSearch();
 
       document.getElementById('notes-ul').innerHTML = '';
-      document.getElementById('content').innerHTML = '<em>Wybierz notatkę z listy po lewej.</em>';
+      contentDiv.innerHTML = '<button id="back-to-list">← Wróć do listy notatek</button><em>Wybierz notatkę z listy po lewej.</em>';
       document.getElementById('email').value = '';
       document.getElementById('password').value = '';
       document.getElementById('decrypt-key').value = '';
