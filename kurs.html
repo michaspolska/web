@@ -119,6 +119,19 @@
       background: var(--accent-dark);
     }
 
+    /* Przycisk Wróć w menu (tylko mobile) */
+    #top-back-button {
+      display: none;
+      padding: 0.35rem 0.8rem;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      border: 1px solid var(--accent);
+      font-size: 0.8rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
     /* Logowanie */
     .login-box {
       border: 1px solid var(--border);
@@ -244,18 +257,6 @@
       color: var(--text-muted);
     }
 
-    #back-to-list {
-      display: none;
-      margin-bottom: 0.75rem;
-      padding: 0.4rem 0.8rem;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      color: var(--accent-dark);
-      border: 1px solid var(--accent);
-      font-size: 0.8rem;
-      cursor: pointer;
-    }
-
     /* Markdown / kod */
     #content h1, #content h2, #content h3 {
       margin-top: 1rem;
@@ -349,6 +350,7 @@
       <div id="app-subtitle">Supabase + AES szyfrowanie po stronie przeglądarki</div>
     </div>
     <div id="main-bar-right">
+      <button id="top-back-button">← Lista notatek</button>
       <input id="search-input" type="text" placeholder="Szukaj notatek po tytule..." />
       <div id="top-auth-info">
         <span id="top-user-email">Niezalogowany</span>
@@ -372,7 +374,6 @@
       <ul id="notes-ul"></ul>
     </div>
     <div id="content">
-      <button id="back-to-list">← Wróć do listy notatek</button>
       <em>Wybierz notatkę z listy po lewej.</em>
     </div>
   </div>
@@ -392,12 +393,12 @@
     const searchInput = document.getElementById('search-input');
     const notesListDiv = document.getElementById('notes-list');
     const contentDiv = document.getElementById('content');
-    const backButton = document.getElementById('back-to-list');
+    const backTopButton = document.getElementById('top-back-button');
 
     document.getElementById('login-btn').addEventListener('click', loginAndLoadNotes);
     document.getElementById('top-auth-button').addEventListener('click', topAuthButtonClick);
     searchInput.addEventListener('input', onSearchChange);
-    backButton.addEventListener('click', showListOnMobile);
+    backTopButton.addEventListener('click', showListOnMobile);
 
     function isMobile() {
       return window.innerWidth <= 480;
@@ -416,14 +417,14 @@
       if (!isMobile()) return;
       notesListDiv.style.display = 'block';
       contentDiv.style.display = 'none';
-      backButton.style.display = 'none';
+      backTopButton.style.display = 'none';
     }
 
     function showContentOnMobile() {
       if (!isMobile()) return;
       notesListDiv.style.display = 'none';
       contentDiv.style.display = 'block';
-      backButton.style.display = 'inline-block';
+      backTopButton.style.display = 'inline-block';
       contentDiv.scrollTop = 0;
     }
 
@@ -486,7 +487,7 @@
       } else {
         notesListDiv.style.display = 'block';
         contentDiv.style.display = 'block';
-        backButton.style.display = 'none';
+        backTopButton.style.display = 'none';
       }
     }
 
@@ -547,7 +548,7 @@
 
       if (!FILTERED_NOTES.length) {
         ul.innerHTML = '<li><span class="note-meta">Brak notatek spełniających kryteria wyszukiwania.</span></li>';
-        contentDiv.innerHTML = '<button id="back-to-list">← Wróć do listy notatek</button><em>Brak danych do wyświetlenia.</em>';
+        contentDiv.innerHTML = '<em>Brak danych do wyświetlenia.</em>';
         return;
       }
 
@@ -582,13 +583,7 @@
           throw new Error("Nieprawidłowy klucz deszyfrowania lub uszkodzone dane.");
         }
 
-        contentDiv.innerHTML = '';
-        contentDiv.appendChild(backButton);
-        backButton.style.display = isMobile() ? 'inline-block' : 'none';
-
-        const rendered = document.createElement('div');
-        rendered.innerHTML = marked.parse(decryptedMarkdown);
-        contentDiv.appendChild(rendered);
+        contentDiv.innerHTML = marked.parse(decryptedMarkdown);
 
         if (isMobile()) {
           showContentOnMobile();
@@ -632,7 +627,7 @@
       hideSearch();
 
       document.getElementById('notes-ul').innerHTML = '';
-      contentDiv.innerHTML = '<button id="back-to-list">← Wróć do listy notatek</button><em>Wybierz notatkę z listy po lewej.</em>';
+      contentDiv.innerHTML = '<em>Wybierz notatkę z listy po lewej.</em>';
       document.getElementById('email').value = '';
       document.getElementById('password').value = '';
       document.getElementById('decrypt-key').value = '';
@@ -640,9 +635,9 @@
       document.getElementById('app').style.display = 'none';
       document.getElementById('login-container').style.display = 'block';
       document.getElementById('login-container').scrollIntoView({ behavior: 'smooth' });
+      backTopButton.style.display = 'none';
     }
 
-    // gdy ktoś obróci ekran / zmieni szerokość, popraw widok
     window.addEventListener('resize', () => {
       if (document.getElementById('app').style.display === 'grid') {
         if (isMobile()) {
@@ -650,7 +645,7 @@
         } else {
           notesListDiv.style.display = 'block';
           contentDiv.style.display = 'block';
-          backButton.style.display = 'none';
+          backTopButton.style.display = 'none';
         }
       }
     });
