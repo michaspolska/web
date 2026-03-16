@@ -513,8 +513,14 @@
         return;
       }
 
-      NOTES_CACHE = notes || [];
-      FILTERED_NOTES = NOTES_CACHE;
+      // --- KLUCZOWA ZMIANA: filtrujemy tylko odszyfrowywalne notatki ---
+      const decryptableNotes = (notes || []).filter(note => {
+        const title = extractTitle(note.encrypted_content);
+        return title !== null && title !== undefined && title !== '';
+      });
+
+      NOTES_CACHE = decryptableNotes;
+      FILTERED_NOTES = decryptableNotes;
 
       document.getElementById('login-container').style.display = 'none';
       document.getElementById('app').style.display = 'grid';
@@ -585,21 +591,25 @@
       const ul = document.getElementById('notes-ul');
       ul.innerHTML = '';
 
-      if (!FILTERED_NOTES.length) {
-        ul.innerHTML = '<li><span class="note-meta">Brak notatek spełniających kryteria wyszukiwania.</span></li>';
+      // Dodatkowe zabezpieczenie – bierzemy tylko notatki z tytułem
+      const visibleNotes = FILTERED_NOTES.map((note, index) => {
+        const title = extractTitle(note.encrypted_content);
+        return { note, index, title };
+      }).filter(x => x.title);
+
+      if (!visibleNotes.length) {
+        ul.innerHTML = '<li><span class="note-meta">Brak notatek spełniających kryteria (lub niepasujący klucz).</span></li>';
         contentDiv.innerHTML = '<em>Brak danych do wyświetlenia.</em>';
         return;
       }
 
-      FILTERED_NOTES.forEach((note, index) => {
+      visibleNotes.forEach(({ note, index, title }) => {
         const li = document.createElement('li');
 
         const date = new Date(note.created_at);
         const dateText = isNaN(date.getTime())
           ? '(brak daty)'
           : date.toLocaleString();
-
-        const title = extractTitle(note.encrypted_content) || `Notatka ${index + 1}`;
 
         li.innerHTML = `
           <span class="note-title">${title}</span>
