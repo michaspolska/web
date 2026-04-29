@@ -293,12 +293,12 @@
           }
 
           statusBox.className = 'status success';
-          statusBox.textContent = 'Komentarz został wysłany na webhook Discord.';
+          statusBox.textContent = 'Komentarz został wysłany.';
           form.reset();
           document.getElementById('articleTitle').value = 'Jak użyć webhooka Discord do zbierania komentarzy pod artykułem';
         } catch (error) {
           statusBox.className = 'status error';
-          statusBox.textContent = 'Nie udało się wysłać komentarza. Sprawdź stałą DISCORD_WEBHOOK_URL w kodzie oraz politykę CORS/przeglądarki.';
+          statusBox.textContent = 'Nie udało się wysłać komentarza.';
         }
       });
     })();
