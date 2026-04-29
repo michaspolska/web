@@ -154,22 +154,22 @@
     <section class="hero" aria-labelledby="tytul-artykulu">
       <div class="eyebrow">Publikacja • DevOps • webhook</div>
       <div>
-        <h1 id="tytul-artykulu">1Jak użyć webhooka Discord do zbierania komentarzy pod artykułem</h1>
+        <h1 id="tytul-artykulu">Jak użyć webhooka Discord do zbierania komentarzy pod artykułem</h1>
         <p class="lead">Ta przykładowa strona pokazuje układ: u góry artykuł, a pod nim formularz komentarza. Po wysłaniu formularza komentarz trafia bezpośrednio na webhook Discord jako wiadomość.</p>
       </div>
     </section>
 
     <article class="article-card" aria-labelledby="article-heading">
       <div class="article-meta">
-        <span>Autor: 1Redakcja techniczna</span>
-        <span>Czas czytania: 14 min</span>
-        <span>Kategoria: 1Integracje</span>
+        <span>Autor: Redakcja techniczna</span>
+        <span>Czas czytania: 4 min</span>
+        <span>Kategoria: Integracje</span>
       </div>
       <div class="article-body">
-        <h2 id="article-heading">1Webhook jako prosty kanał komentarzy</h2>
-        <p>1Webhook Discord to prosty adres HTTP, na który można wykonać żądanie POST. Dzięki temu komentarz wpisany w formularzu na stronie może od razu pojawić się na wybranym kanale Discord bez stawiania całego backendu. Taki układ dobrze sprawdza się przy małych stronach, landing page'ach, dokumentacji albo prostych portalach wewnętrznych. Formularz może przekazywać autora komentarza, tytuł artykułu, treść i znacznik czasu.</p>
+        <h2 id="article-heading">Webhook jako prosty kanał komentarzy</h2>
+        <p>Webhook Discord to prosty adres HTTP, na który można wykonać żądanie POST. Dzięki temu komentarz wpisany w formularzu na stronie może od razu pojawić się na wybranym kanale Discord bez stawiania całego backendu. Taki układ dobrze sprawdza się przy małych stronach, landing page'ach, dokumentacji albo prostych portalach wewnętrznych. Formularz może przekazywać autora komentarza, tytuł artykułu, treść i znacznik czasu.</p>
         <blockquote>
-          1Jeśli chcesz używać tej strony produkcyjnie, najlepiej schować prawdziwy webhook po stronie serwera lub proxy. Umieszczenie webhooka bezpośrednio w kodzie frontendu oznacza, że każdy odwiedzający może go zobaczyć i nadużyć.
+          Jeśli chcesz używać tej strony produkcyjnie, najlepiej schować prawdziwy webhook po stronie serwera lub proxy. Umieszczenie webhooka bezpośrednio w kodzie frontendu oznacza, że każdy odwiedzający może go zobaczyć i nadużyć.
         </blockquote>
         <p>W tym przykładzie formularz wysyła dane przez JavaScript metodą <code>fetch()</code>. Wystarczy podmienić adres webhooka w jednej stałej w kodzie, a następnie opublikować plik HTML.</p>
       </div>
@@ -188,7 +188,7 @@
             </div>
             <div class="field">
               <label for="articleTitle">Tytuł artykułu</label>
-              <input id="articleTitle" name="articleTitle" type="text" maxlength="120" value="1Jak użyć webhooka Discord do zbierania komentarzy pod artykułem" required />
+              <input id="articleTitle" name="articleTitle" type="text" maxlength="120" value="Jak użyć webhooka Discord do zbierania komentarzy pod artykułem" required />
             </div>
           </div>
 
@@ -298,7 +298,7 @@
           statusBox.className = 'status success';
           statusBox.textContent = 'Komentarz został wysłany na webhook Discord.';
           form.reset();
-          document.getElementById('articleTitle').value = '1Jak użyć webhooka Discord do zbierania komentarzy pod artykułem';
+          document.getElementById('articleTitle').value = 'Jak użyć webhooka Discord do zbierania komentarzy pod artykułem';
         } catch (error) {
           statusBox.className = 'status error';
           statusBox.textContent = 'Nie udało się wysłać komentarza. Sprawdź stałą DISCORD_WEBHOOK_URL w kodzie oraz politykę CORS/przeglądarki.';
