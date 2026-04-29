@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pl" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Artykuł z komentarzami na webhook Discord</title>
+  <meta name="description" content="Statyczna strona z artykułem oraz formularzem komentarzy wysyłanych na webhook Discord zapisany w kodzie." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root, [data-theme="light"] {
+      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+      --text-2xl: clamp(2rem, 1.2rem + 2.5vw, 3.5rem);
+      --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.25rem;
+      --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem; --space-12: 3rem; --space-16: 4rem;
+      --color-bg: #f7f6f2; --color-surface: #fbfbf9; --color-surface-2: #f1efe9; --color-border: #d4d1ca;
+      --color-text: #28251d; --color-text-muted: #6d6b66; --color-primary: #01696f; --color-primary-hover: #0c4e54;
+      --color-primary-soft: #dbeceb; --color-error: #a12c7b; --color-success: #437a22; --color-text-inverse: #f9f8f4;
+      --radius-sm: 0.375rem; --radius-md: 0.75rem; --radius-lg: 1rem; --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.05); --shadow-md: 0 12px 30px rgba(0,0,0,.08);
+      --content-narrow: 760px; --content-default: 1000px;
+      --font-display: 'Instrument Serif', Georgia, serif; --font-body: 'Inter', Arial, sans-serif;
+    }
+    [data-theme="dark"] {
+      --color-bg: #171614; --color-surface: #1d1c1a; --color-surface-2: #242320; --color-border: #3a3835;
+      --color-text: #e4e1da; --color-text-muted: #b2aea5; --color-primary: #4f98a3; --color-primary-hover: #68b3be;
+      --color-primary-soft: #223234; --color-error: #d163a7; --color-success: #7bb159; --color-text-inverse: #171614;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.25); --shadow-md: 0 14px 36px rgba(0,0,0,.35);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; min-height: 100vh; background: var(--color-bg); color: var(--color-text);
+      font-family: var(--font-body); line-height: 1.7; font-size: var(--text-base);
+    }
+    img, svg { display: block; max-width: 100%; }
+    a, button, input, textarea { font: inherit; }
+    .skip-link {
+      position: absolute; left: -9999px; top: var(--space-2); background: var(--color-primary); color: white;
+      padding: var(--space-3) var(--space-4); border-radius: var(--radius-sm); z-index: 100;
+    }
+    .skip-link:focus { left: var(--space-2); }
+    .shell { width: min(calc(100% - 2rem), var(--content-default)); margin: 0 auto; }
+    header {
+      position: sticky; top: 0; z-index: 20; backdrop-filter: blur(14px);
+      background: color-mix(in srgb, var(--color-bg) 88%, transparent);
+      border-bottom: 1px solid color-mix(in srgb, var(--color-text) 12%, transparent);
+    }
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+      padding: var(--space-4) 0;
+    }
+    .brand { display: flex; align-items: center; gap: var(--space-3); font-weight: 700; }
+    .brand svg { color: var(--color-primary); }
+    .theme-toggle {
+      min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center;
+      border: 1px solid color-mix(in srgb, var(--color-text) 14%, transparent); border-radius: var(--radius-full);
+      background: var(--color-surface); color: var(--color-text);
+    }
+    main { padding: var(--space-10) 0 var(--space-16); }
+    .hero {
+      display: grid; gap: var(--space-8); margin-bottom: var(--space-12);
+    }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: var(--space-2); width: fit-content;
+      padding: var(--space-2) var(--space-3); border-radius: var(--radius-full);
+      background: var(--color-primary-soft); color: var(--color-primary); font-size: var(--text-sm); font-weight: 700;
+    }
+    h1, h2 { font-family: var(--font-display); line-height: 1.05; letter-spacing: -0.02em; }
+    h1 { font-size: var(--text-2xl); max-width: 12ch; margin: 0; }
+    .lead { max-width: 64ch; color: var(--color-text-muted); }
+    .article-card, .comment-card {
+      background: var(--color-surface); border: 1px solid color-mix(in srgb, var(--color-text) 10%, transparent);
+      border-radius: var(--radius-lg); box-shadow: var(--shadow-md);
+    }
+    .article-card { padding: clamp(1.5rem, 2vw, 3rem); }
+    .article-meta {
+      display: flex; flex-wrap: wrap; gap: var(--space-3); margin-bottom: var(--space-6);
+      color: var(--color-text-muted); font-size: var(--text-sm);
+    }
+    .article-body { max-width: min(72ch, 100%); }
+    .article-body p + p { margin-top: var(--space-5); }
+    .article-body blockquote {
+      margin: var(--space-8) 0; padding: var(--space-6); border-left: 4px solid var(--color-primary);
+      background: var(--color-surface-2); border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      font-size: var(--text-lg); line-height: 1.5;
+    }
+    .comment-wrap { margin-top: var(--space-12); display: grid; gap: var(--space-8); }
+    .comment-card { padding: clamp(1.25rem, 2vw, 2rem); }
+    form { display: grid; gap: var(--space-5); }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+    .field { display: grid; gap: var(--space-2); }
+    label { font-size: var(--text-sm); font-weight: 700; }
+    input, textarea {
+      width: 100%; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-bg);
+      color: var(--color-text); padding: 0.95rem 1rem; min-height: 48px;
+    }
+    textarea { min-height: 180px; resize: vertical; }
+    input:focus, textarea:focus {
+      outline: 2px solid color-mix(in srgb, var(--color-primary) 50%, white); outline-offset: 2px; border-color: var(--color-primary);
+    }
+    .help { font-size: var(--text-sm); color: var(--color-text-muted); }
+    .actions { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+    .btn {
+      min-height: 48px; padding: 0.85rem 1.2rem; border-radius: var(--radius-full); font-weight: 700;
+      border: 1px solid transparent; cursor: pointer;
+    }
+    .btn-primary { background: var(--color-primary); color: var(--color-text-inverse); }
+    .btn-primary:hover { background: var(--color-primary-hover); }
+    .btn-secondary {
+      background: transparent; border-color: color-mix(in srgb, var(--color-text) 16%, transparent); color: var(--color-text);
+    }
+    .status { min-height: 1.5em; font-size: var(--text-sm); font-weight: 600; }
+    .status.error { color: var(--color-error); }
+    .status.success { color: var(--color-success); }
+    .code {
+      margin-top: var(--space-4); padding: var(--space-4); border-radius: var(--radius-md);
+      background: var(--color-surface-2); border: 1px solid color-mix(in srgb, var(--color-text) 10%, transparent);
+      font-size: var(--text-sm); overflow-x: auto;
+    }
+    footer { padding: var(--space-8) 0 var(--space-12); color: var(--color-text-muted); font-size: var(--text-sm); }
+    @media (max-width: 760px) {
+      .grid { grid-template-columns: 1fr; }
+      main { padding-top: var(--space-8); }
+      .article-card, .comment-card { border-radius: var(--radius-md); }
+    }
+  </style>
+</head>
+<body>
+  <a href="#content" class="skip-link">Przejdź do treści</a>
+  <header>
+    <div class="shell topbar">
+      <div class="brand" aria-label="Komentarze do artykułu">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <path d="M4 6.5C4 5.12 5.12 4 6.5 4h11A2.5 2.5 0 0 1 20 6.5v6A2.5 2.5 0 0 1 17.5 15H10l-4.5 4v-4H6.5A2.5 2.5 0 0 1 4 12.5z"/>
+          <path d="M8 8h8M8 11h5"/>
+        </svg>
+        <span>Artykuł + komentarze</span>
+      </div>
+      <button class="theme-toggle" data-theme-toggle aria-label="Przełącz motyw">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="content" class="shell">
+    <section class="hero" aria-labelledby="tytul-artykulu">
+      <div class="eyebrow">Publikacja • DevOps • webhook</div>
+      <div>
+        <h1 id="tytul-artykulu">1Jak użyć webhooka Discord do zbierania komentarzy pod artykułem</h1>
+        <p class="lead">Ta przykładowa strona pokazuje układ: u góry artykuł, a pod nim formularz komentarza. Po wysłaniu formularza komentarz trafia bezpośrednio na webhook Discord jako wiadomość.</p>
+      </div>
+    </section>
+
+    <article class="article-card" aria-labelledby="article-heading">
+      <div class="article-meta">
+        <span>Autor: 1Redakcja techniczna</span>
+        <span>Czas czytania: 14 min</span>
+        <span>Kategoria: 1Integracje</span>
+      </div>
+      <div class="article-body">
+        <h2 id="article-heading">1Webhook jako prosty kanał komentarzy</h2>
+        <p>1Webhook Discord to prosty adres HTTP, na który można wykonać żądanie POST. Dzięki temu komentarz wpisany w formularzu na stronie może od razu pojawić się na wybranym kanale Discord bez stawiania całego backendu. Taki układ dobrze sprawdza się przy małych stronach, landing page'ach, dokumentacji albo prostych portalach wewnętrznych. Formularz może przekazywać autora komentarza, tytuł artykułu, treść i znacznik czasu.</p>
+        <blockquote>
+          1Jeśli chcesz używać tej strony produkcyjnie, najlepiej schować prawdziwy webhook po stronie serwera lub proxy. Umieszczenie webhooka bezpośrednio w kodzie frontendu oznacza, że każdy odwiedzający może go zobaczyć i nadużyć.
+        </blockquote>
+        <p>W tym przykładzie formularz wysyła dane przez JavaScript metodą <code>fetch()</code>. Wystarczy podmienić adres webhooka w jednej stałej w kodzie, a następnie opublikować plik HTML.</p>
+      </div>
+    </article>
+
+    <section class="comment-wrap" aria-labelledby="comments-title">
+      <div class="comment-card">
+        <h2 id="comments-title">Dodaj komentarz</h2>
+        <p class="help">Formularz wysyła komentarz na webhook zapisany bezpośrednio w kodzie JavaScript.</p>
+
+        <form id="commentForm">
+          <div class="grid">
+            <div class="field">
+              <label for="author">Imię lub nick</label>
+              <input id="author" name="author" type="text" maxlength="80" placeholder="np. admin42" required />
+            </div>
+            <div class="field">
+              <label for="articleTitle">Tytuł artykułu</label>
+              <input id="articleTitle" name="articleTitle" type="text" maxlength="120" value="1Jak użyć webhooka Discord do zbierania komentarzy pod artykułem" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="comment">Komentarz</label>
+            <textarea id="comment" name="comment" maxlength="1800" placeholder="Napisz komentarz do artykułu..." required></textarea>
+          </div>
+
+          <div class="field">
+            <label>Webhook w kodzie</label>
+            <p class="help">Podmień wartość stałej <code>DISCORD_WEBHOOK_URL</code> w sekcji JavaScript na własny URL webhooka Discord.</p>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-primary" type="submit">Wyślij komentarz</button>
+            <button class="btn btn-secondary" type="reset">Wyczyść formularz</button>
+          </div>
+
+          <div id="status" class="status" aria-live="polite"></div>
+        </form>
+
+        <div class="code" aria-label="Miejsce zmiany webhooka w kodzie">
+<pre>const DISCORD_WEBHOOK_URL = 'WKLEJ_TUTAJ_SWÓJ_WEBHOOK_DISCORD';</pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="shell">
+    Gotowe do edycji: zmień treść artykułu, styl strony i wpisz swój webhook bezpośrednio w kodzie pliku HTML.
+  </footer>
+
+  <script>
+    (function () {
+      const DISCORD_WEBHOOK_URL = 'WKLEJ_TUTAJ_SWÓJ_WEBHOOK_DISCORD';
+
+      const root = document.documentElement;
+      const toggle = document.querySelector('[data-theme-toggle]');
+      let theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      root.setAttribute('data-theme', theme);
+
+      const setIcon = () => {
+        toggle.innerHTML = theme === 'dark'
+          ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>'
+          : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+      };
+      setIcon();
+      toggle.addEventListener('click', () => {
+        theme = theme === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', theme);
+        setIcon();
+      });
+
+      const form = document.getElementById('commentForm');
+      const statusBox = document.getElementById('status');
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        statusBox.className = 'status';
+        statusBox.textContent = 'Wysyłanie komentarza...';
+
+        const formData = new FormData(form);
+        const author = String(formData.get('author') || '').trim();
+        const articleTitle = String(formData.get('articleTitle') || '').trim();
+        const comment = String(formData.get('comment') || '').trim();
+
+        if (!author || !articleTitle || !comment) {
+          statusBox.className = 'status error';
+          statusBox.textContent = 'Uzupełnij pola autora, tytułu i komentarza.';
+          return;
+        }
+
+        if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL.includes('WKLEJ_TUTAJ')) {
+          statusBox.className = 'status error';
+          statusBox.textContent = 'Najpierw wpisz własny webhook w stałej DISCORD_WEBHOOK_URL w kodzie pliku.';
+          return;
+        }
+
+        const payload = {
+          username: 'Komentarze artykułu',
+          embeds: [
+            {
+              title: 'Nowy komentarz do artykułu',
+              color: 925647,
+              fields: [
+                { name: 'Autor', value: author.slice(0, 80), inline: true },
+                { name: 'Artykuł', value: articleTitle.slice(0, 120), inline: true },
+                { name: 'Komentarz', value: comment.slice(0, 1800) }
+              ],
+              footer: { text: 'Formularz komentarzy' },
+              timestamp: new Date().toISOString()
+            }
+          ]
+        };
+
+        try {
+          const response = await fetch(DISCORD_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          if (!response.ok && response.status !== 204) {
+            throw new Error('HTTP ' + response.status);
+          }
+
+          statusBox.className = 'status success';
+          statusBox.textContent = 'Komentarz został wysłany na webhook Discord.';
+          form.reset();
+          document.getElementById('articleTitle').value = '1Jak użyć webhooka Discord do zbierania komentarzy pod artykułem';
+        } catch (error) {
+          statusBox.className = 'status error';
+          statusBox.textContent = 'Nie udało się wysłać komentarza. Sprawdź stałą DISCORD_WEBHOOK_URL w kodzie oraz politykę CORS/przeglądarki.';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
