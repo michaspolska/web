@@ -224,7 +224,7 @@
 
   <script>
     (function () {
-      const DISCORD_WEBHOOK_URL = 'WKLEJ_TUTAJ_SWÓJ_WEBHOOK_DISCORD';
+      const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1498972602818105385/oroTYIqsYoo6moo_hYEKNc0crWbTrispmVKMOqikuAC6Hb7ucQRMwvGz5ASAP87tNYD6';
 
       const root = document.documentElement;
       const toggle = document.querySelector('[data-theme-toggle]');
@@ -262,7 +262,7 @@
           return;
         }
 
-        if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL.includes('https://discord.com/api/webhooks/1498972602818105385/oroTYIqsYoo6moo_hYEKNc0crWbTrispmVKMOqikuAC6Hb7ucQRMwvGz5ASAP87tNYD6')) {
+        if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL.includes('WKLEJ_TUTAJ')) {
           statusBox.className = 'status error';
           statusBox.textContent = 'Najpierw wpisz własny webhook w stałej DISCORD_WEBHOOK_URL w kodzie pliku.';
           return;
